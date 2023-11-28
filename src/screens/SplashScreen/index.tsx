@@ -4,11 +4,13 @@ import Color from '../../constant/Color';
 import Display from '../../utils/Display';
 import Font from '../../constant/Font';
 import Images from '../../constant/Images';
+import {NavigationProp} from '@react-navigation/native';
 
-const SplashScreen = ({navigation}) => {
+const SplashScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
+  const isLogin = false;
   useEffect(() => {
     setTimeout(() => {
-      navigation.navigate('Welcome');
+      isLogin ? navigation.navigate('Main') : navigation.navigate('Auth');
     }, 2000);
   });
 

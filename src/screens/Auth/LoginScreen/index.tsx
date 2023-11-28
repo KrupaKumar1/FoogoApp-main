@@ -1,27 +1,77 @@
 import {
+  Alert,
   Image,
   SafeAreaView,
   StatusBar,
-  StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Color from '../../../constant/Color';
 import Separator from '../../../components/General/Seperator';
-
 import ToggleButton from '../../../components/General/ToggleButton';
 import Images from '../../../constant/Images';
 import {styles} from './styles';
 
 const LoginScreen = ({navigation}) => {
   const [isPasswordShow, setIsPasswordShow] = useState(false);
+
+  const userID: string = 'kk41495@gmail.com';
+  const password: string = 'Admin@123';
+  const lastLoginIP: string = '111.93.18.226';
+  const isIPNotSame: boolean = true;
+
+  const para: {
+    userID: string;
+    password: string;
+    lastLoginIP: string;
+    isIPNotSame: boolean;
+  } = {
+    userID,
+    password,
+    lastLoginIP,
+    isIPNotSame,
+  };
+
+  useEffect(() => {
+    fetch('http://localhost:8081/Auth/Authenticate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(para),
+    })
+      .then(response => {
+        console.log('Raw Response:', response);
+        return response.json();
+      })
+      .then(data => {
+        console.log('API Response:', data);
+        Alert.alert(
+          'Login',
+          'Login Successful',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {text: 'OK', onPress: () => navigation.navigate('Home')},
+          ],
+          {cancelable: false},
+        );
+      })
+      .catch(err => {
+        console.log('Error:', err.message);
+        Alert.alert('Login Error', 'An error occurred during login.');
+      });
+  }, []);
+
   return (
     <View style={styles.container}>
       <SafeAreaView>
@@ -105,7 +155,9 @@ const LoginScreen = ({navigation}) => {
         </View>
         <Text style={styles.forgotPasswordText}>Forgot Password</Text>
       </View>
-      <TouchableOpacity style={styles.signinButton}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Main')}
+        style={styles.signinButton}>
         <Text style={styles.singinButtonText}>Log In</Text>
       </TouchableOpacity>
       {/* <View style={styles.signUpContainer}>
