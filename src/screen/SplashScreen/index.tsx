@@ -1,12 +1,11 @@
-import { Image, StatusBar, StyleSheet, Text, View } from 'react-native';
-import React, { useEffect } from 'react';
+import {Image, StatusBar, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect} from 'react';
 import Color from '../../constant/Color';
 import Display from '../../utils/Display';
 import Font from '../../constant/Font';
 import Images from '../../constant/Images';
 
-
-const SplashScreen = ({ navigation }) => {
+const SplashScreen = ({navigation}) => {
   useEffect(() => {
     setTimeout(() => {
       navigation.navigate('Welcome');
@@ -17,7 +16,7 @@ const SplashScreen = ({ navigation }) => {
     <View style={styles.container}>
       <StatusBar
         barStyle="light-content"
-        backgroundColor={Color.DEFAULT_GREEN}
+        backgroundColor={Color.PRIMARY}
         translucent
       />
       <Image style={styles.logo} source={Images.PLATE} resizeMode="contain" />
@@ -33,7 +32,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Color.DEFAULT_GREEN,
+    backgroundColor: Color.PRIMARY,
   },
   logo: {
     width: Display.setWidth(60),

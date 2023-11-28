@@ -1,11 +1,9 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import SplashScreen from '../screen/SplashScreen/index';
-import WelcomeScreen from '../screen/Welcome/index';
-import SignInScreen from '../screen/SigninScreen/index';
-
-
+import WelcomeScreen from '../screen/Auth/Welcome/index';
+import SignInScreen from '../screen/Auth/LoginScreen/index';
 
 const Stack = createStackNavigator();
 
@@ -13,23 +11,22 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        screenOptions={{ headerShown: false }}
-        initialRouteName="Splash"
-      >
+        screenOptions={{headerShown: false}}
+        initialRouteName="Splash">
         <Stack.Screen
           name="Splash"
           component={SplashScreen}
-          options={{ headerShown: false }}
+          options={{headerShown: false}}
         />
         <Stack.Screen
           name="Welcome"
           component={WelcomeScreen}
-          options={{ headerShown: false }}
+          options={{headerShown: false}}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="Signin"
           component={SignInScreen}
-          options={{ headerShown: false }}
+          options={{headerShown: false}}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -22,4 +22,6 @@ export default {
   DARK_THREE: '#404040',
   DARK_FOUR: '#282828',
   DARK_FIVE: '#B3B3B3',
+
+  PRIMARY: '#ff9500',
 };

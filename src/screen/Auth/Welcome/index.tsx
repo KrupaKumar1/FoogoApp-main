@@ -7,21 +7,20 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState, useRef } from 'react';
-import Color from '../../constant/Color';
-import General from '../../constant/General';
-import Display from '../../utils/Display';
-import Separator from '../../components/Seperator';
-import WelcomeCard from '../../components/WelcomeCard';
-import Font from '../../constant/Font';
-
+import React, {useState, useRef} from 'react';
+import Color from '../../../constant/Color';
+import General from '../../../constant/General';
+import Display from '../../../utils/Display';
+import Separator from '../../../components/General/Seperator';
+import WelcomeCard from '../../../components/Auth/WelcomeCard';
+import Font from '../../../constant/Font';
 
 const PageStyle = (isActive: boolean) =>
   isActive
     ? styles.page
-    : { ...styles.page, backgroundColor: Color.DEFAULT_GREY };
+    : {...styles.page, backgroundColor: Color.DEFAULT_GREY};
 
-const Pagination = ({ index }) => {
+const Pagination = ({index}) => {
   return (
     <View style={styles.paginationContainer}>
       {[...Array(General.WELCOME_CONTENTS.length).keys()].map((_, i) =>
@@ -35,15 +34,15 @@ const Pagination = ({ index }) => {
   );
 };
 
-const WelcomeScreen = ({ navigation }) => {
+const WelcomeScreen = ({navigation}) => {
   const [welcomeListIndex, setWelcomeListIndex] = useState(0);
   const welcomeList = useRef<ScrollView>(null);
 
-  const onViewRef = useRef(({ changed }: { changed: Array<any> }) => {
+  const onViewRef = useRef(({changed}: {changed: Array<any>}) => {
     setWelcomeListIndex(changed[0].index);
   });
 
-  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
+  const viewConfigRef = useRef({viewAreaCoveragePercentThreshold: 50});
 
   const pageScroll = () => {
     welcomeList?.current?.scrollToIndex({
@@ -71,7 +70,7 @@ const WelcomeScreen = ({ navigation }) => {
           overScrollMode="never"
           viewabilityConfig={viewConfigRef.current}
           onViewableItemsChanged={onViewRef.current}
-          renderItem={({ item }) => <WelcomeCard {...item} />}
+          renderItem={({item}) => <WelcomeCard {...item} />}
         />
       </View>
 
@@ -82,24 +81,21 @@ const WelcomeScreen = ({ navigation }) => {
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.getStartedButton}
-          onPress={() => navigation.navigate('Signin')}
-        >
+          onPress={() => navigation.navigate('Signin')}>
           <Text style={styles.getStartedButtonText}>Get Started</Text>
         </TouchableOpacity>
       ) : (
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             activeOpacity={0.8}
-            style={{ marginLeft: 10 }}
-            onPress={() => welcomeList?.current?.scrollToEnd()}
-          >
+            style={{marginLeft: 10}}
+            onPress={() => welcomeList?.current?.scrollToEnd()}>
             <Text style={styles.buttonText}>Skip</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => pageScroll()}
-            activeOpacity={0.8}
-          >
+            activeOpacity={0.8}>
             <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
         </View>
@@ -127,7 +123,7 @@ const styles = StyleSheet.create({
     width: 15,
     height: 8,
     borderRadius: 32,
-    backgroundColor: Color.DEFAULT_GREEN,
+    backgroundColor: Color.PRIMARY,
     marginHorizontal: 5,
   },
   buttonContainer: {
@@ -146,13 +142,13 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    color: Color.DEFAULT_GREEN,
+    color: Color.PRIMARY,
     fontFamily: Font.POPPINS_BOLD,
     lineHeight: 16 * 1.4,
   },
   getStartedButton: {
     fontSize: 16,
-    backgroundColor: Color.DEFAULT_GREEN,
+    backgroundColor: Color.PRIMARY,
     paddingVertical: 10,
     paddingHorizontal: 40,
     borderRadius: 20,
