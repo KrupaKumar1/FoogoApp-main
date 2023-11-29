@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   Text,
   View,
@@ -14,12 +14,9 @@ import SearchIcon from 'react-native-vector-icons/EvilIcons';
 import {NavigationProp} from '@react-navigation/native';
 import {StatusBar} from 'react-native';
 import Header from '../../../components/General/Header';
-import Separator from '../../../components/General/Seperator';
 import Color from '../../../constant/Color';
 import {styles} from './styles';
 import OrderCard from '../../../components/Main/OrderDashboard/OrderCard';
-import {TouchableNativeFeedback} from 'react-native';
-import {Platform} from 'react-native';
 import OrderBottomTabBar from '../../../components/Main/OrderDashboard/OrderBottomTab';
 
 const sampleData = [
@@ -75,6 +72,31 @@ const sampleData = [
 
 const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
   const [loading, setLoading] = useState(true);
+  const [isFlatListScrolling, setIsFlatListScrolling] = useState(false);
+
+  const [selectedTab, setSelectedTab] = useState('Tab1');
+  const flatListRef = useRef(null);
+
+  const onViewRef = useRef(({changed}) => {
+    if (!isFlatListScrolling) {
+      const visibleIndex = changed.length > 0 ? changed[0].index : 0;
+      const selectedTabIndex = `Tab${visibleIndex + 1}`;
+      setSelectedTab(selectedTabIndex);
+    }
+  });
+
+  const viewConfigRef = useRef({
+    viewAreaCoveragePercentThreshold: 50,
+  });
+
+  const handleTabPress = tab => {
+    console.log('Tab Pressed:', tab);
+    setSelectedTab(tab);
+    flatListRef.current.scrollToIndex({
+      animated: true,
+      index: parseInt(tab.replace('Tab', '')) - 1,
+    });
+  };
 
   const [DATA, setDATA] = useState<
     {
@@ -86,37 +108,34 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
   >([]);
 
   useEffect(() => {
-    // Simulate fetching data
     setTimeout(() => {
       setDATA(sampleData);
       setLoading(false);
-    }, 2000); // Simulating a 2-second delay
+    }, 2000);
   }, []);
 
   const handleButtonPress = () => {
-    // Your button press logic here
     navigation.navigate('MenuItems');
   };
 
   if (loading) {
-    // Show loader while data is being fetched
     return (
       <View style={[styles.loaderContainer, styles.transparentBackground]}>
         <ActivityIndicator size="large" color={Color.PRIMARY} />
       </View>
     );
   }
+
   return (
     <View style={styles.container}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={Color.PRIMARY}
+        translucent
+      />
       <SafeAreaView>
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor={Color.PRIMARY}
-          translucent
-        />
-        {/* <Separator extraProps={{}} height={StatusBar.currentHeight} /> */}
+        <Header />
       </SafeAreaView>
-      <Header />
       <View style={styles.header}>
         <Text style={styles.menuText}>Orders</Text>
         <View style={styles.filterIconContainer}>
@@ -141,56 +160,43 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
       </TouchableOpacity>
       <View style={styles.ordersListContainer}>
         <FlatList
+          ref={flatListRef}
           horizontal
           showsHorizontalScrollIndicator={false}
           pagingEnabled
           overScrollMode="never"
-          data={[1, 2, 3]} // Assuming you want to repeat the content three times
+          data={[1, 2, 3]}
+          onViewableItemsChanged={onViewRef.current}
+          viewabilityConfig={viewConfigRef.current}
           keyExtractor={item => item.toString()}
-          renderItem={({section}) => (
+          renderItem={({item}) => (
             <View style={styles.orderContainer}>
-              <FlatList
-                data={DATA}
-                showsVerticalScrollIndicator={false}
-                keyExtractor={(section, index) => index.toString()}
-                renderItem={({item}) =>
-                  Platform.OS === 'android' ? (
-                    <TouchableNativeFeedback
-                      // onPress={() => handleCardPress(item)}
-                      background={TouchableNativeFeedback.SelectableBackground()} // You can customize this
-                    >
-                      <View>
-                        <OrderCard
-                          orderNumber={item.orderNumber}
-                          paid={item.paid}
-                          username={item.username}
-                          preparingTime={item.preparingTime}
-                        />
-                      </View>
-                    </TouchableNativeFeedback>
-                  ) : (
-                    <TouchableOpacity
-                      // onPress={() => handleCardPress(item)}
-                      activeOpacity={0.7} // Adjust the opacity as needed
-                    >
-                      <OrderCard
-                        orderNumber={item.orderNumber}
-                        paid={item.paid}
-                        username={item.username}
-                        preparingTime={item.preparingTime}
-                      />
-                    </TouchableOpacity>
-                  )
-                }
-              />
+              {DATA.map(dataItem => (
+                <TouchableOpacity
+                  key={dataItem.orderNumber}
+                  activeOpacity={0.7}
+                  // Add any onPress functionality here
+                >
+                  <OrderCard
+                    orderNumber={dataItem.orderNumber}
+                    paid={dataItem.paid}
+                    username={dataItem.username}
+                    preparingTime={dataItem.preparingTime}
+                  />
+                </TouchableOpacity>
+              ))}
             </View>
           )}
+          onScroll={event => {
+            setIsFlatListScrolling(event.nativeEvent.contentOffset.x !== 0);
+          }}
         />
       </View>
-      {/*Recieved */}
-      {/* Preparing*/}
-      {/* Completed */}
-      <OrderBottomTabBar />
+
+      <OrderBottomTabBar
+        selectedTab={selectedTab}
+        handleTabPress={handleTabPress}
+      />
     </View>
   );
 };

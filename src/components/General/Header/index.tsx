@@ -8,6 +8,7 @@ import {
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import DotIcon from 'react-native-vector-icons/Entypo';
+import Display from '../../../utils/Display';
 
 const Header = () => {
   return (
@@ -35,12 +36,13 @@ export default Header;
 
 const styles = StyleSheet.create({
   main: {
-    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 15,
-    maxHeight: 60,
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingBottom: 5,
+    height: Display.setHeight(5),
     backgroundColor: '#fff',
     ...Platform.select({
       ios: {
@@ -48,7 +50,6 @@ const styles = StyleSheet.create({
         shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        zIndex: 1,
       },
       android: {
         elevation: 5,
@@ -59,9 +60,9 @@ const styles = StyleSheet.create({
     height: 30,
     width: 100,
     objectFit: 'contain',
-    paddingLeft: 30,
+    // Remove paddingLeft: 30,
   },
   dotIcon: {
-    marginLeft: 'auto',
+    // Remove marginLeft: 'auto',
   },
 });

@@ -1,52 +1,35 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, TouchableOpacity, Text} from 'react-native';
 
 import {styles} from './styles';
 
-const OrderBottomTabBar = () => {
-  const [selectedTab, setSelectedTab] = useState('Tab2');
-
-  const handleTabPress = (tab: string) => {
-    setSelectedTab(tab);
-    // Perform any other actions when a tab is pressed
-  };
+const OrderBottomTabBar = ({selectedTab, handleTabPress}) => {
+  const tabData = [
+    {id: 'Tab1', label: 'Received'},
+    {id: 'Tab2', label: 'Preparing'},
+    {id: 'Tab3', label: 'Completed'},
+    // Add more tab data as needed
+  ];
 
   return (
     <View style={styles.bottomTabBar}>
-      <TouchableOpacity
-        style={[styles.tabButton, selectedTab === 'Tab1' && styles.selectedTab]}
-        onPress={() => handleTabPress('Tab1')}>
-        <Text
+      {tabData.map(tab => (
+        <TouchableOpacity
+          key={tab.id}
           style={[
-            styles.tabText,
-            selectedTab === 'Tab1' && styles.tabTextSelected,
-          ]}>
-          Recieved
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.tabButton, selectedTab === 'Tab2' && styles.selectedTab]}
-        onPress={() => handleTabPress('Tab2')}>
-        <Text
-          style={[
-            styles.tabText,
-            selectedTab === 'Tab2' && styles.tabTextSelected,
-          ]}>
-          Preparing
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.tabButton, selectedTab === 'Tab3' && styles.selectedTab]}
-        onPress={() => handleTabPress('Tab3')}>
-        <Text
-          style={[
-            styles.tabText,
-            selectedTab === 'Tab3' && styles.tabTextSelected,
-          ]}>
-          Completed
-        </Text>
-      </TouchableOpacity>
-      {/* Add more tab buttons as needed */}
+            styles.tabButton,
+            selectedTab === tab.id && styles.selectedTab,
+          ]}
+          onPress={() => handleTabPress(tab.id)}>
+          <Text
+            style={[
+              styles.tabText,
+              selectedTab === tab.id && styles.tabTextSelected,
+            ]}>
+            {tab.label}
+          </Text>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 };

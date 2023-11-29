@@ -21,57 +21,60 @@ import {styles} from './styles';
 const LoginScreen = ({navigation}) => {
   const [isPasswordShow, setIsPasswordShow] = useState(false);
 
-  const userID: string = 'kk41495@gmail.com';
-  const password: string = 'Admin@123';
+  const userId: string = 'jnet.a2zorderz@gmail.com';
+  const password: string = 'Jnet#admin@123';
   const lastLoginIP: string = '111.93.18.226';
   const isIPNotSame: boolean = true;
 
   const para: {
-    userID: string;
+    userId: string;
     password: string;
     lastLoginIP: string;
     isIPNotSame: boolean;
   } = {
-    userID,
+    userId,
     password,
     lastLoginIP,
     isIPNotSame,
   };
 
-  useEffect(() => {
-    fetch('http://localhost:8081/Auth/Authenticate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(para),
-    })
-      .then(response => {
-        console.log('Raw Response:', response);
-        return response.json();
-      })
-      .then(data => {
-        console.log('API Response:', data);
-        Alert.alert(
-          'Login',
-          'Login Successful',
-          [
-            {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
-            },
-            {text: 'OK', onPress: () => navigation.navigate('Home')},
-          ],
-          {cancelable: false},
-        );
-      })
-      .catch(err => {
-        console.log('Error:', err.message);
-        Alert.alert('Login Error', 'An error occurred during login.');
-      });
-  }, []);
+  const LoginHandler = async () => {
+    try {
+      const response = await fetch(
+        'http://devposapitest.restrozap.biz/Auth/Authenticate',
+        {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(para),
+        },
+      );
+      if (!response.ok) {
+        console.log('API Response: error');
+      }
+      const data = await response.json();
+      console.log('API Response:', data);
 
+      Alert.alert(
+        'Login',
+        'Login Successful',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => navigation.navigate('Main'),
+            style: 'cancel',
+          },
+          {text: 'OK', onPress: () => navigation.navigate('Main')},
+        ],
+        {cancelable: false},
+      );
+    } catch (error) {
+      console.error('Error:', error.message);
+      Alert.alert('Login Error', 'An error occurred during login.');
+    }
+  };
   return (
     <View style={styles.container}>
       <SafeAreaView>
@@ -156,7 +159,7 @@ const LoginScreen = ({navigation}) => {
         <Text style={styles.forgotPasswordText}>Forgot Password</Text>
       </View>
       <TouchableOpacity
-        onPress={() => navigation.navigate('Main')}
+        onPress={() => LoginHandler()}
         style={styles.signinButton}>
         <Text style={styles.singinButtonText}>Log In</Text>
       </TouchableOpacity>
