@@ -52,12 +52,50 @@ const LoginScreen = ({navigation}) => {
     password: string;
   }
 
+  // const LoginHandler = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       'http://devposapitest.restrozap.biz/Auth/Authenticate',
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Origin: 'http://localhost:8081',
+  //         },
+  //         body: JSON.stringify(para),
+  //       },
+  //     );
+  //     if (!response.ok) {
+  //       console.log('API Response: error');
+  //     }
+  //     const data = await response.json();
+  //     console.log('API Response:', data);
+
+  //     Alert.alert(
+  //       'Login',
+  //       'Login Successful',
+  //       [
+  //         {
+  //           text: 'Cancel',
+  //           onPress: () => navigation.navigate('Payment'),
+  //           style: 'cancel',
+  //         },
+  //         {text: 'OK', onPress: () => navigation.navigate('Payment')},
+  //       ],
+  //       {cancelable: false},
+  //     );
+  //   } catch (error: any) {
+  //     console.error('Error:', error.message);
+  //     Alert.alert('Login Error', 'An error occurred during login.');
+  //   }
+  // };
+
   const handleEmailLogin = async (values: LoginFormValues) => {
     // Handle your email/password authentication logic
-    const userId: string = values.email.trim();
-    const password: string = values.password.trim();
-    const lastLoginIP: string = '111.93.18.226';
-    const isIPNotSame: boolean = true;
+    const userId = values.email.trim();
+    const password = values.password.trim();
+    const lastLoginIP = '106.216.206.65';
+    const isIPNotSame = false;
     const para: {
       userId: string;
       password: string;
@@ -70,46 +108,13 @@ const LoginScreen = ({navigation}) => {
       isIPNotSame,
     };
 
-    // try {
-    //   const response = await fetch(
-    //     'http://devposapitest.restrozap.biz/Auth/Authenticate',
-    //     {
-    //       method: 'POST',
-    //       // mode: 'cors',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //       body: JSON.stringify(para),
-    //     },
-    //   );
-    //   if (!response.ok) {
-    //     console.log('API Response: error');
-    //   }
-    //   const data = await response.json();
-    //   console.log('API Response:', data);
-
-    //   Alert.alert(
-    //     'Login',
-    //     'Login Successful',
-    //     [
-    //       {
-    //         text: 'Cancel',
-    //         onPress: () => navigation.navigate('Main'),
-    //         style: 'cancel',
-    //       },
-    //       {text: 'OK', onPress: () => navigation.navigate('Main')},
-    //     ],
-    //     {cancelable: false},
-    //   );
-    // } catch (error) {
-    //   Alert.alert('Login Error', 'An error occurred during login.');
-    // }
-
     API_CALL({
       method: 'post',
       url: 'Auth/Authenticate',
       data: para,
+
       callback: async ({status, data}: {status: any; data: any}) => {
+        console.log(data, 'API STATUS');
         if (status === 200) {
           if (data.successMessage === 'Success' && data.data.isActive) {
             navigation.navigate('Main');

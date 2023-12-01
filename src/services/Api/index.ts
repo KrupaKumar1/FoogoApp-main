@@ -28,7 +28,9 @@ const API_CALL = ({
 }: API_CALL_Params) => {
   let header: AxiosRequestConfig['headers'];
   // To change the header configuration - specific
-  headerConfig ? (header = {...headerConfig}) : {header};
+  headerConfig
+    ? (header = {...headerConfig, Origin: 'http://localhost:8081'})
+    : {header};
   if (callback) {
     axios({
       method,
@@ -36,6 +38,7 @@ const API_CALL = ({
       data,
       params,
       headers: header,
+
       validateStatus: (status: number) => {
         if (status === 401) {
           console.log('error');
