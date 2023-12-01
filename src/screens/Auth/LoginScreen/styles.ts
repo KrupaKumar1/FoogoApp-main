@@ -71,6 +71,12 @@ export const styles = StyleSheet.create({
     color: Color.DEFAULT_BLACK,
     flex: 1,
   },
+  errorText: {
+    color: 'red',
+    marginBottom: 4,
+    marginTop: -8, // To provide a bit of spacing between the input and error text
+    alignSelf: 'flex-start', // Align the error text to the left
+  },
   forgotPasswordCOntainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
