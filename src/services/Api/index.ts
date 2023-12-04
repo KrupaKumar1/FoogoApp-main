@@ -29,7 +29,11 @@ const API_CALL = ({
   let header: AxiosRequestConfig['headers'];
   // To change the header configuration - specific
   headerConfig
-    ? (header = {...headerConfig, Origin: 'http://localhost:8081'})
+    ? (header = {
+        ...headerConfig,
+        Origin: 'http://localhost:8081',
+        'Content-Type': 'application/json',
+      })
     : {header};
   if (callback) {
     axios({

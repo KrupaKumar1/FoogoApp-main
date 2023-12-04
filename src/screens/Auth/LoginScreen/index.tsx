@@ -53,6 +53,22 @@ const LoginScreen = ({navigation}) => {
   }
 
   // const LoginHandler = async () => {
+  //   const userId: string = 'jnet.a2zorderz@gmail.com';
+  //   const password: string = 'Jnet#admin@123';
+  //   const lastLoginIP: string = '111.93.18.226';
+  //   const isIPNotSame: boolean = true;
+
+  //   const para: {
+  //     userId: string;
+  //     password: string;
+  //     lastLoginIP: string;
+  //     isIPNotSame: boolean;
+  //   } = {
+  //     userId,
+  //     password,
+  //     lastLoginIP,
+  //     isIPNotSame,
+  //   };
   //   try {
   //     const response = await fetch(
   //       'http://devposapitest.restrozap.biz/Auth/Authenticate',
@@ -95,7 +111,7 @@ const LoginScreen = ({navigation}) => {
     const userId = values.email.trim();
     const password = values.password.trim();
     const lastLoginIP = '106.216.206.65';
-    const isIPNotSame = false;
+    const isIPNotSame = true;
     const para: {
       userId: string;
       password: string;
@@ -112,9 +128,12 @@ const LoginScreen = ({navigation}) => {
       method: 'post',
       url: 'Auth/Authenticate',
       data: para,
+      headerConfig: {
+        'Content-Type': 'application/json',
+      },
 
       callback: async ({status, data}: {status: any; data: any}) => {
-        console.log(data, 'API STATUS');
+        console.log(data.data, 'API STATUS');
         if (status === 200) {
           if (data.successMessage === 'Success' && data.data.isActive) {
             navigation.navigate('Main');
