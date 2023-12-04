@@ -7,8 +7,9 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.DEFAULT_WHITE,
   },
+
   ordersListContainer: {
-    height: Display.setHeight(100),
+    height: Display.setHeight(70),
   },
 
   loaderContainer: {
