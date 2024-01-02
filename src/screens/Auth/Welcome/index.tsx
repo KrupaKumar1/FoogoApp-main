@@ -14,6 +14,9 @@ import Display from '../../../utils/Display';
 import Separator from '../../../components/General/Seperator';
 import WelcomeCard from '../../../components/Auth/WelcomeCard';
 import Font from '../../../constant/Font';
+import StorageService from '../../../services/StorageService';
+import {useDispatch} from 'react-redux';
+import {GeneralAction} from '../../../services/redux/actions';
 
 const PageStyle = (isActive: boolean) =>
   isActive
@@ -35,6 +38,7 @@ const Pagination = ({index}) => {
 };
 
 const WelcomeScreen = ({navigation}) => {
+  const dispatch = useDispatch();
   const [welcomeListIndex, setWelcomeListIndex] = useState(0);
   const welcomeList = useRef<ScrollView>(null);
 
@@ -43,6 +47,12 @@ const WelcomeScreen = ({navigation}) => {
   });
 
   const viewConfigRef = useRef({viewAreaCoveragePercentThreshold: 50});
+
+  const navigateHandler = () => {
+    StorageService.setFirstTimeUse().then(() => {
+      dispatch(GeneralAction.setIsFirstTimeUse());
+    });
+  };
 
   const pageScroll = () => {
     welcomeList?.current?.scrollToIndex({
@@ -81,7 +91,7 @@ const WelcomeScreen = ({navigation}) => {
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.getStartedButton}
-          onPress={() => navigation.navigate('Login')}>
+          onPress={() => navigateHandler()}>
           <Text style={styles.getStartedButtonText}>Get Started</Text>
         </TouchableOpacity>
       ) : (

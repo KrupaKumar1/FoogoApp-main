@@ -18,12 +18,17 @@ import ToggleButton from '../../../components/General/ToggleButton';
 import {styles} from './styles';
 import axios from 'axios';
 import API_CALL from '../../../services/Api';
+import {useDispatch, useSelector} from 'react-redux';
+import {GeneralAction} from '../../../services/redux/actions';
+import StorageService from '../../../services/StorageService';
 
 const locationApi: string = 'https://geolocation-db.com/json/';
 
 const LoginScreen = ({navigation}) => {
   const [isPasswordShow, setIsPasswordShow] = useState(false);
   const [ip, setIP] = useState<string>('');
+
+  const dispatch = useDispatch();
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -52,60 +57,6 @@ const LoginScreen = ({navigation}) => {
     password: string;
   }
 
-  // const LoginHandler = async () => {
-  //   const userId: string = 'jnet.a2zorderz@gmail.com';
-  //   const password: string = 'Jnet#admin@123';
-  //   const lastLoginIP: string = '111.93.18.226';
-  //   const isIPNotSame: boolean = true;
-
-  //   const para: {
-  //     userId: string;
-  //     password: string;
-  //     lastLoginIP: string;
-  //     isIPNotSame: boolean;
-  //   } = {
-  //     userId,
-  //     password,
-  //     lastLoginIP,
-  //     isIPNotSame,
-  //   };
-  //   try {
-  //     const response = await fetch(
-  //       'http://devposapitest.restrozap.biz/Auth/Authenticate',
-  //       {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Origin: 'http://localhost:8081',
-  //         },
-  //         body: JSON.stringify(para),
-  //       },
-  //     );
-  //     if (!response.ok) {
-  //       console.log('API Response: error');
-  //     }
-  //     const data = await response.json();
-  //     console.log('API Response:', data);
-
-  //     Alert.alert(
-  //       'Login',
-  //       'Login Successful',
-  //       [
-  //         {
-  //           text: 'Cancel',
-  //           onPress: () => navigation.navigate('Payment'),
-  //           style: 'cancel',
-  //         },
-  //         {text: 'OK', onPress: () => navigation.navigate('Payment')},
-  //       ],
-  //       {cancelable: false},
-  //     );
-  //   } catch (error: any) {
-  //     console.error('Error:', error.message);
-  //     Alert.alert('Login Error', 'An error occurred during login.');
-  //   }
-  // };
-
   const handleEmailLogin = async (values: LoginFormValues) => {
     // Handle your email/password authentication logic
     const userId = values.email.trim();
@@ -133,10 +84,11 @@ const LoginScreen = ({navigation}) => {
       },
 
       callback: async ({status, data}: {status: any; data: any}) => {
-        console.log(data.data, 'API STATUS');
         if (status === 200) {
           if (data.successMessage === 'Success' && data.data.isActive) {
-            navigation.navigate('Main');
+            // dispatch(GeneralAction.setUserToken(data.data.userToken));
+            StorageService.setToken(data.data.userToken);
+            // navigation.navigate('Main');
           } else {
             Alert.alert(
               'Error',

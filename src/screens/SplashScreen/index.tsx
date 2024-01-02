@@ -7,12 +7,11 @@ import Images from '../../constant/Images';
 import {NavigationProp} from '@react-navigation/native';
 
 const SplashScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
-  const isLogin = false;
-  useEffect(() => {
-    setTimeout(() => {
-      isLogin ? navigation.navigate('Main') : navigation.navigate('Auth');
-    }, 2000);
-  });
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     isLogin ? navigation.navigate('Main') : navigation.navigate('Auth');
+  //   }, 2000);
+  // });
 
   return (
     <View style={styles.container}>
