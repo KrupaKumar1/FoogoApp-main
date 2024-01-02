@@ -6,6 +6,8 @@ import {
   SafeAreaView,
   ActivityIndicator,
   FlatList,
+  ScrollView,
+  Platform,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -18,6 +20,8 @@ import Color from '../../../constant/Color';
 import {styles} from './styles';
 import OrderCard from '../../../components/Main/OrderDashboard/OrderCard';
 import OrderBottomTabBar from '../../../components/Main/OrderDashboard/OrderBottomTab';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import Separator from '../../../components/General/Seperator';
 
 const sampleData = [
   {
@@ -90,7 +94,6 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
   });
 
   const handleTabPress = tab => {
-    console.log('Tab Pressed:', tab);
     setSelectedTab(tab);
     flatListRef.current.scrollToIndex({
       animated: true,
@@ -127,12 +130,9 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={Color.PRIMARY}
-        translucent
-      />
+    <SafeAreaProvider style={styles.container}>
+      <StatusBar barStyle="dark-content" translucent />
+      <Separator extraProps={{}} height={StatusBar.currentHeight} />
       <SafeAreaView>
         <Header />
       </SafeAreaView>
@@ -170,7 +170,9 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
           viewabilityConfig={viewConfigRef.current}
           keyExtractor={item => item.toString()}
           renderItem={({item}) => (
-            <View style={styles.orderContainer}>
+            <ScrollView
+              style={styles.orderContainer}
+              showsVerticalScrollIndicator={false}>
               {DATA.map(dataItem => (
                 <TouchableOpacity
                   key={dataItem.orderNumber}
@@ -185,7 +187,7 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
                   />
                 </TouchableOpacity>
               ))}
-            </View>
+            </ScrollView>
           )}
           onScroll={event => {
             setIsFlatListScrolling(event.nativeEvent.contentOffset.x !== 0);
@@ -197,7 +199,7 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
         selectedTab={selectedTab}
         handleTabPress={handleTabPress}
       />
-    </View>
+    </SafeAreaProvider>
   );
 };
 
