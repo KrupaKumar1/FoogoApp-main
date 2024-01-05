@@ -4,12 +4,19 @@ const types = {
   SET_IS_APP_LOADING: 'SET_IS_APP_LOADING',
   SET_TOKEN: 'SET_TOKEN',
   SET_FIRST_TIME_USE: 'SET_FIRST_TIME_USE',
+  LOG_OUT: 'LOG_OUT',
 };
 
 const setIsAppLoading = (isAppLoading: boolean) => {
   return {
     type: types.SET_IS_APP_LOADING,
     payload: isAppLoading,
+  };
+};
+
+const logOut = () => {
+  return {
+    type: types.LOG_OUT,
   };
 };
 
@@ -56,4 +63,5 @@ export default {
   types,
   appStart,
   setIsFirstTimeUse,
+  logOut,
 };

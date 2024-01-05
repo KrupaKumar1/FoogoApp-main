@@ -9,11 +9,18 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import DotIcon from 'react-native-vector-icons/Entypo';
 import Display from '../../../utils/Display';
+import {useDispatch} from 'react-redux';
+import {GeneralAction} from '../../../services/redux/actions';
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const logOutHandler = () => {
+    console.log('LOGEDOUT');
+    dispatch(GeneralAction.logOut());
+  };
   return (
     <View style={styles.main}>
-      <TouchableOpacity onPress={() => console.log('Back pressed')}>
+      <TouchableOpacity>
         <Icon name="bars-staggered" size={25} color="black" />
       </TouchableOpacity>
       <Image
@@ -23,6 +30,7 @@ const Header = () => {
         }}
       />
       <DotIcon
+        onPress={() => logOutHandler()}
         style={styles.dotIcon}
         name="dots-three-vertical"
         size={25}

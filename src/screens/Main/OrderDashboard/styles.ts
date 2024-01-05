@@ -5,7 +5,7 @@ import Display from '../../../utils/Display';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.DEFAULT_WHITE,
+    backgroundColor: Color.SECONDARY_WHITE,
   },
 
   ordersListContainer: {
@@ -25,7 +25,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: Color.DEFAULT_WHITE,
   },
   menuText: {
     fontSize: 20,

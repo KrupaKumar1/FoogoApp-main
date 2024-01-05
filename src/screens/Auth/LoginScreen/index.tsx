@@ -86,8 +86,8 @@ const LoginScreen = ({navigation}) => {
       callback: async ({status, data}: {status: any; data: any}) => {
         if (status === 200) {
           if (data.successMessage === 'Success' && data.data.isActive) {
-            // dispatch(GeneralAction.setUserToken(data.data.userToken));
-            StorageService.setToken(data.data.userToken);
+            dispatch(GeneralAction.setToken(`Bearer ${data.data.userToken}`));
+            // StorageService.setToken(data.data.userToken);
             // navigation.navigate('Main');
           } else {
             Alert.alert(

@@ -1,6 +1,6 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 
-const Baseurl = 'http://devposapitest.restrozap.biz/';
+const Baseurl = 'http://newposapitest.restrozap.biz/';
 
 interface API_CALL_Params {
   method: string;

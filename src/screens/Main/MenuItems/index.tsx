@@ -10,6 +10,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import MenuItemCard from '../../../components/Main/MenuItems/MenuItemCard';
 import Header from '../../../components/General/Header';
+import Color from '../../../constant/Color';
 
 const DATA = [
   {
@@ -89,13 +90,13 @@ export default MenuItems;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Color.DEFAULT_WHITE,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: '#fff',
   },
   menuText: {
     fontSize: 20,

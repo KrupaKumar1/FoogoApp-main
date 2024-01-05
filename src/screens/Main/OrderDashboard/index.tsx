@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   Text,
   View,
@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
   FlatList,
   ScrollView,
-  Platform,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -22,6 +21,9 @@ import OrderCard from '../../../components/Main/OrderDashboard/OrderCard';
 import OrderBottomTabBar from '../../../components/Main/OrderDashboard/OrderBottomTab';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Separator from '../../../components/General/Seperator';
+import {Alert} from 'react-native';
+import API_CALL from '../../../services/Api';
+import {useSelector} from 'react-redux';
 
 const sampleData = [
   {
@@ -77,11 +79,12 @@ const sampleData = [
 const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
   const [loading, setLoading] = useState(true);
   const [isFlatListScrolling, setIsFlatListScrolling] = useState(false);
-
   const [selectedTab, setSelectedTab] = useState('Tab1');
   const flatListRef = useRef(null);
 
-  const onViewRef = useRef(({changed}) => {
+  const {token} = useSelector(state => state?.generalState);
+
+  const onViewRef = useRef(({changed}: any) => {
     if (!isFlatListScrolling) {
       const visibleIndex = changed.length > 0 ? changed[0].index : 0;
       const selectedTabIndex = `Tab${visibleIndex + 1}`;
@@ -93,7 +96,7 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
     viewAreaCoveragePercentThreshold: 50,
   });
 
-  const handleTabPress = tab => {
+  const handleTabPress = (tab: any) => {
     setSelectedTab(tab);
     flatListRef.current.scrollToIndex({
       animated: true,
@@ -117,7 +120,59 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
     }, 2000);
   }, []);
 
-  const handleButtonPress = () => {
+  const getAllOrdersList = async () => {
+    const bodyDetails = {
+      orderId: 0,
+      orderStatus: '',
+      zipCode: '',
+      modeOfPayment: '',
+      transactionType: '',
+      dateFilterKey: 't',
+      deliveredBy: 0,
+      fetchDataFrom: 0,
+      startDate: null,
+      endDate: null,
+      status: 0,
+      pageNumber: 0,
+      pageSize: 0,
+      customerName: '',
+      approval: 0,
+      sortBy: '',
+      deliveryType: '',
+      orderNumber: '',
+      paymentStatusId: 0,
+    };
+
+    API_CALL({
+      method: 'POST',
+      url: 'Menu/GetOrders',
+      headerConfig: {
+        'Content-Type': 'application/json',
+        Authorization: `${token}`,
+      },
+      data: bodyDetails,
+
+      callback: async ({status, data}: {status: any; data: any}) => {
+        if (status === 200) {
+          console.log('ORDERS', data);
+        } else {
+          Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        }
+      },
+    });
+  };
+
+  useEffect(() => {
+    getAllOrdersList();
+  }, [selectedTab]);
+
+  const menuItemsRouteHandler = () => {
+    console.log('TRIGGED');
     navigation.navigate('MenuItems');
   };
 
@@ -154,7 +209,7 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
       </View>
       <TouchableOpacity
         style={[styles.newOrderButton, false && styles.disabled]}
-        onPress={handleButtonPress}
+        onPress={menuItemsRouteHandler}
         disabled={false}>
         <Text style={styles.buttonText}>+ New Order</Text>
       </TouchableOpacity>

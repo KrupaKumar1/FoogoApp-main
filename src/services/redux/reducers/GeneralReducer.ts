@@ -5,7 +5,7 @@ const initialState = {
   isFirstTimeUse: true,
 };
 
-const GeneralReducer = (state = initialState, action) => {
+const GeneralReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case GeneralAction.types.SET_IS_APP_LOADING:
       return {
@@ -15,12 +15,17 @@ const GeneralReducer = (state = initialState, action) => {
     case GeneralAction.types.SET_TOKEN:
       return {
         ...state,
-        token: action.payload,
+        token: `Bearer ${action.payload}`,
       };
     case GeneralAction.types.SET_FIRST_TIME_USE:
       return {
         ...state,
         isFirstTimeUse: action.payload,
+      };
+    case GeneralAction.types.LOG_OUT:
+      return {
+        ...state,
+        token: '',
       };
     default:
       return state;
