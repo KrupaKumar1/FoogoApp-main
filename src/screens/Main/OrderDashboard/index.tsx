@@ -25,69 +25,24 @@ import {Alert} from 'react-native';
 import API_CALL from '../../../services/Api';
 import {useSelector} from 'react-redux';
 
-const sampleData = [
-  {
-    orderNumber: '2023-05-001',
-    paid: 'Paid',
-    username: 'Krupa Kumar',
-    preparingTime: '20 min',
-  },
-  {
-    orderNumber: '2023-05-002',
-    paid: 'Unpaid',
-    username: 'Krupa Kumar',
-    preparingTime: '20 min',
-  },
-  {
-    orderNumber: '2023-05-003',
-    paid: 'Paid',
-    username: 'Krupa Kumar',
-    preparingTime: '20 min',
-  },
-  {
-    orderNumber: '2023-05-004',
-    paid: 'Unpaid',
-    username: 'Krupa Kumar',
-    preparingTime: '20 min',
-  },
-  {
-    orderNumber: '2023-05-005',
-    paid: 'Unpaid',
-    username: 'Krupa Kumar',
-    preparingTime: '20 min',
-  },
-  {
-    orderNumber: '2023-05-006',
-    paid: 'Unpaid',
-    username: 'Krupa Kumar',
-    preparingTime: '20 min',
-  },
-  {
-    orderNumber: '2023-05-007',
-    paid: 'Paid',
-    username: 'Krupa Kumar',
-    preparingTime: '20 min',
-  },
-  {
-    orderNumber: '2023-05-008',
-    paid: 'Unpaid',
-    username: 'Krupa Kumar',
-    preparingTime: '20 min',
-  },
-];
+interface Order {
+  label: string;
+  // Add other properties as needed
+}
 
 const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
   const [loading, setLoading] = useState(true);
-  const [isFlatListScrolling, setIsFlatListScrolling] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('Tab1');
-  const flatListRef = useRef(null);
-
   const {token} = useSelector(state => state?.generalState);
 
+  const [orderTypes, setOrderTypes] = useState<Order[]>([]);
+  console.log('ORDERS', orderTypes);
+  const [isFlatListScrolling, setIsFlatListScrolling] = useState(false);
+  const [selectedTab, setSelectedTab] = useState(0);
+  const flatListRef = useRef(null);
   const onViewRef = useRef(({changed}: any) => {
     if (!isFlatListScrolling) {
       const visibleIndex = changed.length > 0 ? changed[0].index : 0;
-      const selectedTabIndex = `Tab${visibleIndex + 1}`;
+      const selectedTabIndex = visibleIndex; // Use the visibleIndex directly
       setSelectedTab(selectedTabIndex);
     }
   });
@@ -96,26 +51,21 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
     viewAreaCoveragePercentThreshold: 50,
   });
 
-  const handleTabPress = (tab: any) => {
-    setSelectedTab(tab);
-    flatListRef.current.scrollToIndex({
-      animated: true,
-      index: parseInt(tab.replace('Tab', '')) - 1,
-    });
+  const [DATA, setDATA] = useState([]);
+  const handleTabPress = (index: number, orderList: Array) => {
+    setSelectedTab(index);
+    setDATA(orderList);
+    // Ensure the index is within the valid range
+    if (index >= 0 && index < orderTypes.length) {
+      flatListRef.current.scrollToIndex({
+        animated: true,
+        index,
+      });
+    }
   };
-
-  const [DATA, setDATA] = useState<
-    {
-      orderNumber: string;
-      paid: string;
-      username: string;
-      preparingTime: string;
-    }[]
-  >([]);
 
   useEffect(() => {
     setTimeout(() => {
-      setDATA(sampleData);
       setLoading(false);
     }, 2000);
   }, []);
@@ -148,13 +98,19 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
       url: 'Menu/GetOrders',
       headerConfig: {
         'Content-Type': 'application/json',
-        Authorization: `${token}`,
+        Authorization: `Bearer ${token}`,
       },
       data: bodyDetails,
 
       callback: async ({status, data}: {status: any; data: any}) => {
         if (status === 200) {
-          console.log('ORDERS', data);
+          const consolidatedOrders = [
+            {items: data.data?.readyToDeliveryOrders, label: 'Recieved'},
+            {items: data.data?.pendingOrders, label: 'Preparing'},
+            {items: data.data?.completedOrders, label: 'Completed'},
+          ];
+
+          setOrderTypes(consolidatedOrders);
         } else {
           Alert.alert(
             'Error',
@@ -172,7 +128,6 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
   }, [selectedTab]);
 
   const menuItemsRouteHandler = () => {
-    console.log('TRIGGED');
     navigation.navigate('MenuItems');
   };
 
@@ -220,15 +175,15 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
           showsHorizontalScrollIndicator={false}
           pagingEnabled
           overScrollMode="never"
-          data={[1, 2, 3]}
+          data={orderTypes}
           onViewableItemsChanged={onViewRef.current}
           viewabilityConfig={viewConfigRef.current}
-          keyExtractor={item => item.toString()}
+          keyExtractor={item => item.label}
           renderItem={({item}) => (
             <ScrollView
               style={styles.orderContainer}
               showsVerticalScrollIndicator={false}>
-              {DATA.map(dataItem => (
+              {DATA?.map(dataItem => (
                 <TouchableOpacity
                   key={dataItem.orderNumber}
                   activeOpacity={0.7}
@@ -236,9 +191,9 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
                 >
                   <OrderCard
                     orderNumber={dataItem.orderNumber}
-                    paid={dataItem.paid}
-                    username={dataItem.username}
-                    preparingTime={dataItem.preparingTime}
+                    paid={dataItem.paymentStatus}
+                    username={dataItem.orderType}
+                    preparingTime={dataItem.status}
                   />
                 </TouchableOpacity>
               ))}
@@ -249,11 +204,13 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
           }}
         />
       </View>
-
-      <OrderBottomTabBar
-        selectedTab={selectedTab}
-        handleTabPress={handleTabPress}
-      />
+      {orderTypes && (
+        <OrderBottomTabBar
+          orderTypes={orderTypes}
+          selectedTab={selectedTab}
+          handleTabPress={handleTabPress}
+        />
+      )}
     </SafeAreaProvider>
   );
 };

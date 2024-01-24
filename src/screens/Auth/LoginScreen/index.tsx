@@ -86,8 +86,8 @@ const LoginScreen = ({navigation}) => {
       callback: async ({status, data}: {status: any; data: any}) => {
         if (status === 200) {
           if (data.successMessage === 'Success' && data.data.isActive) {
-            dispatch(GeneralAction.setToken(`Bearer ${data.data.userToken}`));
-            // StorageService.setToken(data.data.userToken);
+            dispatch(GeneralAction.setToken(`${data.data.userToken}`));
+            StorageService.setToken(data.data.userToken);
             // navigation.navigate('Main');
           } else {
             Alert.alert(
@@ -139,8 +139,8 @@ const LoginScreen = ({navigation}) => {
       <Separator extraProps={{}} height={15} />
       <Formik
         initialValues={{
-          email: 'jnet.a2zorderz@gmail.com',
-          password: 'Jnet#admin@123',
+          email: 'kk41495@gmail.com',
+          password: 'Admin@123',
         }}
         validationSchema={validationSchema}
         onSubmit={values => handleEmailLogin(values)}>

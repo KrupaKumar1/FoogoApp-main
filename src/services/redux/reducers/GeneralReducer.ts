@@ -15,7 +15,7 @@ const GeneralReducer = (state = initialState, action: any) => {
     case GeneralAction.types.SET_TOKEN:
       return {
         ...state,
-        token: `Bearer ${action.payload}`,
+        token: `${action.payload}`,
       };
     case GeneralAction.types.SET_FIRST_TIME_USE:
       return {

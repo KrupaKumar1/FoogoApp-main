@@ -6,6 +6,9 @@ const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
  *
  * @type {import('metro-config').MetroConfig}
  */
-const config = {};
-
+const config = {
+  server: {
+    host: '192.168.1.9', // Replace with your actual IP address
+  },
+};
 module.exports = mergeConfig(getDefaultConfig(__dirname), config);

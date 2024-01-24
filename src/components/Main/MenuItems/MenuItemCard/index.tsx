@@ -21,7 +21,7 @@ const MenuItemCard = ({title, content}) => {
         <View style={styles.itemDetailsContainer}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.content}>{content}</Text>
-          <View style={styles.buttonscontainer}>
+          <View style={styles.buttonsContainer}>
             <Text style={styles.moreDetailsText}>{`More Details >`}</Text>
             <TouchableOpacity style={styles.roundedButton}>
               <Text style={styles.buttonText}>Add</Text>
@@ -64,18 +64,19 @@ const styles = StyleSheet.create({
   itemDetailsContainer: {
     flex: 1,
     flexDirection: 'column',
-    padding: 2,
-    margin: 10,
+    padding: 10,
+    marginLeft: 5,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   content: {
     fontSize: 16,
+    marginBottom: 10,
   },
-  buttonscontainer: {
+  buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

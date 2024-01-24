@@ -3,28 +3,22 @@ import {View, TouchableOpacity, Text} from 'react-native';
 
 import {styles} from './styles';
 
-const OrderBottomTabBar = ({selectedTab, handleTabPress}) => {
-  const tabData = [
-    {id: 'Tab1', label: 'Received'},
-    {id: 'Tab2', label: 'Preparing'},
-    {id: 'Tab3', label: 'Completed'},
-    // Add more tab data as needed
-  ];
+const OrderBottomTabBar = ({orderTypes, selectedTab, handleTabPress}) => {
+  const tabData = orderTypes;
+
+  console.log(tabData, 'TABINDEX');
 
   return (
     <View style={styles.bottomTabBar}>
-      {tabData.map(tab => (
+      {tabData.map((tab, i) => (
         <TouchableOpacity
           key={tab.id}
-          style={[
-            styles.tabButton,
-            selectedTab === tab.id && styles.selectedTab,
-          ]}
-          onPress={() => handleTabPress(tab.id)}>
+          style={[styles.tabButton, selectedTab === i && styles.selectedTab]}
+          onPress={() => handleTabPress(i, tab.items)}>
           <Text
             style={[
               styles.tabText,
-              selectedTab === tab.id && styles.tabTextSelected,
+              selectedTab === i && styles.tabTextSelected,
             ]}>
             {tab.label}
           </Text>
