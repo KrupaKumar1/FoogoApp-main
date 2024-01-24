@@ -190,6 +190,7 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
                   // Add any onPress functionality here
                 >
                   <OrderCard
+                    orderDetails={dataItem}
                     orderNumber={dataItem.orderNumber}
                     paid={dataItem.paymentStatus}
                     username={dataItem.orderType}
