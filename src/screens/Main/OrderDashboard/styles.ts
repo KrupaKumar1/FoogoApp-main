@@ -5,7 +5,7 @@ import Display from '../../../utils/Display';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.SECONDARY_WHITE,
+    backgroundColor: Color.LIGHT_GREY2,
   },
 
   ordersListContainer: {

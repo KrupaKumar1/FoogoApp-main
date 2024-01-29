@@ -16,6 +16,8 @@ import Color from '../../../constant/Color';
 import API_CALL from '../../../services/Api';
 import {useSelector} from 'react-redux';
 import MenuCard from '../../../components/Main/MenuItems/MenuCard';
+import SkeletonForMenuCard from '../../../components/Main/MenuItems/SkeletonForMenuCard';
+import ViewCart from '../../../components/Main/MenuItems/ViewCart';
 
 interface RootState {
   generalState: {
@@ -28,19 +30,9 @@ const MenuItems = ({navigation}: {navigation: any}) => {
   const [selectedGroupId, setSelectedGroupId] = useState(10); // Initialize with the default group
   const {token} = useSelector((state: RootState) => state?.generalState ?? {});
 
-  const DATA = [
-    // Your menu item data goes here
-    {title: 'Item 1', content: 'Description 1', group: 'Appetizers'},
-    {title: 'Item 2', content: 'Description 2', group: 'Main Course'},
-    {title: 'Item 3', content: 'Description 3', group: 'Desserts'},
-    {title: 'Item 4', content: 'Description 4', group: 'Biriyani'},
-    // Add more menu items with different groups
-  ];
-
   const [menuGroups, setMenuGroups] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
-
-  console.log('ITEMS', menuItems);
+  const [itemsLoading, setItemsLoading] = useState(true);
 
   const filters = [
     {key: 'bestseller', label: 'Bestseller'},
@@ -96,6 +88,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
   /**Group Items */
   const getGroupItemsAPI = (menuId: any) => {
     setSelectedGroupId(menuId);
+    // setItemsLoading(true);
     const paramsOnj = {
       groupId: menuId,
     };
@@ -119,6 +112,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
             {cancelable: false},
           );
         }
+        setItemsLoading(false);
       },
     });
   };
@@ -138,7 +132,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
         </TouchableOpacity>
         <Text style={styles.menuText}>Menu Items</Text>
         <View style={styles.filterIconContainer}>
-          <TouchableOpacity onPress={() => console.log('Filter pressed')}>
+          <TouchableOpacity>
             <Icon name="filter" size={30} color="black" />
           </TouchableOpacity>
         </View>
@@ -166,17 +160,25 @@ const MenuItems = ({navigation}: {navigation: any}) => {
               key={filter.key}
               style={styles.filterButton}
               onPress={() => handleFilterPress(filter.key)}>
-              <Text>{filter.label}</Text>
+              <Text style={styles.filterText}>{filter.label}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
       <View style={styles.orderContainer}>
-        <FlatList
-          data={menuItems}
-          renderItem={({item}) => <MenuCard itemDetails={item} />}
-        />
+        {itemsLoading ? (
+          // Render Skeleton Cards dynamically based on the length of menuItems array
+          Array.from({length: 5}, (_, index) => (
+            <SkeletonForMenuCard key={index} />
+          ))
+        ) : (
+          <FlatList
+            data={menuItems}
+            renderItem={({item}) => <MenuCard itemDetails={item} />}
+          />
+        )}
       </View>
+      <ViewCart navigation={navigation} />
     </View>
   );
 };
@@ -184,12 +186,14 @@ const MenuItems = ({navigation}: {navigation: any}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Color.LIGHT_GREY,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10,
+    backgroundColor: Color.LIGHT_GREY2,
   },
   menuText: {
     fontSize: 20,
@@ -216,7 +220,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   selectedGroup: {
-    backgroundColor: Color.PRIMARY, // Change the color for the selected tab
+    borderColor: Color.PRIMARY,
+    borderBottomWidth: 2,
+    // Change the color for the selected tab
   },
   groupButtonText: {
     fontSize: 16,
@@ -225,10 +231,10 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
     marginRight: 10,
-    padding: 5,
+    padding: 10,
     paddingVertical: 10,
   },
   filterButton: {
@@ -236,12 +242,16 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: Color.PRIMARY,
     marginHorizontal: 5,
+  },
+  filterText: {
+    color: Color.DEFAULT_BLACK,
   },
   orderContainer: {
     flex: 1,
     width: '100%',
+    backgroundColor: Color.LIGHT_GREY2,
   },
 });
 

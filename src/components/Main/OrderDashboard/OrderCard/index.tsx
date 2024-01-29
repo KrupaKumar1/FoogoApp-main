@@ -1,5 +1,13 @@
 import React from 'react';
 import {View, Text, StyleSheet, Platform, TouchableOpacity} from 'react-native';
+import Color from '../../../../constant/Color';
+import {
+  Border,
+  Colors,
+  FontFamily,
+  FontSize,
+} from '../../../../CSS/GlobalStyles';
+import Font from '../../../../constant/Font';
 
 interface OrderCardProps {
   orderNumber: string;
@@ -24,28 +32,48 @@ const OrderCard: React.FC<OrderCardProps> = ({
     <View style={styles.cardContainer}>
       <View style={styles.card}>
         <View style={styles.header}>
-          <Text style={styles.orderNumber}>{orderNumber}</Text>
+          <Text style={styles.orderInfoText}>{orderNumber}</Text>
+
           <View style={getStatusStyle()}>
             <Text style={styles.statusText}>
               {paid === 'Paid' ? 'Paid' : 'Unpaid'}
             </Text>
           </View>
+          <Text style={styles.orderInfoText}>
+            ${parseFloat(orderDetails?.grandTotal).toFixed(2)}
+          </Text>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.username}>{username}</Text>
-          <Text style={styles.preparingTime}>{preparingTime}</Text>
+        <View style={styles.orderDetailsSection}>
+          <View style={styles.section}>
+            <Text style={styles.username}>{orderDetails?.customerName}</Text>
+            <Text
+              style={
+                styles.orderType
+              }>{`${orderDetails?.orderSource},${username}`}</Text>
+            <Text style={styles.preparingTime}>TABLE 1</Text>
+          </View>
+          <View style={styles.section}>
+            <Text style={styles.preparingTime}>
+              <Text style={styles.orderInfoText}>00:00</Text>
+              {', Recieved'}
+            </Text>
+            <Text style={styles.preparingTime}>
+              <Text style={styles.orderInfoText}>00:00</Text>
+              {', Ready To Pick'}
+            </Text>
+          </View>
         </View>
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Delay</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Ready</Text>
-          </TouchableOpacity>
-        </View>
+      </View>
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.actionButtonText}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.actionButtonText}>Delay</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.actionButtonText}>Ready</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -54,11 +82,11 @@ const OrderCard: React.FC<OrderCardProps> = ({
 const styles = StyleSheet.create({
   cardContainer: {
     width: '100%',
-    height: 200,
+    height: 160,
     marginVertical: 10,
     borderRadius: 20,
     overflow: 'hidden',
-    backgroundColor: 'white',
+    backgroundColor: Color.DEFAULT_WHITE,
     ...Platform.select({
       ios: {
         borderWidth: 3,
@@ -76,15 +104,20 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 15,
   },
+  orderInfoText: {
+    fontFamily: Font.POPPINS_BOLD,
+    fontSize: FontSize.size_base,
+    fontWeight: '500',
+    color: Colors.colorBlack,
+    textTransform: 'capitalize',
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 15,
   },
-  orderNumber: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
+
   paidStatus: {
     backgroundColor: '#4CAF50',
     paddingVertical: 5,
@@ -101,14 +134,20 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
-  section: {
-    flex: 1,
+  orderDetailsSection: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  section: {
+    flexDirection: 'column',
     justifyContent: 'space-between',
   },
   username: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  orderType: {
+    fontSize: 16,
   },
   preparingTime: {
     fontSize: 14,
@@ -117,20 +156,27 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 15,
+    alignItems: 'center',
   },
   button: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
-    backgroundColor: '#2196F3',
-    borderRadius: 10,
-    marginHorizontal: 5,
+    paddingVertical: 9,
+    borderRightWidth: 1,
+    borderRightColor: Color.DEFAULT_GREY,
+    backgroundColor: '#f7f7f7',
   },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
+  actionButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  actionButtonText: {
+    textTransform: 'capitalize',
+    fontFamily: FontFamily.poppinsLight,
+    fontSize: FontSize.size_sm,
+    color: Colors.colorBlack,
   },
 });
 

@@ -1,5 +1,13 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Platform,
+  TextInput,
+} from 'react-native';
 
 import Font from '../../../constant/Font';
 import Color from '../../../constant/Color';
@@ -7,7 +15,6 @@ import Display from '../../../utils/Display';
 import AddItemModal from './AddItemModal';
 
 const MenuCard = ({itemDetails}: {itemDetails: any}) => {
-  console.log('Picture Name:', itemDetails.pictureName);
   const [isModalVisible, setModalVisible] = useState(false);
 
   const openModal = () => {
@@ -52,6 +59,19 @@ const MenuCard = ({itemDetails}: {itemDetails: any}) => {
               onPress={() => openModal()}>
               <Text style={styles.addButtonText}>ADD</Text>
             </TouchableOpacity>
+            {/* <View style={styles.qtySection}>
+              <TouchableOpacity style={styles.qtyButton1}>
+                <Text style={styles.qtyIcon}>-</Text>
+              </TouchableOpacity>
+              <TextInput
+                style={styles.qtyValue}
+                value="1"
+                keyboardType="numeric"
+              />
+              <TouchableOpacity style={styles.qtyButton2}>
+                <Text style={styles.qtyIcon}>+</Text>
+              </TouchableOpacity>
+            </View> */}
           </View>
           <AddItemModal
             isVisible={isModalVisible}
@@ -71,19 +91,34 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 15,
-    elevation: 1,
+    shadowColor: '#000', // Shadow color
+    shadowOffset: {width: 0, height: 2}, // Shadow offset
+    shadowOpacity: 0.25, // Shadow opacity
+    shadowRadius: 3, // Shadow blur radius
     borderRadius: borderRadiusValue,
-    backgroundColor: Color.DEFAULT_WHITE,
+    backgroundColor: Color.LIGHT_GREY,
     marginTop: 8,
     height: Display.setWidth(30), // Adjust the height as needed
     overflow: 'hidden', // Ensure content inside the container doesn't overflow
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
   },
+
   posterStyle: {
     width: '30%',
     height: '100%',
     borderTopLeftRadius: borderRadiusValue,
     borderBottomLeftRadius: borderRadiusValue,
-    borderColor: Color.DEFAULT_BLACK,
+
     borderWidth: 2,
   },
   overlayContainer: {
@@ -134,7 +169,7 @@ const styles = StyleSheet.create({
   buttonConatiner: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 30,
+    marginTop: 25,
   },
   moreDetailsButton: {
     paddingVertical: 8,
@@ -144,14 +179,15 @@ const styles = StyleSheet.create({
   moreDetailsButtonText: {
     fontFamily: Font.POPPINS_SEMI_BOLD,
     fontSize: 12,
-    color: Color.DEFAULT_GREY,
+    color: Color.DEFAULT_BLACK,
   },
   addButton: {
-    backgroundColor: Color.DEFAULT_GREY,
+    backgroundColor: Color.LIGHT_GREY2,
     width: 70,
-    paddingVertical: 8,
+
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 12,
     borderRadius: 8,
     marginBottom: 5,
@@ -160,6 +196,44 @@ const styles = StyleSheet.create({
     fontFamily: Font.POPPINS_SEMI_BOLD,
     fontSize: 12,
     color: Color.DARK_ONE,
+  },
+  qtySection: {
+    flexDirection: 'row',
+
+    justifyContent: 'center',
+    // align: 'center',
+
+    width: 100,
+    padding: 3,
+    // height: 100,
+  },
+  qtyButton1: {
+    backgroundColor: Color.PRIMARY,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 30,
+    height: 30,
+    borderTopLeftRadius: 25,
+    borderBottomLeftRadius: 25,
+  },
+  qtyButton2: {
+    backgroundColor: Color.PRIMARY,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 30,
+    height: 30,
+    borderTopRightRadius: 25,
+    borderBottomRightRadius: 25,
+  },
+  qtyValue: {
+    fontSize: 16,
+
+    marginHorizontal: 15,
+  },
+  qtyIcon: {
+    color: Color.DEFAULT_WHITE,
   },
 });
 

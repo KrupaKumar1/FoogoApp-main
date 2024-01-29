@@ -13,8 +13,19 @@ import Modal from 'react-native-modal';
 import Display from '../../../utils/Display';
 import Color from '../../../constant/Color';
 import {CheckBox} from 'react-native-elements';
+import Font from '../../../constant/Font';
+import {useDispatch, useSelector} from 'react-redux';
+import {CartAction} from '../../../services/redux/actions';
 
-const AddItemModal = ({isVisible, closeModal, itemDetails}) => {
+interface ItemModalProps {
+  isVisible: boolean;
+  closeModal: () => void;
+  itemDetails: any;
+}
+
+const AddItemModal = ({isVisible, closeModal, itemDetails}: ItemModalProps) => {
+  const dispatch = useDispatch();
+
   const [selectedPack, setSelectedPack] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [addons, setAddons] = useState({
@@ -66,7 +77,7 @@ const AddItemModal = ({isVisible, closeModal, itemDetails}) => {
 
           {/* Section 2 */}
           <Text style={styles.descriptionHeading}>Description</Text>
-          <Text>{itemDetails?.description}</Text>
+          <Text style={styles.descriptionText}>{itemDetails?.description}</Text>
           <View style={styles.separator} />
 
           {/* Section 3 */}
@@ -138,6 +149,8 @@ const AddItemModal = ({isVisible, closeModal, itemDetails}) => {
               style={styles.footerButton}
               onPress={() => {
                 /* Handle ADD */
+                dispatch(CartAction.addItemToCart(itemDetails));
+                closeModal();
               }}>
               <Text style={styles.footerButtonTextAdd}>ADD</Text>
             </TouchableOpacity>
@@ -152,6 +165,7 @@ const styles = StyleSheet.create({
   modal: {
     justifyContent: 'flex-end',
     margin: 0,
+    borderTopLeftRadius: 10,
   },
   modalContent: {
     backgroundColor: 'white',
@@ -164,6 +178,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: Color.LIGHT_GREY2,
+
     borderBottomWidth: 1,
     borderBottomColor: Color.DEFAULT_GREY,
     padding: 16,
@@ -279,6 +294,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginTop: 10,
+  },
+  descriptionText: {
+    fontSize: 14,
   },
   subItemPackSection: {
     padding: 16,
