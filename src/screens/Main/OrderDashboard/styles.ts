@@ -1,11 +1,12 @@
 import {StyleSheet} from 'react-native';
 import Color from '../../../constant/Color';
 import Display from '../../../utils/Display';
+import {Colors} from '../../../CSS/GlobalStyles';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.LIGHT_GREY2,
+    backgroundColor: Colors.colorWhitesmoke_100,
   },
 
   ordersListContainer: {

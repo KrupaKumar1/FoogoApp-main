@@ -11,6 +11,7 @@ import DotIcon from 'react-native-vector-icons/Entypo';
 import Display from '../../../utils/Display';
 import {useDispatch} from 'react-redux';
 import {GeneralAction} from '../../../services/redux/actions';
+import {Colors} from '../../../CSS/GlobalStyles';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     paddingBottom: 5,
     height: Display.setHeight(5),
-    backgroundColor: '#fff',
+    backgroundColor: Colors.colorWhitesmoke_100,
     ...Platform.select({
       ios: {
         shadowColor: 'black',

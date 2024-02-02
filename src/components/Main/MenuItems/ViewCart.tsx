@@ -1,14 +1,17 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import Color from '../../../constant/Color';
+import {useSelector} from 'react-redux';
 
 const ViewCart = ({navigation}: {navigation: any}) => {
+  const {cartItems} = useSelector(state => state?.cartState);
   return (
     <View style={styles.bottomTabBar}>
       <TouchableOpacity
         onPress={() => navigation.navigate('Cart')}
         style={styles.tabButton}>
         <Text style={styles.tabText}>View Cart</Text>
+        <Text style={styles.cartItems}>{cartItems?.length}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -19,7 +22,7 @@ export default ViewCart;
 const styles = StyleSheet.create({
   bottomTabBar: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
     margin: 20,
@@ -34,9 +37,9 @@ const styles = StyleSheet.create({
   },
   tabButton: {
     flex: 1,
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 10,
   },
   selectedTab: {
     height: 40,
@@ -54,5 +57,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Color.PRIMARY,
     fontWeight: 'bold',
+  },
+  cartItems: {
+    fontSize: 16,
+    color: Color.DEFAULT_BLACK,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginLeft: 10,
+    borderRadius: 25,
+    backgroundColor: Color.DEFAULT_WHITE,
   },
 });

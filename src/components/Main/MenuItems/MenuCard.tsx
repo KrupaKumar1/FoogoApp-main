@@ -13,12 +13,18 @@ import Font from '../../../constant/Font';
 import Color from '../../../constant/Color';
 import Display from '../../../utils/Display';
 import AddItemModal from './AddItemModal';
+import {CartAction} from '../../../services/redux/actions';
+import {useDispatch, useSelector} from 'react-redux';
 
 const MenuCard = ({itemDetails}: {itemDetails: any}) => {
   const [isModalVisible, setModalVisible] = useState(false);
+  const {cartItems} = useSelector(state => state?.cartState);
+
+  const dispatch = useDispatch();
 
   const openModal = () => {
-    setModalVisible(true);
+    dispatch(CartAction.addItemToCart({...itemDetails, qty: 1}));
+    // setModalVisible(true);
   };
 
   const closeModal = () => {
@@ -54,24 +60,27 @@ const MenuCard = ({itemDetails}: {itemDetails: any}) => {
               <Text
                 style={styles.moreDetailsButtonText}>{`More Details>`}</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={() => openModal()}>
-              <Text style={styles.addButtonText}>ADD</Text>
-            </TouchableOpacity>
-            {/* <View style={styles.qtySection}>
-              <TouchableOpacity style={styles.qtyButton1}>
-                <Text style={styles.qtyIcon}>-</Text>
+            {!itemDetails.quantity ? (
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => openModal()}>
+                <Text style={styles.addButtonText}>ADD</Text>
               </TouchableOpacity>
-              <TextInput
-                style={styles.qtyValue}
-                value="1"
-                keyboardType="numeric"
-              />
-              <TouchableOpacity style={styles.qtyButton2}>
-                <Text style={styles.qtyIcon}>+</Text>
-              </TouchableOpacity>
-            </View> */}
+            ) : (
+              <View style={styles.qtySection}>
+                <TouchableOpacity style={styles.qtyButton1}>
+                  <Text style={styles.qtyIcon}>-</Text>
+                </TouchableOpacity>
+                <TextInput
+                  style={styles.qtyValue}
+                  value="1"
+                  keyboardType="numeric"
+                />
+                <TouchableOpacity style={styles.qtyButton2}>
+                  <Text style={styles.qtyIcon}>+</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
           <AddItemModal
             isVisible={isModalVisible}

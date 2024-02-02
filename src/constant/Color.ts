@@ -11,7 +11,7 @@ export default {
   SECONDARY_BLACK: '#191d35',
   LIGHT_GREEN: '#CEE8E7',
   LIGHT_GREY: '#F8F7F7',
-  LIGHT_GREY2: '#EAEAEA',
+  LIGHT_GREY2: '#e9ebec',
   LIGHT_YELLOW: '#FCE6CD',
   LIGHT_RED: '#FFC8BF',
   FABEBOOK_BLUE: '#4A61A8',
@@ -23,5 +23,6 @@ export default {
   DARK_FOUR: '#282828',
   DARK_FIVE: '#B3B3B3',
 
-  PRIMARY: '#0A8791',
+  // PRIMARY: '#ff8b00',
+  PRIMARY: '#4A61A8',
 };

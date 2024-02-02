@@ -18,6 +18,7 @@ import {useSelector} from 'react-redux';
 import MenuCard from '../../../components/Main/MenuItems/MenuCard';
 import SkeletonForMenuCard from '../../../components/Main/MenuItems/SkeletonForMenuCard';
 import ViewCart from '../../../components/Main/MenuItems/ViewCart';
+import {Colors} from '../../../CSS/GlobalStyles';
 
 interface RootState {
   generalState: {
@@ -29,9 +30,12 @@ interface RootState {
 const MenuItems = ({navigation}: {navigation: any}) => {
   const [selectedGroupId, setSelectedGroupId] = useState(10); // Initialize with the default group
   const {token} = useSelector((state: RootState) => state?.generalState ?? {});
+  const {cartItems} = useSelector(state => state?.cartState);
 
   const [menuGroups, setMenuGroups] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
+  console.log('MENUITEM QTY', menuItems);
+  //console.log('CARTITEMS', cartItems);
   const [itemsLoading, setItemsLoading] = useState(true);
 
   const filters = [
@@ -43,6 +47,94 @@ const MenuItems = ({navigation}: {navigation: any}) => {
   const handleFilterPress = (filterKey: string) => {
     console.log(`${filterKey} pressed`);
     // Implement your filter logic here
+  };
+
+  /**Quantity set Handler */
+  const cardQtySetHandler = () => {
+    const itemQtyMap: {[key: string]: number} = {};
+
+    cartItems?.forEach((listItem: any) => {
+      const itemName = listItem.name;
+      // Check if the item is already in the map
+      if (itemQtyMap.hasOwnProperty(itemName)) {
+        // If yes, update the quantity
+        itemQtyMap[itemName] += listItem.qty;
+      } else {
+        // If no, add the item to the map with its quantity
+        itemQtyMap[itemName] = listItem.qty;
+      }
+    });
+
+    // Now update the menuItemforGrpoup based on the itemQtyMap
+    const dataList = [...menuItems];
+    dataList.forEach((apiItem: any) => {
+      const itemName = apiItem.name;
+
+      if (itemQtyMap.hasOwnProperty(itemName)) {
+        // If the item exists in the map, update the quantity
+        apiItem.quantity = itemQtyMap[itemName];
+      }
+    });
+
+    setMenuItems(dataList);
+  };
+
+  /**Group Items */
+  const getGroupItemsAPI = (menuId: any) => {
+    setSelectedGroupId(menuId);
+    // setItemsLoading(true);
+    const paramsOnj = {
+      groupId: menuId,
+    };
+    API_CALL({
+      method: 'GET',
+      url: 'Menu/GetActiveMenuItems',
+      headerConfig: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      params: paramsOnj,
+
+      callback: async ({status, data}: {status: any; data: any}) => {
+        if (status === 200) {
+          const menuItemsForQty = data.data;
+          const itemQtyMap: {[key: string]: number} = {};
+
+          cartItems?.forEach((listItem: any) => {
+            const itemName = listItem.name;
+            // Check if the item is already in the map
+            if (itemQtyMap.hasOwnProperty(itemName)) {
+              // If yes, update the quantity
+              itemQtyMap[itemName] += listItem.qty;
+            } else {
+              // If no, add the item to the map with its quantity
+              itemQtyMap[itemName] = listItem.qty;
+            }
+          });
+
+          // Now update the menuItemforGrpoup based on the itemQtyMap
+          const dataList = [...menuItemsForQty];
+          dataList.forEach((apiItem: any) => {
+            const itemName = apiItem.name;
+
+            if (itemQtyMap.hasOwnProperty(itemName)) {
+              // If the item exists in the map, update the quantity
+              apiItem.quantity = itemQtyMap[itemName];
+            }
+          });
+
+          setMenuItems(dataList);
+        } else {
+          Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        }
+        setItemsLoading(false);
+      },
+    });
   };
 
   /**Group Names */
@@ -85,41 +177,13 @@ const MenuItems = ({navigation}: {navigation: any}) => {
     });
   };
 
-  /**Group Items */
-  const getGroupItemsAPI = (menuId: any) => {
-    setSelectedGroupId(menuId);
-    // setItemsLoading(true);
-    const paramsOnj = {
-      groupId: menuId,
-    };
-    API_CALL({
-      method: 'GET',
-      url: 'Menu/GetActiveMenuItems',
-      headerConfig: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      params: paramsOnj,
-
-      callback: async ({status, data}: {status: any; data: any}) => {
-        if (status === 200) {
-          setMenuItems(data.data);
-        } else {
-          Alert.alert(
-            'Error',
-            data.errorMessage,
-            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
-            {cancelable: false},
-          );
-        }
-        setItemsLoading(false);
-      },
-    });
-  };
-
   useEffect(() => {
     getGroupNames();
   }, []);
+
+  useEffect(() => {
+    cardQtySetHandler();
+  }, [selectedGroupId, cartItems]);
 
   return (
     <View style={styles.container}>
@@ -178,7 +242,12 @@ const MenuItems = ({navigation}: {navigation: any}) => {
           />
         )}
       </View>
-      <ViewCart navigation={navigation} />
+      {cartItems?.length > 0 && (
+        <ViewCart
+          navigation={navigation}
+          cardQtySetHandler={cardQtySetHandler}
+        />
+      )}
     </View>
   );
 };
@@ -186,7 +255,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.LIGHT_GREY,
+    backgroundColor: Colors.colorWhitesmoke_100,
   },
   header: {
     flexDirection: 'row',

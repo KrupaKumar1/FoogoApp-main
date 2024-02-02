@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 20,
     overflow: 'hidden',
-    backgroundColor: Color.DEFAULT_WHITE,
+    backgroundColor: Colors.colorWhitesmoke_100,
     ...Platform.select({
       ios: {
         borderWidth: 3,
