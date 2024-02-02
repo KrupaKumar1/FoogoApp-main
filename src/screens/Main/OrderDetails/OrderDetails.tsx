@@ -184,7 +184,7 @@ const OrderDetails = ({navigation}) => {
         </View>
       </ScrollView>
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.paymentContainer}>
+        <TouchableOpacity style={styles.paymentContainer} onPress={() => navigation.goBack()}>
           <Text style={styles.paymentText}>Cancel Order</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.generateKOTContainer}>
@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.LIGHT_GREY2,
   },
+ 
   scrollView: {
     flex: 1,
   },
@@ -371,5 +372,6 @@ const styles = StyleSheet.create({
   couponContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+
   },
 });

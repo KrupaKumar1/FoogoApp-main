@@ -23,8 +23,8 @@ const MenuCard = ({itemDetails}: {itemDetails: any}) => {
   const dispatch = useDispatch();
 
   const openModal = () => {
-    dispatch(CartAction.addItemToCart({...itemDetails, qty: 1}));
-    // setModalVisible(true);
+    // dispatch(CartAction.addItemToCart({...itemDetails, qty: 1}));
+     setModalVisible(true);
   };
 
   const closeModal = () => {
