@@ -26,13 +26,9 @@ interface ItemModalProps {
 const AddItemModal = ({isVisible, closeModal, itemDetails}: ItemModalProps) => {
   const dispatch = useDispatch();
 
-  const [selectedPack, setSelectedPack] = useState(null);
+  const [selectedPack, setSelectedPack] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [addons, setAddons] = useState({
-    addon1: false,
-    addon2: false,
-    // Add more addons as needed
-  });
+
   return (
     <Modal
       isVisible={isVisible}
@@ -73,67 +69,71 @@ const AddItemModal = ({isVisible, closeModal, itemDetails}: ItemModalProps) => {
               <Text style={styles.qtyIcon}>+</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.separator} />
+          {itemDetails?.description && (
+            <>
+              <View style={styles.separator} />
+              {/* Section 2 */}
+              <Text style={styles.descriptionHeading}>Description</Text>
+              <Text style={styles.descriptionText}>
+                {itemDetails?.description}
+              </Text>
+            </>
+          )}
 
-          {/* Section 2 */}
-          <Text style={styles.descriptionHeading}>Description</Text>
-          <Text style={styles.descriptionText}>{itemDetails?.description}</Text>
-          <View style={styles.separator} />
+          {itemDetails?.menuSubItem && (
+            <>
+              <View style={styles.separator} />
+              {/* Section 3 */}
+              <View style={styles.subItemSection}>
+                <Text style={styles.descriptionHeading}>Select Pack</Text>
 
-          {/* Section 3 */}
-          <View style={styles.subItemSection}>
-            <Text style={styles.descriptionHeading}>Select Pack</Text>
-
-            {/* Sub Item Pack Selection */}
-            <View style={styles.packSelection}>
-              <TouchableOpacity
-                style={[
-                  styles.packButton,
-                  selectedPack === 'full' && styles.selectedPack,
-                ]}
-                onPress={() => setSelectedPack('full')}>
-                <Text
-                  style={[
-                    styles.subItemText,
-                    selectedPack === 'full' && styles.selectedItemText,
-                  ]}>
-                  Full $400
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.packButton,
-                  selectedPack === 'half' && styles.selectedPack,
-                ]}
-                onPress={() => setSelectedPack('half')}>
-                <Text>Half $100</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={styles.separator} />
-          {/* Section 4 */}
-          <View style={styles.addonSection}>
-            <Text style={styles.descriptionHeading}>Addons</Text>
-            <View style={styles.checkboxContainer}>
-              <View style={styles.checkboxItem}>
-                <CheckBox
-                  value={addons.addon1}
-                  checked
-                  onValueChange={value => setAddons({...addons, addon1: value})}
-                />
-                <Text>Addon 1</Text>
+                {/* Sub Item Pack Selection */}
+                <View style={styles.packSelection}>
+                  {itemDetails?.menuSubItem?.map((subItem, i) => (
+                    <TouchableOpacity
+                      style={[
+                        styles.packButton,
+                        selectedPack === i && styles.selectedPack,
+                      ]}
+                      onPress={() => setSelectedPack(i)}>
+                      <Text
+                        style={[
+                          styles.subItemText,
+                          selectedPack === i && styles.selectedItemText,
+                        ]}>
+                        {`$ ${subItem?.itemPrice}`}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
-              <View style={styles.checkboxItem}>
-                <CheckBox
-                  value={addons.addon1}
-                  onValueChange={value => setAddons({...addons, addon2: value})}
-                />
-                <Text>Addon 2</Text>
+            </>
+          )}
+          {itemDetails?.menuAddOnsField && (
+            <>
+              <View style={styles.separator} />
+              {/* Section 4 */}
+              <View style={styles.addonSection}>
+                <Text style={styles.descriptionHeading}>Addons</Text>
+                <View style={styles.checkboxContainer}>
+                  {itemDetails.menuAddOnsField.map(
+                    (addOnTypeObj: any, index: number) =>
+                      addOnTypeObj.addOnType === 'Checkbox' &&
+                      addOnTypeObj.menuMappedAddOnFields.map(
+                        (addOn: any, index2: number) => (
+                          <View
+                            style={styles.checkboxItem}
+                            key={`addon-${index}-${index2}`}>
+                            <CheckBox />
+                            <Text>{addOn.addOnText}</Text>
+                          </View>
+                        ),
+                      ),
+                  )}
+                </View>
               </View>
-            </View>
-
-            {/* Add more addons as needed */}
-          </View>
+            </>
+          )}
         </ScrollView>
 
         {/* Footer */}

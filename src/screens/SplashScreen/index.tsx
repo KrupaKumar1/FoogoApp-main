@@ -1,20 +1,36 @@
-import {Image, StatusBar, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
+import {
+  Dimensions,
+  Image,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import Color from '../../constant/Color';
 import Display from '../../utils/Display';
 import Font from '../../constant/Font';
 import Images from '../../constant/Images';
-import {NavigationProp} from '@react-navigation/native';
 
-const SplashScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     isLogin ? navigation.navigate('Main') : navigation.navigate('Auth');
-  //   }, 2000);
-  // });
+const SplashScreen = () => {
+  const [orientation, setOrientation] = useState('portrait');
+
+  useEffect(() => {
+    const updateOrientation = () => {
+      const {width, height} = Dimensions.get('screen');
+      setOrientation(width > height ? 'landscape' : 'portrait');
+    };
+
+    Dimensions.addEventListener('change', updateOrientation);
+    return () => Dimensions.removeEventListener('change', updateOrientation);
+  }, []);
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        orientation === 'landscape' && styles.landscapeContainer,
+      ]}>
       <StatusBar
         barStyle="light-content"
         backgroundColor={Color.PRIMARY}
@@ -34,6 +50,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Color.PRIMARY,
+    width: '100%',
+    height: '100%', // Set the height to 100% to take the full height of the screen
+  },
+  landscapeContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Color.PRIMARY,
+    width: '100%',
+    height: '100%',
   },
   logo: {
     width: Display.setWidth(60),
