@@ -8,6 +8,7 @@ import {
   FontSize,
 } from '../../../../CSS/GlobalStyles';
 import Font from '../../../../constant/Font';
+import moment  from "moment";
 
 interface OrderCardProps {
   orderNumber: string;
@@ -27,6 +28,11 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const getStatusStyle = () => {
     return paid === 'Paid' ? styles.paidStatus : styles.unpaidStatus;
   };
+
+    const TableNames =
+    Array.isArray(orderDetails?.tableId) && orderDetails?.tableId != null
+      ? orderDetails?.tableId?.replace(/,/g, ", ")
+      : orderDetails?.tableId;
 
   return (
     <View style={styles.cardContainer}>
@@ -50,23 +56,61 @@ const OrderCard: React.FC<OrderCardProps> = ({
               style={
                 styles.orderType
               }>{`${orderDetails?.orderSource},${username}`}</Text>
-            <Text style={styles.preparingTime}>TABLE 1</Text>
+              {orderDetails?.orderType==="Dine-In" &&
+              <>
+               <Text style={styles.preparingTime}> {orderDetails?.numberOfPeople} , {TableNames}  </Text>
+               
+               </>
+               
+              }
+           
           </View>
           <View style={styles.section}>
             <Text style={styles.preparingTime}>
-              <Text style={styles.orderInfoText}>00:00</Text>
+              <Text style={styles.orderInfoText}> {moment(orderDetails?.createdDate).format("HH:mm")}</Text>
               {', Recieved'}
             </Text>
             <Text style={styles.preparingTime}>
-              <Text style={styles.orderInfoText}>00:00</Text>
+              <Text style={styles.orderInfoText}>{moment(orderDetails?.estimatedDeliveryOrPickupTime).format("HH:mm")}</Text>
               {', Ready To Pick'}
             </Text>
           </View>
         </View>
       </View>
+      {orderDetails?.paymentStatus === "Paid" && orderDetails?.status ==="OrderPreparedReadyForDelivery" &&
+      
       <View style={styles.footer}>
         <TouchableOpacity style={styles.button}>
           <Text style={styles.actionButtonText}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.actionButtonText}>Deliver</Text>
+        </TouchableOpacity>
+      
+      </View>
+}
+ {orderDetails?.paymentStatus === "Paid" && orderDetails?.status ==="Preparing" &&
+      
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.actionButtonText}>Cancel</Text>
+        </TouchableOpacity>
+          <TouchableOpacity style={styles.button}>
+          <Text style={styles.actionButtonText}>Delay</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.actionButtonText}>Ready</Text>
+        </TouchableOpacity>
+      
+      </View>
+}
+ {orderDetails?.paymentStatus !== "Paid" && orderDetails?.status ==="Preparing" &&
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.actionButtonText}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.actionButtonText}>Pay</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}>
           <Text style={styles.actionButtonText}>Delay</Text>
@@ -75,7 +119,20 @@ const OrderCard: React.FC<OrderCardProps> = ({
           <Text style={styles.actionButtonText}>Ready</Text>
         </TouchableOpacity>
       </View>
+}
+{orderDetails?.paymentStatus !== "Paid" && orderDetails?.status ==="OrderPreparedReadyForDelivery" &&
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.actionButtonText}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.actionButtonText}>Pay</Text>
+        </TouchableOpacity>
+     
+      </View>
+}
     </View>
+
   );
 };
 
