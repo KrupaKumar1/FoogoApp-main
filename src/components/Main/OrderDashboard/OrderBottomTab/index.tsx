@@ -10,7 +10,7 @@ const OrderBottomTabBar = ({orderTypes, selectedTab, handleTabPress}) => {
 
   return (
     <View style={styles.bottomTabBar}>
-      {tabData.map((tab, i) => (
+      {tabData?.map((tab, i) => (
         <TouchableOpacity
           key={tab.id}
           style={[styles.tabButton, selectedTab === i && styles.selectedTab]}

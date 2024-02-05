@@ -24,6 +24,7 @@ import Separator from '../../../components/General/Seperator';
 import {Alert} from 'react-native';
 import API_CALL from '../../../services/Api';
 import {useSelector} from 'react-redux';
+import CancelModal from '../../../components/Main/OrderDashboard/CancelModal';
 
 interface Order {
   label: string;
@@ -35,6 +36,14 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
   const {token} = useSelector(state => state?.generalState);
 
   const [orderTypes, setOrderTypes] = useState<Order[]>([]);
+  const [isModalVisible, setModalVisible] = useState(false);
+
+ const cancelHandler =()=>{
+  setModalVisible(true);
+ }
+  const closeModal = () => {
+    setModalVisible(false);
+  };
   console.log('ORDERS', orderTypes);
   const [isFlatListScrolling, setIsFlatListScrolling] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
@@ -57,7 +66,7 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
     setDATA(orderList);
     // Ensure the index is within the valid range
     if (index >= 0 && index < orderTypes.length) {
-      flatListRef.current.scrollToIndex({
+      flatListRef?.current?.scrollToIndex({
         animated: true,
         index,
       });
@@ -67,7 +76,7 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 1000);
   }, []);
 
   const getAllOrdersList = async () => {
@@ -128,7 +137,7 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
   }, [selectedTab]);
 
   const menuItemsRouteHandler = () => {
-    navigation.navigate('MenuItems');
+    navigation?.navigate('MenuItems');
   };
 
   if (loading) {
@@ -195,6 +204,8 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
                     paid={dataItem.paymentStatus}
                     username={dataItem.orderType}
                     preparingTime={dataItem.status}
+                    getAllOrdersList={getAllOrdersList}
+                    
                   />
                 </TouchableOpacity>
               ))}
@@ -212,6 +223,10 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
           handleTabPress={handleTabPress}
         />
       )}
+      {/* <CancelModal
+          isVisible={isModalVisible}
+            closeModal={closeModal}
+      /> */}
     </SafeAreaProvider>
   );
 };

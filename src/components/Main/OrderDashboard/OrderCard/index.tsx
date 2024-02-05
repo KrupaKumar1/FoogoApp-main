@@ -1,5 +1,5 @@
-import React from 'react';
-import {View, Text, StyleSheet, Platform, TouchableOpacity} from 'react-native';
+import React,{useState} from 'react';
+import {View, Text, StyleSheet, Platform, TouchableOpacity, Alert} from 'react-native';
 import Color from '../../../../constant/Color';
 import {
   Border,
@@ -9,6 +9,9 @@ import {
 } from '../../../../CSS/GlobalStyles';
 import Font from '../../../../constant/Font';
 import moment  from "moment";
+import API_CALL from '../../../../services/Api';
+import { useSelector } from 'react-redux';
+import CancelModal from '../CancelModal';
 
 interface OrderCardProps {
   orderNumber: string;
@@ -16,6 +19,7 @@ interface OrderCardProps {
   username: string;
   preparingTime: string;
   orderDetails: Object;
+  getAllOrdersList:Function;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({
@@ -23,16 +27,91 @@ const OrderCard: React.FC<OrderCardProps> = ({
   orderNumber,
   paid,
   username,
+  getAllOrdersList,
   preparingTime,
 }) => {
   const getStatusStyle = () => {
     return paid === 'Paid' ? styles.paidStatus : styles.unpaidStatus;
   };
-
+const {token} = useSelector(state => state?.generalState);
     const TableNames =
     Array.isArray(orderDetails?.tableId) && orderDetails?.tableId != null
       ? orderDetails?.tableId?.replace(/,/g, ", ")
       : orderDetails?.tableId;
+
+ 
+
+ const deliverStatusHandler = async (orderid:any) => {
+    API_CALL({
+      method: 'POST',
+      url: `Order/UpdateOrderStatus?orderId=${orderid}&statusId=5&comments="test"&userName="Krupa kumaar"&ipAddress="111.93.18.226"`,
+      headerConfig: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      callback: async ({status, data}: {status: any; data: any}) => {
+        if (status === 200) {
+        Alert.alert('Order Delivered Successfully');
+          getAllOrdersList();
+        } else {
+          Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        }
+      },
+    });
+  };
+  const delayStatusHandler = async (orderid:any) => {
+    API_CALL({
+      method: 'POST',
+      url: `Order/UpdateOrderStatus?orderId=${orderid}&statusId=16&comments="test"&userName="Krupa kumaar"&ipAddress="111.93.18.226"`,
+      headerConfig: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      callback: async ({status, data}: {status: any; data: any}) => {
+        if (status === 200) {
+        Alert.alert('Order Delayed Successfully');
+          getAllOrdersList();
+        } else {
+          Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        }
+      },
+    });
+  };
+
+   const readyStatusHandler = async (orderid:any) => {
+    API_CALL({
+      method: 'POST',
+      url: `Order/UpdateOrderStatus?orderId=${orderid}&statusId=15&comments="test"&userName="Krupa kumaar"&ipAddress="111.93.18.226"`,
+      headerConfig: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      callback: async ({status, data}: {status: any; data: any}) => {
+        if (status === 200) {
+        Alert.alert('Order Delayed Successfully');
+        getAllOrdersList();
+        
+        } else {
+          Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        }
+      },
+    });
+  };
 
   return (
     <View style={styles.cardContainer}>
@@ -83,10 +162,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
         <TouchableOpacity style={styles.button}>
           <Text style={styles.actionButtonText}>Cancel</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={()=>deliverStatusHandler(orderDetails?.id)}>
           <Text style={styles.actionButtonText}>Deliver</Text>
         </TouchableOpacity>
-      
       </View>
 }
  {orderDetails?.paymentStatus === "Paid" && orderDetails?.status ==="Preparing" &&
@@ -95,13 +173,12 @@ const OrderCard: React.FC<OrderCardProps> = ({
         <TouchableOpacity style={styles.button}>
           <Text style={styles.actionButtonText}>Cancel</Text>
         </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={()=>delayStatusHandler(orderDetails?.id)}>
           <Text style={styles.actionButtonText}>Delay</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={()=>readyStatusHandler(orderDetails?.id)}>
           <Text style={styles.actionButtonText}>Ready</Text>
         </TouchableOpacity>
-      
       </View>
 }
  {orderDetails?.paymentStatus !== "Paid" && orderDetails?.status ==="Preparing" &&
@@ -112,15 +189,15 @@ const OrderCard: React.FC<OrderCardProps> = ({
         <TouchableOpacity style={styles.button}>
           <Text style={styles.actionButtonText}>Pay</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button}  onPress={()=>delayStatusHandler(orderDetails?.id)}>
           <Text style={styles.actionButtonText}>Delay</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button}  onPress={()=>readyStatusHandler(orderDetails?.id)}>
           <Text style={styles.actionButtonText}>Ready</Text>
         </TouchableOpacity>
       </View>
 }
-{orderDetails?.paymentStatus !== "Paid" && orderDetails?.status ==="OrderPreparedReadyForDelivery" &&
+{orderDetails?.paymentStatus !== "Paid" && orderDetails?.status ==="Delay" &&
       <View style={styles.footer}>
         <TouchableOpacity style={styles.button}>
           <Text style={styles.actionButtonText}>Cancel</Text>
@@ -128,10 +205,30 @@ const OrderCard: React.FC<OrderCardProps> = ({
         <TouchableOpacity style={styles.button}>
           <Text style={styles.actionButtonText}>Pay</Text>
         </TouchableOpacity>
-     
+       
+        <TouchableOpacity style={styles.button}  onPress={()=>readyStatusHandler(orderDetails?.id)}>
+          <Text style={styles.actionButtonText}>Ready</Text>
+        </TouchableOpacity>
       </View>
 }
+
+{orderDetails?.paymentStatus !== "Paid" && orderDetails?.status ==="OrderPreparedReadyForDelivery" &&
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.button} onPress={()=>cancelHandler()}>
+          <Text style={styles.actionButtonText}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.actionButtonText}>Pay</Text>
+        </TouchableOpacity>
+      </View>
+}
+
+
+ 
     </View>
+
+    
+          
 
   );
 };
