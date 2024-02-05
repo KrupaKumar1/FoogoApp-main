@@ -23,13 +23,48 @@ const MenuCard = ({itemDetails}: {itemDetails: any}) => {
 
   const dispatch = useDispatch();
 
+  // const openModal = () => {
+  //   if (itemDetails?.menuSubItem?.length > 0) {
+  //     setModalVisible(true);
+  //   } else {
+  //     dispatch(CartAction.addItemToCart({...itemDetails, qty: 1}));
+  //     // setModalVisible(true);
+  //   }
+  // };
+
   const openModal = () => {
+    const itemObjectDetails = {
+      responseOrder: itemDetails,
+      qty: itemDetails?.quantity || 1,
+      item: itemDetails.name,
+      price: itemDetails.deliveryPrice,
+      total: itemDetails.deliveryPrice,
+      addonsamount1: 0,
+      subItem: {},
+      customFieldListItem: [],
+      addons: [],
+      listAddons: [],
+      radioAddon: {},
+      customFields: [],
+      addonField: [],
+    };
+
     if (itemDetails?.menuSubItem?.length > 0) {
       setModalVisible(true);
     } else {
-      dispatch(CartAction.addItemToCart({...itemDetails, qty: 1}));
+      dispatch(CartAction.addItemToCart(itemObjectDetails));
       // setModalVisible(true);
     }
+
+    // const objIndex = list?.findIndex(
+    //   obj => obj.data.item === itemObjectDetails.item,
+    // );
+
+    // if (objIndex !== -1) {
+    //   dispatch(sameitemupdateIn(itemObjectDetails));
+    // } else {
+    //   dispatch(orderdetailsIn(itemObjectDetails));
+    // }
   };
 
   const closeModal = () => {
@@ -59,9 +94,7 @@ const MenuCard = ({itemDetails}: {itemDetails: any}) => {
             <Text style={styles.price}>$50.00</Text>
           </View>
           <View style={styles.buttonConatiner}>
-            <TouchableOpacity
-              style={styles.moreDetailsButton}
-              onPress={() => console.log('More Details Pressed')}>
+            <TouchableOpacity style={styles.moreDetailsButton}>
               <Text
                 style={styles.moreDetailsButtonText}>{`More Details>`}</Text>
             </TouchableOpacity>

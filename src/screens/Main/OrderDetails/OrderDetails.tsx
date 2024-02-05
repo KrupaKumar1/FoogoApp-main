@@ -34,6 +34,7 @@ if (
 
 const OrderDetails = ({navigation}) => {
   const {cartItems} = useSelector(state => state?.cartState);
+
   const dispatch = useDispatch();
 
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
@@ -42,6 +43,10 @@ const OrderDetails = ({navigation}) => {
 
   const closeBillModal = () => {
     setShowBillSummary(false);
+  };
+
+  const cancelOrder = () => {
+    dispatch(CartAction.removeItems());
   };
   // Function to toggle visibility of CustomerDetails
   const toggleCustomerDetails = () => {
@@ -184,6 +189,7 @@ const OrderDetails = ({navigation}) => {
                   <BillSummary
                     isVisible={showBillSummary}
                     closeModal={closeBillModal}
+                    cartItems={cartItems}
                   />
                 )}
               </TouchableOpacity>
@@ -191,7 +197,9 @@ const OrderDetails = ({navigation}) => {
           </View>
         </ScrollView>
         <View style={styles.footer}>
-          <TouchableOpacity style={styles.paymentContainer}>
+          <TouchableOpacity
+            onPress={() => cancelOrder()}
+            style={styles.paymentContainer}>
             <Text style={styles.paymentText}>Cancel Order</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.generateKOTContainer}>
@@ -210,7 +218,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.LIGHT_GREY2,
   },
- 
+
   scrollView: {
     flex: 1,
   },
@@ -373,6 +381,5 @@ const styles = StyleSheet.create({
   couponContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-
   },
 });

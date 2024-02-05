@@ -12,18 +12,23 @@ import {Colors} from '../../../CSS/GlobalStyles';
 import Display from '../../../utils/Display';
 import FontAwsome from 'react-native-vector-icons/FontAwesome';
 import CrossIcon from 'react-native-vector-icons/Entypo';
+import {useSelector} from 'react-redux';
 
 const CartItem = ({item}) => {
+  const {generalSettings} = useSelector(state => state?.generalSettingsState);
   return (
     <View style={styles.itemList}>
       <View style={styles.itemDetails}>
         <View style={styles.section1}>
-          <Text style={styles.itemName}>{item?.name}</Text>
-          <Text style={styles.itemName}>$600.00</Text>
+          <Text style={styles.itemName}>{item?.item}</Text>
+          <Text style={styles.itemName}>
+            {generalSettings?.currencyCode}
+            {parseFloat(item?.total).toFixed(2)}
+          </Text>
         </View>
-        <Text style={styles.subText}>
+        {/* <Text style={styles.subText}>
           Jalapeno Dip, Mild Spicy, Medium Spice level
-        </Text>
+        </Text> */}
         <View style={styles.section1}>
           <View style={styles.qtySection}>
             <TouchableOpacity style={styles.qtyButton1}>
@@ -64,6 +69,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 5,
   },
   itemName: {
     fontSize: 12,
@@ -72,7 +78,6 @@ const styles = StyleSheet.create({
   },
   subText: {
     fontSize: 10,
-
     fontFamily: Font.POPPINS_LIGHT,
     color: Color.DEFAULT_BLACK,
     paddingBottom: 10,

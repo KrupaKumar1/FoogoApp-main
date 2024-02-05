@@ -16,7 +16,6 @@ import {Colors} from '../../../CSS/GlobalStyles';
 const Header = () => {
   const dispatch = useDispatch();
   const logOutHandler = () => {
-    console.log('LOGEDOUT');
     dispatch(GeneralAction.logOut());
   };
   return (

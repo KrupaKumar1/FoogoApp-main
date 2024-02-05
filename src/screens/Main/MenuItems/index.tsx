@@ -35,7 +35,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
 
   const [menuGroups, setMenuGroups] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
-  console.log('MENUITEM QTY', menuItems);
+
   //console.log('CARTITEMS', cartItems);
   const [itemsLoading, setItemsLoading] = useState(true);
 
@@ -55,7 +55,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
     const itemQtyMap: {[key: string]: number} = {};
 
     cartItems?.forEach((listItem: any) => {
-      const itemName = listItem.name;
+      const itemName = listItem.item;
       // Check if the item is already in the map
       if (itemQtyMap.hasOwnProperty(itemName)) {
         // If yes, update the quantity
@@ -74,6 +74,8 @@ const MenuItems = ({navigation}: {navigation: any}) => {
       if (itemQtyMap.hasOwnProperty(itemName)) {
         // If the item exists in the map, update the quantity
         apiItem.quantity = itemQtyMap[itemName];
+      } else {
+        apiItem.quantity = null;
       }
     });
 
@@ -102,7 +104,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
           const itemQtyMap: {[key: string]: number} = {};
 
           cartItems?.forEach((listItem: any) => {
-            const itemName = listItem.name;
+            const itemName = listItem.item;
             // Check if the item is already in the map
             if (itemQtyMap.hasOwnProperty(itemName)) {
               // If yes, update the quantity
@@ -184,7 +186,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
 
   useEffect(() => {
     cardQtySetHandler();
-  }, [selectedGroupId, cartItems]);
+  }, [cartItems]);
 
   return (
     <View style={styles.container}>
