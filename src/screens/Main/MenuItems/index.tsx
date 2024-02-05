@@ -19,6 +19,7 @@ import MenuCard from '../../../components/Main/MenuItems/MenuCard';
 import SkeletonForMenuCard from '../../../components/Main/MenuItems/SkeletonForMenuCard';
 import ViewCart from '../../../components/Main/MenuItems/ViewCart';
 import {Colors} from '../../../CSS/GlobalStyles';
+import Font from '../../../constant/Font';
 
 interface RootState {
   generalState: {
@@ -34,7 +35,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
 
   const [menuGroups, setMenuGroups] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
-  console.log('MENUITEM QTY', menuItems);
+
   //console.log('CARTITEMS', cartItems);
   const [itemsLoading, setItemsLoading] = useState(true);
 
@@ -54,7 +55,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
     const itemQtyMap: {[key: string]: number} = {};
 
     cartItems?.forEach((listItem: any) => {
-      const itemName = listItem.name;
+      const itemName = listItem.item;
       // Check if the item is already in the map
       if (itemQtyMap.hasOwnProperty(itemName)) {
         // If yes, update the quantity
@@ -73,6 +74,8 @@ const MenuItems = ({navigation}: {navigation: any}) => {
       if (itemQtyMap.hasOwnProperty(itemName)) {
         // If the item exists in the map, update the quantity
         apiItem.quantity = itemQtyMap[itemName];
+      } else {
+        apiItem.quantity = null;
       }
     });
 
@@ -101,7 +104,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
           const itemQtyMap: {[key: string]: number} = {};
 
           cartItems?.forEach((listItem: any) => {
-            const itemName = listItem.name;
+            const itemName = listItem.item;
             // Check if the item is already in the map
             if (itemQtyMap.hasOwnProperty(itemName)) {
               // If yes, update the quantity
@@ -183,7 +186,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
 
   useEffect(() => {
     cardQtySetHandler();
-  }, [selectedGroupId, cartItems]);
+  }, [cartItems]);
 
   return (
     <View style={styles.container}>
@@ -267,6 +270,7 @@ const styles = StyleSheet.create({
   menuText: {
     fontSize: 20,
     paddingLeft: 15,
+    fontFamily: Font.POPPINS_BOLD, // Use appropriate Poppins font from your constants
   },
   filterIconContainer: {
     marginLeft: 'auto',
@@ -279,7 +283,6 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingVertical: 10,
   },
-
   groupSelector: {
     paddingVertical: 10,
   },
@@ -287,6 +290,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
+    fontFamily: Font.POPPINS_BOLD, // Use appropriate Poppins font from your constants
   },
   selectedGroup: {
     borderColor: Color.PRIMARY,
@@ -295,8 +299,8 @@ const styles = StyleSheet.create({
   },
   groupButtonText: {
     fontSize: 16,
-    fontWeight: 'bold',
     color: Color.DEFAULT_BLACK, // Change text color for the tabs
+    fontFamily: Font.POPPINS_SEMI_BOLD, // Use appropriate Poppins font from your constants
   },
   filterContainer: {
     flexDirection: 'row',
@@ -316,6 +320,7 @@ const styles = StyleSheet.create({
   },
   filterText: {
     color: Color.DEFAULT_BLACK,
+    fontFamily: Font.POPPINS_REGULAR, // Use appropriate Poppins font from your constants
   },
   orderContainer: {
     flex: 1,

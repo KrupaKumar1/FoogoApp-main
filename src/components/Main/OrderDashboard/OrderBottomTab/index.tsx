@@ -6,8 +6,6 @@ import {styles} from './styles';
 const OrderBottomTabBar = ({orderTypes, selectedTab, handleTabPress}) => {
   const tabData = orderTypes;
 
-  console.log(tabData, 'TABINDEX');
-
   return (
     <View style={styles.bottomTabBar}>
       {tabData?.map((tab, i) => (

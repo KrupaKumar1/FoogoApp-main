@@ -1,12 +1,7 @@
 import React,{useState} from 'react';
 import {View, Text, StyleSheet, Platform, TouchableOpacity, Alert} from 'react-native';
 import Color from '../../../../constant/Color';
-import {
-  Border,
-  Colors,
-  FontFamily,
-  FontSize,
-} from '../../../../CSS/GlobalStyles';
+import {Colors, FontSize} from '../../../../CSS/GlobalStyles';
 import Font from '../../../../constant/Font';
 import moment  from "moment";
 import API_CALL from '../../../../services/Api';
@@ -36,7 +31,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
 const {token} = useSelector(state => state?.generalState);
     const TableNames =
     Array.isArray(orderDetails?.tableId) && orderDetails?.tableId != null
-      ? orderDetails?.tableId?.replace(/,/g, ", ")
+      ? orderDetails?.tableId?.replace(/,/g, ', ')
       : orderDetails?.tableId;
 
  
@@ -135,22 +130,29 @@ const {token} = useSelector(state => state?.generalState);
               style={
                 styles.orderType
               }>{`${orderDetails?.orderSource},${username}`}</Text>
-              {orderDetails?.orderType==="Dine-In" &&
+            {orderDetails?.orderType === 'Dine-In' && (
               <>
-               <Text style={styles.preparingTime}> {orderDetails?.numberOfPeople} , {TableNames}  </Text>
-               
-               </>
-               
-              }
-           
+                <Text style={styles.preparingTime}>
+                  {' '}
+                  {orderDetails?.numberOfPeople} , {TableNames}{' '}
+                </Text>
+              </>
+            )}
           </View>
           <View style={styles.section}>
             <Text style={styles.preparingTime}>
-              <Text style={styles.orderInfoText}> {moment(orderDetails?.createdDate).format("HH:mm")}</Text>
+              <Text style={styles.orderInfoText}>
+                {' '}
+                {moment(orderDetails?.createdDate).format('HH:mm')}
+              </Text>
               {', Recieved'}
             </Text>
             <Text style={styles.preparingTime}>
-              <Text style={styles.orderInfoText}>{moment(orderDetails?.estimatedDeliveryOrPickupTime).format("HH:mm")}</Text>
+              <Text style={styles.orderInfoText}>
+                {moment(orderDetails?.estimatedDeliveryOrPickupTime).format(
+                  'HH:mm',
+                )}
+              </Text>
               {', Ready To Pick'}
             </Text>
           </View>
@@ -259,7 +261,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   orderInfoText: {
-    fontFamily: Font.POPPINS_BOLD,
+    fontFamily: Font.POPPINS_BOLD, // Use appropriate Poppins font family
     fontSize: FontSize.size_base,
     fontWeight: '500',
     color: Colors.colorBlack,
@@ -299,13 +301,16 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: Font.POPPINS_BOLD, // Use appropriate Poppins font family
   },
   orderType: {
     fontSize: 16,
+    fontFamily: Font.POPPINS_REGULAR, // Use appropriate Poppins font family
   },
   preparingTime: {
     fontSize: 14,
     color: '#555',
+    fontFamily: Font.POPPINS_REGULAR, // Use appropriate Poppins font family
   },
   footer: {
     flexDirection: 'row',
@@ -328,7 +333,7 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     textTransform: 'capitalize',
-    fontFamily: FontFamily.poppinsLight,
+    fontFamily: Font.POPPINS_LIGHT, // Use appropriate Poppins font family
     fontSize: FontSize.size_sm,
     color: Colors.colorBlack,
   },

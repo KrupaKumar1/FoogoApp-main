@@ -30,9 +30,7 @@ const SkeletonForMenuCard = () => {
                 </View>
                 <SkeletonPlaceholder>
                   <View style={styles.buttonsContainer}>
-                    <TouchableOpacity
-                      style={styles.button}
-                      onPress={() => console.log('More Details Pressed')}>
+                    <TouchableOpacity style={styles.button}>
                       <Text style={styles.buttonText}>More Details</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.button}>

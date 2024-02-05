@@ -23,7 +23,8 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Separator from '../../../components/General/Seperator';
 import {Alert} from 'react-native';
 import API_CALL from '../../../services/Api';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {GeneralSettings} from '../../../services/redux/actions';
 import CancelModal from '../../../components/Main/OrderDashboard/CancelModal';
 
 interface Order {
@@ -32,9 +33,9 @@ interface Order {
 }
 
 const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const {token} = useSelector(state => state?.generalState);
-
   const [orderTypes, setOrderTypes] = useState<Order[]>([]);
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -131,6 +132,33 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
       },
     });
   };
+
+  const getSettings = () => {
+    API_CALL({
+      method: 'POST',
+      url: 'SiteSettings/GetSettings?name=General',
+      headerConfig: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+
+      callback: async ({status, data}: {status: any; data: any}) => {
+        if (status === 200) {
+          dispatch(GeneralSettings.generalEffectedArea(data.data));
+        } else {
+          Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        }
+      },
+    });
+  };
+  useEffect(() => {
+    getSettings();
+  }, []);
 
   useEffect(() => {
     getAllOrdersList();

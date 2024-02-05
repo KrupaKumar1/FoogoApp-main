@@ -15,6 +15,7 @@ import Display from '../../../utils/Display';
 import AddItemModal from './AddItemModal';
 import {CartAction} from '../../../services/redux/actions';
 import {useDispatch, useSelector} from 'react-redux';
+import {FontSize} from '../../../CSS/GlobalStyles';
 
 const MenuCard = ({itemDetails}: {itemDetails: any}) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -22,13 +23,48 @@ const MenuCard = ({itemDetails}: {itemDetails: any}) => {
 
   const dispatch = useDispatch();
 
+  // const openModal = () => {
+  //   if (itemDetails?.menuSubItem?.length > 0) {
+  //     setModalVisible(true);
+  //   } else {
+  //     dispatch(CartAction.addItemToCart({...itemDetails, qty: 1}));
+  //     // setModalVisible(true);
+  //   }
+  // };
+
   const openModal = () => {
+    const itemObjectDetails = {
+      responseOrder: itemDetails,
+      qty: itemDetails?.quantity || 1,
+      item: itemDetails.name,
+      price: itemDetails.deliveryPrice,
+      total: itemDetails.deliveryPrice,
+      addonsamount1: 0,
+      subItem: {},
+      customFieldListItem: [],
+      addons: [],
+      listAddons: [],
+      radioAddon: {},
+      customFields: [],
+      addonField: [],
+    };
+
     if (itemDetails?.menuSubItem?.length > 0) {
       setModalVisible(true);
     } else {
-      dispatch(CartAction.addItemToCart({...itemDetails, qty: 1}));
+      dispatch(CartAction.addItemToCart(itemObjectDetails));
       // setModalVisible(true);
     }
+
+    // const objIndex = list?.findIndex(
+    //   obj => obj.data.item === itemObjectDetails.item,
+    // );
+
+    // if (objIndex !== -1) {
+    //   dispatch(sameitemupdateIn(itemObjectDetails));
+    // } else {
+    //   dispatch(orderdetailsIn(itemObjectDetails));
+    // }
   };
 
   const closeModal = () => {
@@ -58,9 +94,7 @@ const MenuCard = ({itemDetails}: {itemDetails: any}) => {
             <Text style={styles.price}>$50.00</Text>
           </View>
           <View style={styles.buttonConatiner}>
-            <TouchableOpacity
-              style={styles.moreDetailsButton}
-              onPress={() => console.log('More Details Pressed')}>
+            <TouchableOpacity style={styles.moreDetailsButton}>
               <Text
                 style={styles.moreDetailsButtonText}>{`More Details>`}</Text>
             </TouchableOpacity>
@@ -162,10 +196,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   itemName: {
-    fontFamily: Font.POPPINS_BOLD,
-    fontSize: 16,
+    fontFamily: Font.POPPINS_MEDIUM,
+    fontSize: FontSize.size_sm,
     color: Color.DEFAULT_BLACK,
-    marginBottom: 5,
   },
   priceRatingContainer: {
     flexDirection: 'row',
@@ -174,7 +207,7 @@ const styles = StyleSheet.create({
   },
   price: {
     fontFamily: Font.POPPINS_MEDIUM,
-    fontSize: 14,
+    fontSize: FontSize.size_sm,
     color: Color.DEFAULT_BLACK,
     marginRight: 10,
   },
@@ -190,7 +223,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   moreDetailsButtonText: {
-    fontFamily: Font.POPPINS_SEMI_BOLD,
+    fontFamily: Font.POPPINS_EXTRA_LIGHT,
     fontSize: 12,
     color: Color.DEFAULT_BLACK,
   },
@@ -206,7 +239,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   addButtonText: {
-    fontFamily: Font.POPPINS_SEMI_BOLD,
+    fontFamily: Font.POPPINS_REGULAR,
     fontSize: 12,
     color: Color.DARK_ONE,
   },

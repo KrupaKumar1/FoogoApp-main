@@ -2,6 +2,7 @@ import {StyleSheet} from 'react-native';
 import Color from '../../../constant/Color';
 import Display from '../../../utils/Display';
 import {Colors} from '../../../CSS/GlobalStyles';
+import Font from '../../../constant/Font';
 
 export const styles = StyleSheet.create({
   container: {
@@ -29,7 +30,8 @@ export const styles = StyleSheet.create({
   },
   menuText: {
     fontSize: 20,
-    fontWeight: '500',
+    fontFamily: Font.POPPINS_BOLD,
+    color: Colors.colorBlack,
     paddingLeft: 15,
   },
   filterIconContainer: {
@@ -42,7 +44,7 @@ export const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 20,
-    fontWeight: '500',
+    fontFamily: Font.POPPINS_MEDIUM,
   },
   disabled: {
     backgroundColor: '#bdc3c7',

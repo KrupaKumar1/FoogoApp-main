@@ -37,7 +37,7 @@ const SplashScreen = () => {
         translucent
       />
       <Image style={styles.logo} source={Images.PLATE} resizeMode="contain" />
-      <Text style={styles.text}>Foo Go</Text>
+      <Text style={styles.text}>Restrozap POS</Text>
     </View>
   );
 };
