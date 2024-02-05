@@ -210,6 +210,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.LIGHT_GREY2,
   },
+ 
   scrollView: {
     flex: 1,
   },
@@ -372,5 +373,6 @@ const styles = StyleSheet.create({
   couponContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+
   },
 });

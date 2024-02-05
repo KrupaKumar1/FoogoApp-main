@@ -149,7 +149,8 @@ const AddItemModal = ({isVisible, closeModal, itemDetails}: ItemModalProps) => {
               style={styles.footerButton}
               onPress={() => {
                 /* Handle ADD */
-                dispatch(CartAction.addItemToCart(itemDetails));
+                // dispatch(CartAction.addItemToCart(itemDetails));
+                dispatch(CartAction.addItemToCart({...itemDetails, qty: 1}));
                 closeModal();
               }}>
               <Text style={styles.footerButtonTextAdd}>ADD</Text>
