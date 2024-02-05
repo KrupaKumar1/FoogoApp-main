@@ -1,12 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet, Platform, TouchableOpacity} from 'react-native';
 import Color from '../../../../constant/Color';
-import {
-  Border,
-  Colors,
-  FontFamily,
-  FontSize,
-} from '../../../../CSS/GlobalStyles';
+import {Colors, FontSize} from '../../../../CSS/GlobalStyles';
 import Font from '../../../../constant/Font';
 
 interface OrderCardProps {
@@ -55,7 +50,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
           <View style={styles.section}>
             <Text style={styles.preparingTime}>
               <Text style={styles.orderInfoText}>00:00</Text>
-              {', Recieved'}
+              {', Received'}
             </Text>
             <Text style={styles.preparingTime}>
               <Text style={styles.orderInfoText}>00:00</Text>
@@ -105,7 +100,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   orderInfoText: {
-    fontFamily: Font.POPPINS_BOLD,
+    fontFamily: Font.POPPINS_BOLD, // Use appropriate Poppins font family
     fontSize: FontSize.size_base,
     fontWeight: '500',
     color: Colors.colorBlack,
@@ -145,13 +140,16 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: Font.POPPINS_BOLD, // Use appropriate Poppins font family
   },
   orderType: {
     fontSize: 16,
+    fontFamily: Font.POPPINS_REGULAR, // Use appropriate Poppins font family
   },
   preparingTime: {
     fontSize: 14,
     color: '#555',
+    fontFamily: Font.POPPINS_REGULAR, // Use appropriate Poppins font family
   },
   footer: {
     flexDirection: 'row',
@@ -174,7 +172,7 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     textTransform: 'capitalize',
-    fontFamily: FontFamily.poppinsLight,
+    fontFamily: Font.POPPINS_LIGHT, // Use appropriate Poppins font family
     fontSize: FontSize.size_sm,
     color: Colors.colorBlack,
   },

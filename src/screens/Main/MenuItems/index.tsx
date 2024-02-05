@@ -19,6 +19,7 @@ import MenuCard from '../../../components/Main/MenuItems/MenuCard';
 import SkeletonForMenuCard from '../../../components/Main/MenuItems/SkeletonForMenuCard';
 import ViewCart from '../../../components/Main/MenuItems/ViewCart';
 import {Colors} from '../../../CSS/GlobalStyles';
+import Font from '../../../constant/Font';
 
 interface RootState {
   generalState: {
@@ -267,6 +268,7 @@ const styles = StyleSheet.create({
   menuText: {
     fontSize: 20,
     paddingLeft: 15,
+    fontFamily: Font.POPPINS_BOLD, // Use appropriate Poppins font from your constants
   },
   filterIconContainer: {
     marginLeft: 'auto',
@@ -279,7 +281,6 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingVertical: 10,
   },
-
   groupSelector: {
     paddingVertical: 10,
   },
@@ -287,6 +288,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
+    fontFamily: Font.POPPINS_BOLD, // Use appropriate Poppins font from your constants
   },
   selectedGroup: {
     borderColor: Color.PRIMARY,
@@ -295,8 +297,8 @@ const styles = StyleSheet.create({
   },
   groupButtonText: {
     fontSize: 16,
-    fontWeight: 'bold',
     color: Color.DEFAULT_BLACK, // Change text color for the tabs
+    fontFamily: Font.POPPINS_SEMI_BOLD, // Use appropriate Poppins font from your constants
   },
   filterContainer: {
     flexDirection: 'row',
@@ -316,6 +318,7 @@ const styles = StyleSheet.create({
   },
   filterText: {
     color: Color.DEFAULT_BLACK,
+    fontFamily: Font.POPPINS_REGULAR, // Use appropriate Poppins font from your constants
   },
   orderContainer: {
     flex: 1,

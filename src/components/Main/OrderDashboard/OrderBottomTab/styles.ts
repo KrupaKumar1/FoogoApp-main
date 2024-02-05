@@ -1,5 +1,6 @@
 import {StyleSheet} from 'react-native';
 import Color from '../../../../constant/Color';
+import Font from '../../../../constant/Font';
 
 export const styles = StyleSheet.create({
   bottomTabBar: {
@@ -33,11 +34,11 @@ export const styles = StyleSheet.create({
   tabText: {
     fontSize: 16,
     color: '#fff',
-    fontWeight: 'bold',
+    fontFamily: Font.POPPINS_MEDIUM,
   },
   tabTextSelected: {
     fontSize: 16,
     color: Color.PRIMARY,
-    fontWeight: 'bold',
+    fontFamily: Font.POPPINS_MEDIUM,
   },
 });

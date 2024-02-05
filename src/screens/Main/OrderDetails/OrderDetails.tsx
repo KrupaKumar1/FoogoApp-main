@@ -3,7 +3,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
   Platform,
@@ -16,12 +15,14 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Color from '../../../constant/Color';
 import {CartAction} from '../../../services/redux/actions';
 import {Colors, FontFamily, FontSize} from '../../../CSS/GlobalStyles';
-import FontAwsome from 'react-native-vector-icons/FontAwesome';
-import CrossIcon from 'react-native-vector-icons/Entypo';
+
+import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomerDetails from '../../../components/Main/OrderDetails/CutomerDetails';
 import Display from '../../../utils/Display';
 import Font from '../../../constant/Font';
+import CartItem from '../../../components/Main/Cart/CartItem';
+import BillSummary from '../../../components/Main/OrderDetails/BillSummary';
 
 // Enable LayoutAnimation for Android
 if (
@@ -36,9 +37,12 @@ const OrderDetails = ({navigation}) => {
   const dispatch = useDispatch();
 
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
-  const [showBillSummary, setShowBillSummary] = useState(true);
+  const [showBillSummary, setShowBillSummary] = useState(false);
   const [showAddTip, setShowAddTip] = useState(false);
 
+  const closeBillModal = () => {
+    setShowBillSummary(false);
+  };
   // Function to toggle visibility of CustomerDetails
   const toggleCustomerDetails = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -47,7 +51,6 @@ const OrderDetails = ({navigation}) => {
 
   // Function to toggle visibility of BillSummary
   const toggleBillSummary = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setShowBillSummary(!showBillSummary);
   };
 
@@ -66,49 +69,15 @@ const OrderDetails = ({navigation}) => {
           </TouchableOpacity>
           <Text style={styles.menuText}>OrderDetails</Text>
         </View>
-        <ScrollView style={styles.scrollView} decelerationRate="fast">
+        <ScrollView
+          style={styles.scrollView}
+          decelerationRate="fast"
+          showsVerticalScrollIndicator={false}>
           <View style={styles.summary}>
             <View style={styles.cardSection}>
               {cartItems?.length > 0 &&
                 cartItems.map((item: any, index: number) => (
-                  <View style={styles.itemList} key={index}>
-                    <View style={styles.itemDetails}>
-                      <View style={styles.section1}>
-                        <Text>{item?.name}</Text>
-                        <Text>$600.00</Text>
-                      </View>
-                      <Text style={styles.subText}>
-                        Jalapeno Dip, Mild Spicy, Medium Spice level
-                      </Text>
-                      <View style={styles.section1}>
-                        <View style={styles.qtySection}>
-                          <TouchableOpacity style={styles.qtyButton1}>
-                            <Text style={styles.qtyIcon}>-</Text>
-                          </TouchableOpacity>
-                          <TextInput
-                            style={styles.qtyValue}
-                            value="1"
-                            keyboardType="numeric"
-                          />
-                          <TouchableOpacity style={styles.qtyButton2}>
-                            <Text style={styles.qtyIcon}>+</Text>
-                          </TouchableOpacity>
-                        </View>
-                        <View style={styles.iconSection}>
-                          <TouchableOpacity style={styles.editIcon}>
-                            <FontAwsome name="edit" size={20} color="#000" />
-                          </TouchableOpacity>
-                          <TouchableOpacity style={styles.deleteIcon}>
-                            <CrossIcon
-                              name="cross"
-                              size={20}
-                              color={Color.DEFAULT_RED}
-                            />
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </View>
-                  </View>
+                  <CartItem item={item} key={index} />
                 ))}
               <TouchableOpacity style={styles.addMoreContainer}>
                 <Text style={styles.addMoreButton}>+Add More Items</Text>
@@ -121,11 +90,12 @@ const OrderDetails = ({navigation}) => {
                     <MaterialIcon
                       name="ticket-percent-outline"
                       size={20}
-                      color={Colors.colorDarkslateblue}
+                      style={styles.couponIcon}
+                      color={Colors.colorBlack}
                     />
-                    <Text>All Coupons</Text>
+                    <Text style={styles.cardTitle}>All Coupons</Text>
                   </View>
-                  <CrossIcon
+                  <Entypo
                     name="chevron-small-right"
                     size={20}
                     color={Colors.colorDarkslateblue}
@@ -136,8 +106,16 @@ const OrderDetails = ({navigation}) => {
             <View style={styles.cardSection}>
               <TouchableOpacity onPress={toggleCustomerDetails}>
                 <View style={styles.section1}>
-                  <Text>Customer Details</Text>
-                  <CrossIcon
+                  <View style={styles.couponContainer}>
+                    <Icon
+                      name="person"
+                      size={20}
+                      style={styles.couponIcon}
+                      color={Colors.colorBlack}
+                    />
+                    <Text style={styles.cardTitle}>Customer Details</Text>
+                  </View>
+                  <Entypo
                     name={
                       showCustomerDetails
                         ? 'chevron-small-down'
@@ -154,8 +132,16 @@ const OrderDetails = ({navigation}) => {
             <View style={styles.cardSection}>
               <TouchableOpacity onPress={toggleAddTip}>
                 <View style={styles.section1}>
-                  <Text>Add Tip</Text>
-                  <CrossIcon
+                  <View style={styles.couponContainer}>
+                    <Entypo
+                      name="wallet"
+                      size={20}
+                      style={styles.couponIcon}
+                      color={Colors.colorBlack}
+                    />
+                    <Text style={styles.cardTitle}>Add Tip</Text>
+                  </View>
+                  <Entypo
                     name={
                       showAddTip ? 'chevron-small-down' : 'chevron-small-right'
                     }
@@ -174,8 +160,17 @@ const OrderDetails = ({navigation}) => {
             <View style={styles.cardSection}>
               <TouchableOpacity onPress={toggleBillSummary}>
                 <View style={styles.section1}>
-                  <Text>Bill Summary</Text>
-                  <CrossIcon
+                  <View style={styles.couponContainer}>
+                    <Entypo
+                      name="text-document"
+                      size={20}
+                      style={styles.couponIcon}
+                      color={Colors.colorBlack}
+                    />
+                    <Text style={styles.cardTitle}>Bill Summary</Text>
+                  </View>
+
+                  <Entypo
                     name={
                       showBillSummary
                         ? 'chevron-small-down'
@@ -185,31 +180,13 @@ const OrderDetails = ({navigation}) => {
                     color={Colors.colorDarkslateblue}
                   />
                 </View>
+                {showBillSummary && (
+                  <BillSummary
+                    isVisible={showBillSummary}
+                    closeModal={closeBillModal}
+                  />
+                )}
               </TouchableOpacity>
-              {showBillSummary && (
-                <View style={styles.billContainer}>
-                  <View style={styles.billItem}>
-                    <Text>Sub Total</Text>
-                    <Text>$10.00</Text>
-                  </View>
-                  <View style={styles.billItem}>
-                    <Text>Coupon Value</Text>
-                    <Text style={styles.reducedAmountText}>-$5.00</Text>
-                  </View>
-                  <View style={styles.billItem}>
-                    <Text>Tax (10%)</Text>
-                    <Text>$4.00</Text>
-                  </View>
-                  <View style={styles.billItem}>
-                    <Text>Service Tax (3%)</Text>
-                    <Text>$1.00</Text>
-                  </View>
-                  <View style={styles.billItem}>
-                    <Text style={styles.totalDue}>Total Due Amount</Text>
-                    <Text style={styles.totalDue}>$40.00</Text>
-                  </View>
-                </View>
-              )}
             </View>
           </View>
         </ScrollView>
@@ -261,6 +238,14 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     marginBottom: 10,
   },
+  couponIcon: {
+    marginRight: 10,
+  },
+  cardTitle: {
+    fontSize: 12,
+    fontFamily: Font.POPPINS_SEMI_BOLD,
+    color: Color.DEFAULT_BLACK,
+  },
   addMoreContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -270,9 +255,11 @@ const styles = StyleSheet.create({
   addMoreButton: {
     color: Color.PRIMARY,
     fontWeight: 'bold',
+    fontFamily: Font.POPPINS_BOLD,
   },
   removeButton: {
     color: Color.DEFAULT_RED,
+    fontFamily: Font.POPPINS_BOLD,
   },
   itemList: {
     backgroundColor: Colors.colorWhitesmoke_100,
@@ -296,36 +283,37 @@ const styles = StyleSheet.create({
   qtySection: {
     flexDirection: 'row',
     borderWidth: 2,
-    borderRadius: Display.setWidth(12.5), // Set border radius dynamically
+    borderRadius: Display.setWidth(12.5),
     borderColor: Color.PRIMARY,
     justifyContent: 'center',
-    width: Display.setWidth(30), // Set width dynamically
-    padding: Display.setWidth(0.75), // Set padding dynamically
+    width: Display.setWidth(30),
+    padding: Display.setWidth(0.75),
   },
   qtyButton1: {
     backgroundColor: Color.PRIMARY,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    width: Display.setWidth(7), // Set width dynamically
-    height: Display.setHeight(3), // Set height dynamically
-    borderTopLeftRadius: Display.setWidth(5), // Set border radius dynamically
-    borderBottomLeftRadius: Display.setWidth(5), // Set border radius dynamically
+    width: Display.setWidth(7),
+    height: Display.setHeight(3),
+    borderTopLeftRadius: Display.setWidth(5),
+    borderBottomLeftRadius: Display.setWidth(5),
   },
   qtyButton2: {
     backgroundColor: Color.PRIMARY,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    width: Display.setWidth(7), // Set width dynamically
-    height: Display.setHeight(3), // Set height dynamically
-    borderTopRightRadius: Display.setWidth(5), // Set border radius dynamically
-    borderBottomRightRadius: Display.setWidth(5), // Set border radius dynamically
+    width: Display.setWidth(7),
+    height: Display.setHeight(3),
+    borderTopRightRadius: Display.setWidth(5),
+    borderBottomRightRadius: Display.setWidth(5),
   },
 
   qtyValue: {
     fontSize: 16,
     marginHorizontal: 25,
+    fontFamily: Font.POPPINS_BOLD,
   },
   qtyIcon: {
     color: Color.DEFAULT_WHITE,
@@ -345,36 +333,17 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 50,
   },
-  billSummary: {
-    backgroundColor: Color.DEFAULT_WHITE,
-    padding: 20,
-  },
-  billContainer: {
-    marginTop: 20,
-  },
-  billItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingBottom: 5,
-  },
-  totalDue: {
-    fontWeight: 'bold',
-    fontSize: FontSize.size_xl,
-    color: Color.DEFAULT_BLACK,
-  },
-  reducedAmountText: {
-    color: '#d11a2a',
-  },
+
   footer: {
     flexDirection: 'row',
-    position: 'absolute',
+    position: 'relative',
     bottom: 0,
     left: 0,
     right: 0,
     height: 70,
     width: '100%',
-    zIndex: 2, // Adjust the z-index as needed
-    elevation: 5, // For Android elevation
+    zIndex: 5,
+    elevation: 5,
   },
   paymentContainer: {
     backgroundColor: Color.DEFAULT_WHITE,
