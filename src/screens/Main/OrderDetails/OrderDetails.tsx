@@ -21,6 +21,7 @@ import CrossIcon from 'react-native-vector-icons/Entypo';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomerDetails from '../../../components/Main/OrderDetails/CutomerDetails';
 import Display from '../../../utils/Display';
+import Font from '../../../constant/Font';
 
 // Enable LayoutAnimation for Android
 if (
@@ -36,6 +37,7 @@ const OrderDetails = ({navigation}) => {
 
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [showBillSummary, setShowBillSummary] = useState(true);
+  const [showAddTip, setShowAddTip] = useState(false);
 
   // Function to toggle visibility of CustomerDetails
   const toggleCustomerDetails = () => {
@@ -47,6 +49,12 @@ const OrderDetails = ({navigation}) => {
   const toggleBillSummary = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setShowBillSummary(!showBillSummary);
+  };
+
+  // Function to toggle visibility of AddTip
+  const toggleAddTip = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setShowAddTip(!showAddTip);
   };
 
   return (
@@ -107,54 +115,77 @@ const OrderDetails = ({navigation}) => {
               </TouchableOpacity>
             </View>
             <View style={styles.cardSection}>
-              <View style={styles.section1}>
-                <View style={styles.couponContainer}>
-                  <MaterialIcon
-                    name="ticket-percent-outline"
+              <TouchableOpacity>
+                <View style={styles.section1}>
+                  <View style={styles.couponContainer}>
+                    <MaterialIcon
+                      name="ticket-percent-outline"
+                      size={20}
+                      color={Colors.colorDarkslateblue}
+                    />
+                    <Text>All Coupons</Text>
+                  </View>
+                  <CrossIcon
+                    name="chevron-small-right"
                     size={20}
                     color={Colors.colorDarkslateblue}
                   />
-                  <Text>All Coupons</Text>
                 </View>
-                <CrossIcon
-                  name="chevron-small-right"
-                  size={20}
-                  color={Colors.colorDarkslateblue}
-                />
-              </View>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={styles.cardSection}
-              onPress={toggleCustomerDetails}>
-              <View style={styles.section1}>
-                <Text>Customer Details</Text>
-                <CrossIcon
-                  name={
-                    showCustomerDetails
-                      ? 'chevron-small-down'
-                      : 'chevron-small-right'
-                  }
-                  size={20}
-                  color={Colors.colorDarkslateblue}
-                />
-              </View>
+            <View style={styles.cardSection}>
+              <TouchableOpacity onPress={toggleCustomerDetails}>
+                <View style={styles.section1}>
+                  <Text>Customer Details</Text>
+                  <CrossIcon
+                    name={
+                      showCustomerDetails
+                        ? 'chevron-small-down'
+                        : 'chevron-small-right'
+                    }
+                    size={20}
+                    color={Colors.colorDarkslateblue}
+                  />
+                </View>
+              </TouchableOpacity>
               {showCustomerDetails && <CustomerDetails />}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.cardSection}
-              onPress={toggleBillSummary}>
-              <View style={styles.section1}>
-                <Text>Bill Summary</Text>
-                <CrossIcon
-                  name={
-                    showBillSummary
-                      ? 'chevron-small-down'
-                      : 'chevron-small-right'
-                  }
-                  size={20}
-                  color={Colors.colorDarkslateblue}
-                />
-              </View>
+            </View>
+
+            <View style={styles.cardSection}>
+              <TouchableOpacity onPress={toggleAddTip}>
+                <View style={styles.section1}>
+                  <Text>Add Tip</Text>
+                  <CrossIcon
+                    name={
+                      showAddTip ? 'chevron-small-down' : 'chevron-small-right'
+                    }
+                    size={20}
+                    color={Colors.colorDarkslateblue}
+                  />
+                </View>
+                {showAddTip && (
+                  <View>
+                    <Text>10%</Text>
+                    <Text>10%</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            </View>
+            <View style={styles.cardSection}>
+              <TouchableOpacity onPress={toggleBillSummary}>
+                <View style={styles.section1}>
+                  <Text>Bill Summary</Text>
+                  <CrossIcon
+                    name={
+                      showBillSummary
+                        ? 'chevron-small-down'
+                        : 'chevron-small-right'
+                    }
+                    size={20}
+                    color={Colors.colorDarkslateblue}
+                  />
+                </View>
+              </TouchableOpacity>
               {showBillSummary && (
                 <View style={styles.billContainer}>
                   <View style={styles.billItem}>
@@ -179,7 +210,7 @@ const OrderDetails = ({navigation}) => {
                   </View>
                 </View>
               )}
-            </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
         <View style={styles.footer}>
@@ -215,6 +246,7 @@ const styles = StyleSheet.create({
   },
   menuText: {
     fontSize: 20,
+    fontFamily: Font.POPPINS_BOLD,
     paddingLeft: 15,
   },
   summary: {
@@ -228,7 +260,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.DEFAULT_WHITE,
     borderRadius: 12,
     shadowColor: '#000',
-    marginBottom: 5,
+    marginBottom: 10,
   },
   addMoreContainer: {
     flexDirection: 'row',
@@ -245,8 +277,7 @@ const styles = StyleSheet.create({
   },
   itemList: {
     backgroundColor: Colors.colorWhitesmoke_100,
-    borderBottomColor: Color.DEFAULT_BLACK,
-    borderBottomWidth: 1,
+    marginBottom: 4,
   },
   itemDetails: {
     padding: 10,
@@ -259,7 +290,7 @@ const styles = StyleSheet.create({
   subText: {
     fontSize: 10,
     fontWeight: 'normal',
-    fontFamily: FontFamily.poppinsMedium,
+    fontFamily: Font.POPPINS_BOLD,
     color: Color.DEFAULT_BLACK,
     paddingBottom: 10,
   },
