@@ -20,6 +20,7 @@ import SkeletonForMenuCard from '../../../components/Main/MenuItems/SkeletonForM
 import ViewCart from '../../../components/Main/MenuItems/ViewCart';
 import {Colors} from '../../../CSS/GlobalStyles';
 import Font from '../../../constant/Font';
+import { Image } from 'react-native-elements';
 
 interface RootState {
   generalState: {
@@ -30,6 +31,8 @@ interface RootState {
 
 const MenuItems = ({navigation}: {navigation: any}) => {
   const [selectedGroupId, setSelectedGroupId] = useState(10); // Initialize with the default group
+  
+ const [menuitem, setmenuitem] = useState([]);
   const {token} = useSelector((state: RootState) => state?.generalState ?? {});
   const {cartItems} = useSelector(state => state?.cartState);
 
@@ -139,6 +142,86 @@ const MenuItems = ({navigation}: {navigation: any}) => {
       },
     });
   };
+   const getGroupItemsWithGroupAPI = () => {
+    // setItemsLoading(true);
+    API_CALL({
+      method: 'GET',
+      url: `Menu/GetActiveMenuGroupsAndMenuItems?menuType=&isTopOrderedItem=false`,
+      headerConfig: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+   
+
+      callback: async ({status, data}: {status: any; data: any}) => {
+        if (status === 200) {
+        
+       console.log("data",data.data);
+           const menuGroupItemData = data.data;
+        const itemQtyMap: {[key: string]: number} = {};
+          cartItems.forEach((listItem) => {
+            menuGroupItemData.forEach((apiItem) => {
+              const matchingMenuItem = apiItem.menuItemDto.find(
+                (menuItem:any) => menuItem.name === listItem.data.item
+              );
+ 
+              if (matchingMenuItem) {
+                const itemName = matchingMenuItem.name;
+                const quantityToAdd = listItem.data.qty;
+ 
+                if (itemQtyMap.hasOwnProperty(itemName)) {
+                  itemQtyMap[itemName] += quantityToAdd;
+                } else {
+                  itemQtyMap[itemName] = quantityToAdd;
+                }
+ 
+                matchingMenuItem.quantity = itemQtyMap[itemName];
+              }
+            });
+          });
+ 
+          // Remove groups with empty menuItemDto arrays
+          const updatedMenuGroupItemData = menuGroupItemData.filter(
+            (apiItem:any) => {
+              return apiItem.menuItemDto.length > 0;
+            }
+          );
+ 
+          // Update the quantity in the remaining groups
+          updatedMenuGroupItemData.forEach((apiItem:any) => {
+            apiItem.menuItemDto.forEach((menuItem:any) => {
+              const itemName = menuItem.name;
+ 
+              if (itemQtyMap.hasOwnProperty(itemName)) {
+                menuItem.quantity = itemQtyMap[itemName];
+              }
+            });
+          });
+ 
+          // Set the updated menuGroupItemData without empty groups
+          setmenuitem(menuGroupItemData);
+          // setmenuItemGroup([]);
+          
+        } else {
+          Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        }
+        setItemsLoading(false);
+      },
+    });
+  };
+
+  useEffect(()=>{
+    if(selectedGroupId==10){
+     getGroupItemsWithGroupAPI()
+    }
+  },[selectedGroupId]);
+
+
 
   /**Group Names */
   const getGroupNames = () => {
@@ -189,6 +272,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
   }, [cartItems]);
 
   return (
+    
     <View style={styles.container}>
       <SafeAreaView>
         <Header />
@@ -232,6 +316,9 @@ const MenuItems = ({navigation}: {navigation: any}) => {
           ))}
         </ScrollView>
       </View>
+   {selectedGroupId !=10 && (
+    <>
+   
       <View style={styles.orderContainer}>
         {itemsLoading ? (
           // Render Skeleton Cards dynamically based on the length of menuItems array
@@ -245,6 +332,34 @@ const MenuItems = ({navigation}: {navigation: any}) => {
           />
         )}
       </View>
+      </>
+      )}
+      
+      
+
+ {selectedGroupId == 10 && (
+      <FlatList
+        data={menuitem}
+        keyExtractor={(item) => item?.id.toString()}
+        renderItem={({ item: menuitem1 }) => {
+          if (menuitem1?.isPOS && menuitem1?.isGroupAvailableNow) {
+            console.log(menuitem1);
+            return (
+              <>
+                <Text style={styles.category}>{menuitem1.name}</Text>
+             <FlatList
+               data={menuitem1.menuItemDto}
+                renderItem={({item}) => <MenuCard itemDetails={item} />}
+               />
+              </>
+            );
+          }
+        }}
+      />
+  )
+  }
+
+
       {cartItems?.length > 0 && (
         <ViewCart
           navigation={navigation}
@@ -266,6 +381,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     backgroundColor: Color.LIGHT_GREY2,
+  },
+   category: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginVertical: 15,
+    marginLeft:5,
+  },
+  itemContainer: {
+    marginRight: 10,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
   },
   menuText: {
     fontSize: 20,
