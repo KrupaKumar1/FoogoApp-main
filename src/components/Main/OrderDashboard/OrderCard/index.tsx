@@ -93,7 +93,7 @@ const {token} = useSelector(state => state?.generalState);
       },
       callback: async ({status, data}: {status: any; data: any}) => {
         if (status === 200) {
-        Alert.alert('Order Delayed Successfully');
+        Alert.alert('Order Ready Successfully');
         getAllOrdersList();
         
         } else {
