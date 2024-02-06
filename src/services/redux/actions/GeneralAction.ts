@@ -3,6 +3,8 @@ import StorageService from '../../StorageService';
 const types = {
   SET_IS_APP_LOADING: 'SET_IS_APP_LOADING',
   SET_TOKEN: 'SET_TOKEN',
+  USER_IP: 'USER_IP',
+  USER_DETAILS: 'USER_DETAILS',
   SET_FIRST_TIME_USE: 'SET_FIRST_TIME_USE',
   LOG_OUT: 'LOG_OUT',
 };
@@ -24,6 +26,20 @@ const setToken = (token: any) => {
   return {
     type: types.SET_TOKEN,
     payload: token,
+  };
+};
+
+const setUserIp = (userIp: any) => {
+  return {
+    type: types.USER_IP,
+    payload: userIp,
+  };
+};
+
+const setUserDetails = (userDetails: any) => {
+  return {
+    type: types.USER_DETAILS,
+    payload: userDetails,
   };
 };
 
@@ -60,6 +76,8 @@ const appStart = () => {
 export default {
   setIsAppLoading,
   setToken,
+  setUserIp,
+  setUserDetails,
   types,
   appStart,
   setIsFirstTimeUse,
