@@ -2,7 +2,9 @@ import {GeneralAction} from '../actions';
 const initialState = {
   isAppLoading: true,
   token: '',
+  userIp: '',
   isFirstTimeUse: true,
+  userDetails: {},
 };
 
 const GeneralReducer = (state = initialState, action: any) => {
@@ -26,6 +28,16 @@ const GeneralReducer = (state = initialState, action: any) => {
       return {
         ...state,
         token: '',
+      };
+    case GeneralAction.types.USER_DETAILS:
+      return {
+        ...state,
+        userDetails: action.payload,
+      };
+    case GeneralAction.types.USER_IP:
+      return {
+        ...state,
+        userIp: action.payload,
       };
     default:
       return state;

@@ -26,7 +26,6 @@ const locationApi: string = 'https://geolocation-db.com/json/';
 
 const LoginScreen = ({navigation}) => {
   const [isPasswordShow, setIsPasswordShow] = useState(false);
-  const [ip, setIP] = useState<string>('');
 
   const dispatch = useDispatch();
 
@@ -47,7 +46,7 @@ const LoginScreen = ({navigation}) => {
     const getData = async () => {
       const res = await axios.get(`${locationApi}`);
       const dataip = res.data.IPv4;
-      setIP(dataip);
+      dispatch(GeneralAction.setUserIp(dataip));
     };
     getData();
   }, []);
@@ -87,8 +86,8 @@ const LoginScreen = ({navigation}) => {
         if (status === 200) {
           if (data.successMessage === 'Success' && data.data.isActive) {
             dispatch(GeneralAction.setToken(`${data.data.userToken}`));
+            dispatch(GeneralAction.setUserDetails(data.data));
             StorageService.setToken(data.data.userToken);
-            // navigation.navigate('Main');
           } else {
             Alert.alert(
               'Error',

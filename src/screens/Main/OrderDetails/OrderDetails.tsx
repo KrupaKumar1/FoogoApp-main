@@ -23,6 +23,8 @@ import Display from '../../../utils/Display';
 import Font from '../../../constant/Font';
 import CartItem from '../../../components/Main/Cart/CartItem';
 import BillSummary from '../../../components/Main/OrderDetails/BillSummary';
+import API_CALL from '../../../services/Api';
+import {Alert} from 'react-native';
 
 // Enable LayoutAnimation for Android
 if (
@@ -34,12 +36,296 @@ if (
 
 const OrderDetails = ({navigation}) => {
   const {cartItems} = useSelector(state => state?.cartState);
+  const {token, userDetails, userIp} = useSelector(
+    state => state?.generalState,
+  );
+
+  const currentDate = new Date();
+
+  console.log('USER', userDetails);
 
   const dispatch = useDispatch();
 
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [showBillSummary, setShowBillSummary] = useState(false);
   const [showAddTip, setShowAddTip] = useState(false);
+
+  /**Customer Details */
+  const [customerDetails, setCustomerDetails] = useState({});
+
+  /**BIll Sumary Details */
+
+  const [billDetails, setBillDetails] = useState({});
+  console.log('BILL', billDetails);
+
+  const billDetailsHandler = (data: any) => {
+    setBillDetails(data);
+  };
+
+  /**On CLick GenerateKOT*/
+  /**Order Item Info for API */
+  const orderItemsInfo = cartItems?.map(list => ({
+    createdBy: userDetails.fullName,
+    createdDate: currentDate,
+    createdIP: userIp,
+    updatedBy: '',
+    updatedDate: null,
+    updatedIP: '',
+    deletedBy: '',
+    deletedDate: null,
+    deletedIP: '',
+    id: 0,
+    guid: userDetails?.guid,
+    orderId: 0,
+    menuId: list?.responseOrder?.id,
+    menuGroupId: list.responseOrder.menuGroupId,
+    itemName: list?.item,
+    menuSubItemId: list?.subItem != null ? list?.subItem.id : null,
+    subItemName: list?.subItem != null ? list?.subItem.itemName : null,
+    price: list?.price,
+    specialInstructions:
+      list?.customFieldListItem != undefined
+        ? JSON.stringify(
+            list?.customFields.reduce((acc, item) => {
+              acc[item.fieldName] = item.value;
+              return acc;
+            }, {}),
+          )
+        : '',
+    // customFields: list?.customFieldListItem,
+    quantity: list?.qty,
+    addOnTemplateText: '',
+    addOnAmount: list?.addonsamount1,
+    menuAddOnDescription: '',
+    originalQuantity: 0,
+    rating: 0,
+    discountAmount: list?.total * (list?.responseOrder.discount / 100),
+    couponAmount: 0,
+    discountPercentage: list?.responseOrder.discount,
+    couponPercentage: 0,
+    singleItemDiscountAmount: 0,
+    singleItemCouponAmount: 0,
+    isPartialRefunded: false,
+    isNewOrder: false,
+    isUpdateQuantity: false,
+
+    groupInfo: {
+      groupId: 0,
+      groupIndex: 0,
+      groupName: '',
+    },
+    printer: {
+      server: '',
+      name: '',
+    },
+
+    // selectedOrderItemAddOns: selectedAddons(list?.addonField, list.data),
+    selectedOrderItemAddOns: [],
+    refundQuantity: 0,
+
+    menuSubItem:
+      list?.subItem?.length !== 0
+        ? {
+            createdBy: userDetails.fullName,
+            createdDate: currentDate,
+            createdIP: userIp,
+            id: list.data?.subItem?.id,
+            itemName: list?.subItem?.itemName,
+            itemPrice: list?.subItem?.itemPrice,
+          }
+        : null,
+  }));
+
+  const SaveOrder = () => {
+    const createdBy = userDetails?.userId;
+    const createdDate = currentDate;
+    const createdIP = userIp;
+    const updatedBy = '';
+    const updatedDate = null;
+    const updatedIP = '';
+
+    const id = 0;
+    const guid = userDetails?.guid;
+
+    /**Customer Details */
+    const customerId = 0;
+    const customerName = 'KK';
+    const emailAddress = '';
+    const phone = '';
+
+    /**Amounts */
+    const subTotal = billDetails?.subTotal;
+    const tax = billDetails?.tax;
+    const grandTotal = billDetails?.finalGrandTotal;
+    const discountAmount = 0;
+    const couponAmount = '';
+    const tipAmount = 0;
+    const paymentDiscountAmount = 0;
+    const addOnAmount = 0;
+    const serviceCharge = 5;
+    const serviceChargeFee = billDetails?.serviceCharge;
+    const refundAmount = 0;
+    const refundedTax = 0;
+    const refundedServiceCharge = 0;
+    const paymentDiscountPercentage = 0;
+    const isServiceChargeRefund = false;
+    const isTaxRefund = false;
+    const isServiceChargePercentage = true;
+    const taxPercentage = 10;
+    const couponCode = '';
+
+    /**Order keys */
+    const orderId = 0;
+    const orderNumber = '';
+    const orderStatusId = 21;
+    const orderSource = 'POS';
+    const deliveryType = 'TakeAway';
+
+    /**OrderItems Keys */
+    const orderItems = orderItemsInfo;
+    const orderItemAddOns = [
+      {
+        createdBy: userDetails.fullName,
+        createdDate: currentDate,
+        createdIP: userIp,
+        updatedBy: '',
+        updatedDate: null,
+        updatedIP: '',
+        deletedBy: '',
+        deletedDate: null,
+        deletedIP: '',
+        id: 0,
+        guid: guid,
+        orderId: 0,
+        orderItemId: 0,
+        addOnId: 1,
+        menuId: 1,
+      },
+    ];
+
+    /**Table Dine-In Keys */
+    const tableId = '';
+    const freeUpTableIds = '';
+    const numberOfPeople = 0;
+
+    /**Payment Type */
+    const modeOfPayment = 'Cash';
+    const creditCardType = '';
+    const paymentStatusId = 2;
+    const isPrintingFailed = false;
+    const printerStatusId = 0;
+
+    /**Split Payment */
+    const orderSplit = {};
+    const noOfSplits = 0;
+    const splitPayments = orderSplit;
+
+    /**Additional Fields */
+    const orderSpecialInstructions = '';
+    const vehicleNumber = '';
+    const addOnTemplateText = '';
+    const adminOrderComment = '';
+    const kitchenServiceResponse = '';
+
+    /**Delivery Keys */
+    const isDeliveryScheduled = false;
+    const scheduleDeliveryTime = currentDate;
+    const estimatedDeliveryOrPickupTime = currentDate;
+    const orderCloseDateTime = currentDate;
+    const orderReadyDateTime = currentDate;
+    const isPickupOrder = true;
+
+    const orderPayload = {
+      createdBy,
+      createdDate,
+      createdIP,
+      updatedBy,
+      updatedDate,
+      updatedIP,
+      id,
+      guid,
+      orderSource,
+      customerId,
+      customerName,
+      emailAddress,
+      phone,
+      printerStatusId,
+      discountAmount,
+      couponAmount,
+      tipAmount,
+      subTotal,
+      tax,
+      grandTotal,
+      orderStatusId,
+      vehicleNumber,
+      adminOrderComment,
+      kitchenServiceResponse,
+      orderSpecialInstructions,
+      modeOfPayment,
+      paymentDiscountAmount,
+      addOnAmount,
+      addOnTemplateText,
+      creditCardType,
+      serviceCharge,
+      serviceChargeFee,
+      deliveryType,
+      tableId,
+      freeUpTableIds,
+      numberOfPeople,
+      refundAmount,
+      refundedTax,
+      refundedServiceCharge,
+      paymentDiscountPercentage,
+      paymentStatusId,
+      isPrintingFailed,
+      orderId,
+      orderNumber,
+      isPickupOrder,
+      isServiceChargeRefund,
+      isTaxRefund,
+      isServiceChargePercentage,
+      isDeliveryScheduled,
+      scheduleDeliveryTime,
+      estimatedDeliveryOrPickupTime,
+      orderCloseDateTime,
+      orderReadyDateTime,
+      taxPercentage,
+      couponCode,
+      orderItems,
+      orderItemAddOns,
+      noOfSplits,
+      splitPayments,
+    };
+
+    //console.log(orderPayload, "SVAE_ORDER");
+    API_CALL({
+      method: 'POST',
+      url: 'Order/SaveOrder',
+      headerConfig: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      data: orderPayload,
+
+      callback: async ({status, data}: {status: any; data: any}) => {
+        if (status === 200) {
+          Alert.alert(
+            'Error',
+            'Order Placed Successfully',
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        } else {
+          Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        }
+      },
+    });
+  };
 
   const closeBillModal = () => {
     setShowBillSummary(false);
@@ -190,6 +476,7 @@ const OrderDetails = ({navigation}) => {
                     isVisible={showBillSummary}
                     closeModal={closeBillModal}
                     cartItems={cartItems}
+                    billDetailsHandler={billDetailsHandler}
                   />
                 )}
               </TouchableOpacity>
@@ -202,7 +489,9 @@ const OrderDetails = ({navigation}) => {
             style={styles.paymentContainer}>
             <Text style={styles.paymentText}>Cancel Order</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.generateKOTContainer}>
+          <TouchableOpacity
+            onPress={() => SaveOrder()}
+            style={styles.generateKOTContainer}>
             <Text style={styles.generateKOTText}>Generate KOT</Text>
           </TouchableOpacity>
         </View>

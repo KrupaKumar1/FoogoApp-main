@@ -11,7 +11,7 @@ import MaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons'
 import {useSelector} from 'react-redux';
 
 const BillSummary = (props: any) => {
-  const {isVisible, closeModal, cartItems} = props;
+  const {isVisible, closeModal, cartItems, billDetailsHandler} = props;
 
   const {generalSettings} = useSelector(state => state?.generalSettingsState);
 
@@ -37,6 +37,24 @@ const BillSummary = (props: any) => {
     setAdditionalTax(taxAdditionalToApi);
   };
 
+  useEffect(() => {
+    billDetailsHandler({
+      subtotal: subtotal,
+      tax: tax,
+      serviceCharge: additionalTax,
+      finalGrandTotal: finalGrandTotal,
+    });
+  }, [
+    subtotal,
+    tax,
+    additionalTax,
+    finalGrandTotal,
+    generalSettings?.taxPercentage,
+    generalSettings?.serviceChargeFee,
+    generalSettings?.isServiceChargePercentage,
+    generalSettings?.isServiceChargeApplicable,
+  ]);
+
   const finalGrandTotalHandler = () => {
     let calculatedAmount = 0;
 
@@ -45,12 +63,12 @@ const BillSummary = (props: any) => {
       generalSettings?.isServiceChargeApplicable
     ) {
       calculatedAmount =
-        subtotal -
+        subtotal +
         (subtotal * generalSettings?.taxPercentage) / 100 +
         (subtotal * generalSettings?.serviceChargeFee) / 100;
     } else {
       calculatedAmount =
-        subtotal -
+        subtotal +
         (subtotal * generalSettings?.taxPercentage) / 100 +
         generalSettings?.serviceChargeFee;
     }
