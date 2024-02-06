@@ -310,7 +310,7 @@ const OrderDetails = ({navigation}) => {
       callback: async ({status, data}: {status: any; data: any}) => {
         if (status === 200) {
           Alert.alert(
-            'Error',
+            'Success',
             'Order Placed Successfully',
             [{text: 'OK', onPress: () => console.log('OK Pressed')}],
             {cancelable: false},
