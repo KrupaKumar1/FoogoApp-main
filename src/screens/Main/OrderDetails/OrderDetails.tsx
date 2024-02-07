@@ -43,6 +43,7 @@ const OrderDetails = ({navigation}) => {
   const {token, userDetails, userIp} = useSelector(
     state => state?.generalState,
   );
+  const {generalSettings} = useSelector(state => state?.generalSettingsState);
 
   const currentDate = new Date();
 
@@ -50,7 +51,6 @@ const OrderDetails = ({navigation}) => {
 
   const dispatch = useDispatch();
 
-  const [showAllCoupons, setShowAllCoupons] = useState(false);
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [showBillSummary, setShowBillSummary] = useState(false);
   const [showAddTip, setShowAddTip] = useState(false);
@@ -59,9 +59,6 @@ const OrderDetails = ({navigation}) => {
   const [customerDetails, setCustomerDetails] = useState({});
 
   /**BIll Sumary Details */
-  const {generalSettings} = useSelector(state => state?.generalSettingsState);
-
-  console.log('SETTINGS', generalSettings);
 
   const [finalSubTotal, setSubtotal] = useState(0);
   const [gstTax, setTax] = useState(0);
@@ -209,7 +206,7 @@ const OrderDetails = ({navigation}) => {
     refundQuantity: 0,
 
     menuSubItem:
-      list?.subItem?.length !== 0
+      list?.subItem?.id != null
         ? {
             createdBy: userDetails.fullName,
             createdDate: currentDate,

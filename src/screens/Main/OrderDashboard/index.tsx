@@ -164,6 +164,12 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
     getAllOrdersList();
   }, [selectedTab]);
 
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     getAllOrdersList();
+  //   }, 9000);
+  // });
+
   const menuItemsRouteHandler = () => {
     navigation?.navigate('MenuItems');
   };
