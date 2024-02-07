@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   qtySection: {
     flexDirection: 'row',
     borderWidth: 2,
-    borderRadius: 20,
+    borderRadius: 25,
     borderColor: Color.PRIMARY,
     justifyContent: 'center',
     alignItems: 'center',
@@ -101,8 +101,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: Display.setWidth(7),
     height: Display.setHeight(3),
-    borderTopLeftRadius: Display.setWidth(5),
-    borderBottomLeftRadius: Display.setWidth(5),
+    borderTopLeftRadius: 25,
+    borderBottomLeftRadius: 25,
   },
   qtyButton2: {
     backgroundColor: Color.PRIMARY,
@@ -111,8 +111,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: Display.setWidth(7),
     height: Display.setHeight(3),
-    borderTopRightRadius: Display.setWidth(5),
-    borderBottomRightRadius: Display.setWidth(5),
+    borderTopRightRadius: 25,
+    borderBottomRightRadius: 25,
   },
 
   qtyValue: {
