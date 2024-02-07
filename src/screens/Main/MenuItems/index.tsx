@@ -387,14 +387,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     marginLeft: 5,
   },
-  itemContainer: {
-    marginRight: 10,
-  },
-  image: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-  },
+ 
   menuText: {
     fontSize: 20,
     paddingLeft: 15,
