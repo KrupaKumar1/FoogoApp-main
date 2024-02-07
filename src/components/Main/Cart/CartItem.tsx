@@ -34,11 +34,7 @@ const CartItem = ({item}) => {
             <TouchableOpacity style={styles.qtyButton1}>
               <Text style={styles.qtyIcon}>-</Text>
             </TouchableOpacity>
-            <TextInput
-              style={styles.qtyValue}
-              value="1"
-              keyboardType="numeric"
-            />
+            <Text style={styles.qtyValue}>3</Text>
             <TouchableOpacity style={styles.qtyButton2}>
               <Text style={styles.qtyIcon}>+</Text>
             </TouchableOpacity>
