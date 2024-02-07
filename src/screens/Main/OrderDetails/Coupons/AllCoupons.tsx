@@ -209,8 +209,8 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 12,
-    fontFamily: Font.POPPINS_SEMI_BOLD,
-    color: Color.DEFAULT_BLACK,
+    fontFamily: Font.POPPINS_REGULAR,
+    color: Color.FABEBOOK_BLUE,
   },
   appliedButtonContainer: {
     flexDirection: 'row',
