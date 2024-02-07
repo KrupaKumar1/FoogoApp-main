@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   Alert,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -21,6 +22,7 @@ import ViewCart from '../../../components/Main/MenuItems/ViewCart';
 import {Colors} from '../../../CSS/GlobalStyles';
 import Font from '../../../constant/Font';
 import {Image} from 'react-native-elements';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 interface RootState {
   generalState: {
@@ -268,7 +270,8 @@ const MenuItems = ({navigation}: {navigation: any}) => {
   }, [cartItems]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaProvider style={styles.container}>
+      <StatusBar barStyle={'dark-content'} translucent={true} />
       <SafeAreaView>
         <Header />
       </SafeAreaView>
@@ -365,7 +368,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
           cardQtySetHandler={cardQtySetHandler}
         />
       )}
-    </View>
+    </SafeAreaProvider>
   );
 };
 
@@ -387,7 +390,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     marginLeft: 5,
   },
- 
+
   menuText: {
     fontSize: 20,
     paddingLeft: 15,

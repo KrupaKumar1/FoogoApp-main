@@ -25,6 +25,7 @@ import CartItem from '../../../components/Main/Cart/CartItem';
 import BillSummary from '../../../components/Main/OrderDetails/BillSummary';
 import API_CALL from '../../../services/Api';
 import {Alert} from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 // Enable LayoutAnimation for Android
 if (
@@ -413,156 +414,154 @@ const OrderDetails = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.LIGHT_GREY2}}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" size={30} color="black" />
-          </TouchableOpacity>
-          <Text style={styles.menuText}>OrderDetails</Text>
-        </View>
-        <ScrollView
-          style={styles.scrollView}
-          decelerationRate="fast"
-          showsVerticalScrollIndicator={false}>
-          <View style={styles.summary}>
-            <View style={styles.cardSection}>
-              {cartItems?.length > 0 &&
-                cartItems.map((item: any, index: number) => (
-                  <CartItem item={item} key={index} />
-                ))}
-              <TouchableOpacity style={styles.addMoreContainer}>
-                <Text style={styles.addMoreButton}>+Add More Items</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.cardSection}>
-              <TouchableOpacity>
-                <View style={styles.section1}>
-                  <View style={styles.couponContainer}>
-                    <MaterialIcon
-                      name="ticket-percent-outline"
-                      size={20}
-                      style={styles.couponIcon}
-                      color={Colors.colorBlack}
-                    />
-                    <Text style={styles.cardTitle}>All Coupons</Text>
-                  </View>
-                  <Entypo
-                    name="chevron-small-right"
-                    size={20}
-                    color={Colors.colorDarkslateblue}
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.cardSection}>
-              <TouchableOpacity onPress={toggleCustomerDetails}>
-                <View style={styles.section1}>
-                  <View style={styles.couponContainer}>
-                    <Icon
-                      name="person"
-                      size={20}
-                      style={styles.couponIcon}
-                      color={Colors.colorBlack}
-                    />
-                    <Text style={styles.cardTitle}>Customer Details</Text>
-                  </View>
-                  <Entypo
-                    name={
-                      showCustomerDetails
-                        ? 'chevron-small-down'
-                        : 'chevron-small-right'
-                    }
-                    size={20}
-                    color={Colors.colorDarkslateblue}
-                  />
-                </View>
-              </TouchableOpacity>
-              {showCustomerDetails && <CustomerDetails />}
-            </View>
-
-            <View style={styles.cardSection}>
-              <TouchableOpacity onPress={toggleAddTip}>
-                <View style={styles.section1}>
-                  <View style={styles.couponContainer}>
-                    <Entypo
-                      name="wallet"
-                      size={20}
-                      style={styles.couponIcon}
-                      color={Colors.colorBlack}
-                    />
-                    <Text style={styles.cardTitle}>Add Tip</Text>
-                  </View>
-                  <Entypo
-                    name={
-                      showAddTip ? 'chevron-small-down' : 'chevron-small-right'
-                    }
-                    size={20}
-                    color={Colors.colorDarkslateblue}
-                  />
-                </View>
-                {showAddTip && (
-                  <View>
-                    <Text>10%</Text>
-                    <Text>10%</Text>
-                  </View>
-                )}
-              </TouchableOpacity>
-            </View>
-            <View style={styles.cardSection}>
-              <TouchableOpacity onPress={toggleBillSummary}>
-                <View style={styles.section1}>
-                  <View style={styles.couponContainer}>
-                    <Entypo
-                      name="text-document"
-                      size={20}
-                      style={styles.couponIcon}
-                      color={Colors.colorBlack}
-                    />
-                    <Text style={styles.cardTitle}>Bill Summary</Text>
-                  </View>
-
-                  <Entypo
-                    name={
-                      showBillSummary
-                        ? 'chevron-small-down'
-                        : 'chevron-small-right'
-                    }
-                    size={20}
-                    color={Colors.colorDarkslateblue}
-                  />
-                </View>
-                {showBillSummary && (
-                  <BillSummary
-                    isVisible={showBillSummary}
-                    closeModal={closeBillModal}
-                    cartItems={cartItems}
-                    totals={{
-                      subTotal: finalSubTotal,
-                      tax: gstTax,
-                      serviceCharge: finalAdditionalTax,
-                      total: finalGrandTotal,
-                    }}
-                  />
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
-        </ScrollView>
-        <View style={styles.footer}>
-          <TouchableOpacity
-            onPress={() => cancelOrder()}
-            style={styles.paymentContainer}>
-            <Text style={styles.paymentText}>Cancel Order</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => SaveOrder()}
-            style={styles.generateKOTContainer}>
-            <Text style={styles.generateKOTText}>Generate KOT</Text>
-          </TouchableOpacity>
-        </View>
+    <SafeAreaProvider style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={30} color="black" />
+        </TouchableOpacity>
+        <Text style={styles.menuText}>OrderDetails</Text>
       </View>
-    </SafeAreaView>
+      <ScrollView
+        style={styles.scrollView}
+        decelerationRate="fast"
+        showsVerticalScrollIndicator={false}>
+        <View style={styles.summary}>
+          <View style={styles.cardSection}>
+            {cartItems?.length > 0 &&
+              cartItems.map((item: any, index: number) => (
+                <CartItem item={item} key={index} />
+              ))}
+            <TouchableOpacity style={styles.addMoreContainer}>
+              <Text style={styles.addMoreButton}>+Add More Items</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.cardSection}>
+            <TouchableOpacity>
+              <View style={styles.section1}>
+                <View style={styles.couponContainer}>
+                  <MaterialIcon
+                    name="ticket-percent-outline"
+                    size={20}
+                    style={styles.couponIcon}
+                    color={Colors.colorBlack}
+                  />
+                  <Text style={styles.cardTitle}>All Coupons</Text>
+                </View>
+                <Entypo
+                  name="chevron-small-right"
+                  size={20}
+                  color={Colors.colorDarkslateblue}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.cardSection}>
+            <TouchableOpacity onPress={toggleCustomerDetails}>
+              <View style={styles.section1}>
+                <View style={styles.couponContainer}>
+                  <Icon
+                    name="person"
+                    size={20}
+                    style={styles.couponIcon}
+                    color={Colors.colorBlack}
+                  />
+                  <Text style={styles.cardTitle}>Customer Details</Text>
+                </View>
+                <Entypo
+                  name={
+                    showCustomerDetails
+                      ? 'chevron-small-down'
+                      : 'chevron-small-right'
+                  }
+                  size={20}
+                  color={Colors.colorDarkslateblue}
+                />
+              </View>
+            </TouchableOpacity>
+            {showCustomerDetails && <CustomerDetails />}
+          </View>
+
+          <View style={styles.cardSection}>
+            <TouchableOpacity onPress={toggleAddTip}>
+              <View style={styles.section1}>
+                <View style={styles.couponContainer}>
+                  <Entypo
+                    name="wallet"
+                    size={20}
+                    style={styles.couponIcon}
+                    color={Colors.colorBlack}
+                  />
+                  <Text style={styles.cardTitle}>Add Tip</Text>
+                </View>
+                <Entypo
+                  name={
+                    showAddTip ? 'chevron-small-down' : 'chevron-small-right'
+                  }
+                  size={20}
+                  color={Colors.colorDarkslateblue}
+                />
+              </View>
+              {showAddTip && (
+                <View>
+                  <Text>10%</Text>
+                  <Text>10%</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
+          <View style={styles.cardSection}>
+            <TouchableOpacity onPress={toggleBillSummary}>
+              <View style={styles.section1}>
+                <View style={styles.couponContainer}>
+                  <Entypo
+                    name="text-document"
+                    size={20}
+                    style={styles.couponIcon}
+                    color={Colors.colorBlack}
+                  />
+                  <Text style={styles.cardTitle}>Bill Summary</Text>
+                </View>
+
+                <Entypo
+                  name={
+                    showBillSummary
+                      ? 'chevron-small-down'
+                      : 'chevron-small-right'
+                  }
+                  size={20}
+                  color={Colors.colorDarkslateblue}
+                />
+              </View>
+              {showBillSummary && (
+                <BillSummary
+                  isVisible={showBillSummary}
+                  closeModal={closeBillModal}
+                  cartItems={cartItems}
+                  totals={{
+                    subTotal: finalSubTotal,
+                    tax: gstTax,
+                    serviceCharge: finalAdditionalTax,
+                    total: finalGrandTotal,
+                  }}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+      <View style={styles.footer}>
+        <TouchableOpacity
+          onPress={() => cancelOrder()}
+          style={styles.paymentContainer}>
+          <Text style={styles.paymentText}>Cancel Order</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => SaveOrder()}
+          style={styles.generateKOTContainer}>
+          <Text style={styles.generateKOTText}>Generate KOT</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaProvider>
   );
 };
 
