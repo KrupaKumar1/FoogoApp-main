@@ -23,6 +23,7 @@ import {Colors} from '../../../CSS/GlobalStyles';
 import Font from '../../../constant/Font';
 import {Image} from 'react-native-elements';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import Separator from '../../../components/General/Seperator';
 
 interface RootState {
   generalState: {
@@ -272,6 +273,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
   return (
     <SafeAreaProvider style={styles.container}>
       <StatusBar barStyle={'dark-content'} translucent={true} />
+      <Separator extraProps={{}} height={StatusBar.currentHeight} />
       <SafeAreaView>
         <Header />
       </SafeAreaView>
