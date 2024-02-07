@@ -41,6 +41,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
 
   const [menuGroups, setMenuGroups] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
+  const [foodtypefilter, setfoodtypefilter] = useState([]);
 
   //console.log('CARTITEMS', cartItems);
   const [itemsLoading, setItemsLoading] = useState(true);
@@ -51,10 +52,47 @@ const MenuItems = ({navigation}: {navigation: any}) => {
     {key: 'nonVeg', label: 'Non-Veg'},
   ];
 
-  const handleFilterPress = (filterKey: string) => {
-    console.log(`${filterKey} pressed`);
+
+
+  const handleFilterPress = (value: string) => {
+    console.log(`${value} pressed`);
     // Implement your filter logic here
+    setfoodtypefilter((prevFilter) => {
+      const newFilter = new Set(prevFilter);
+ 
+      if (value === "Veg") {
+        if (newFilter.has("Veg")) {
+          newFilter.delete("Veg");
+          newFilter.delete("None");
+        } else {
+          newFilter.add("Veg");
+          newFilter.add("None");
+        }
+      } else {
+        if (newFilter.has(value)) {
+          newFilter.delete(value);
+        } else {
+          newFilter.add(value);
+        }
+ 
+        // Remove "None" if "Veg" is not present
+        newFilter.delete("None");
+      }
+ 
+      return Array.from(newFilter);
+    });
   };
+
+  function getFoodTypes(values:String) {
+    if (values?.includes("Bestseller")) {
+      // Exclude "Bestseller" and join the remaining values
+      const otherValues = values?.filter((value:String) => value !== "Bestseller");
+      return otherValues.length > 1 ? otherValues.join(", ") : otherValues[0];
+    } else {
+      // Proceed with joining all values
+      return values?.length > 1 ? values.join(", ") : values[0];
+    }
+  }
 
   /**Quantity set Handler */
   const cardQtySetHandler = () => {
@@ -92,17 +130,18 @@ const MenuItems = ({navigation}: {navigation: any}) => {
   const getGroupItemsAPI = (menuId: any) => {
     setSelectedGroupId(menuId);
     // setItemsLoading(true);
-    const paramsOnj = {
-      groupId: menuId,
-    };
+      const isTopOrderedItem = foodtypefilter.includes("Bestseller");
+   
     API_CALL({
       method: 'GET',
-      url: 'Menu/GetActiveMenuItems',
+      url: `Menu/GetActiveMenuItems?groupId=${menuId}&menuType=${
+          foodtypefilter.length != 0 ? getFoodTypes(foodtypefilter) : ""
+        }&isTopOrderedItem=${isTopOrderedItem}`,
       headerConfig: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      params: paramsOnj,
+    
 
       callback: async ({status, data}: {status: any; data: any}) => {
         if (status === 200) {
@@ -147,10 +186,13 @@ const MenuItems = ({navigation}: {navigation: any}) => {
   };
 
   const getGroupItemsWithGroupAPI = () => {
+     const isTopOrderedItem = foodtypefilter.includes("Bestseller");
     setItemsLoading(true);
     API_CALL({
       method: 'GET',
-      url: `Menu/GetActiveMenuGroupsAndMenuItems?menuType=&isTopOrderedItem=false`,
+      url: `Menu/GetActiveMenuGroupsAndMenuItems?menuType=${
+        foodtypefilter?.length != 0 ? getFoodTypes(foodtypefilter) : ""
+      }&isTopOrderedItem=${isTopOrderedItem}`,
       headerConfig: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -220,7 +262,10 @@ const MenuItems = ({navigation}: {navigation: any}) => {
     if (selectedGroupId == 10) {
       getGroupItemsWithGroupAPI();
     }
-  }, [selectedGroupId]);
+    else{
+      getGroupItemsAPI(selectedGroupId);
+    }
+  }, [selectedGroupId,foodtypefilter]);
 
   /**Group Names */
   const getGroupNames = () => {
@@ -309,8 +354,8 @@ const MenuItems = ({navigation}: {navigation: any}) => {
           {filters.map(filter => (
             <TouchableOpacity
               key={filter.key}
-              style={styles.filterButton}
-              onPress={() => handleFilterPress(filter.key)}>
+              style={foodtypefilter?.includes(filter.label)? styles.filterButtonActive :  styles.filterButton}
+              onPress={() => handleFilterPress(filter.label)}>
               <Text style={styles.filterText}>{filter.label}</Text>
             </TouchableOpacity>
           ))}
@@ -442,6 +487,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: Color.PRIMARY,
+
+    marginHorizontal: 5,
+  },
+   filterButtonActive: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: Color.PRIMARY,
+    backgroundColor:Color.PRIMARY,
     marginHorizontal: 5,
   },
   filterText: {
