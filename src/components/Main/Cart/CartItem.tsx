@@ -116,6 +116,8 @@ const styles = StyleSheet.create({
   },
 
   qtyValue: {
+    flex: 1,
+    textAlign: 'center',
     fontSize: 16,
     margin: 20,
     fontFamily: Font.POPPINS_BOLD,
