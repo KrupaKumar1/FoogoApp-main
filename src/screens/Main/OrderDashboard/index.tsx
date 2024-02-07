@@ -39,9 +39,9 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
   const [orderTypes, setOrderTypes] = useState<Order[]>([]);
   const [isModalVisible, setModalVisible] = useState(false);
 
- const cancelHandler =()=>{
-  setModalVisible(true);
- }
+  const cancelHandler = () => {
+    setModalVisible(true);
+  };
   const closeModal = () => {
     setModalVisible(false);
   };
@@ -178,7 +178,11 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
 
   return (
     <SafeAreaProvider style={styles.container}>
-      <StatusBar barStyle="dark-content" translucent backgroundColor={Color.PRIMARY} />
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor={Color.PRIMARY}
+      />
       <Separator extraProps={{}} height={StatusBar.currentHeight} />
       <SafeAreaView>
         <Header />
@@ -233,7 +237,6 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
                     username={dataItem.orderType}
                     preparingTime={dataItem.status}
                     getAllOrdersList={getAllOrdersList}
-                    
                   />
                 </TouchableOpacity>
               ))}

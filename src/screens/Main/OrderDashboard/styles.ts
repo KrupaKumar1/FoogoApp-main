@@ -7,7 +7,7 @@ import Font from '../../../constant/Font';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.colorWhitesmoke_100,
+    backgroundColor: Color.LIGHT_GREY2,
   },
 
   ordersListContainer: {
