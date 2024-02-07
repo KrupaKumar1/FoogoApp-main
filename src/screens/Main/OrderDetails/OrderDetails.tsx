@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -54,13 +54,65 @@ const OrderDetails = ({navigation}) => {
   const [customerDetails, setCustomerDetails] = useState({});
 
   /**BIll Sumary Details */
+  const {generalSettings} = useSelector(state => state?.generalSettingsState);
 
-  const [billDetails, setBillDetails] = useState({});
-  console.log('BILL', billDetails);
+  console.log('SETTINGS', generalSettings);
 
-  const billDetailsHandler = (data: any) => {
-    setBillDetails(data);
+  const [finalSubTotal, setSubtotal] = useState(0);
+  const [gstTax, setTax] = useState(0);
+  const [finalAdditionalTax, setAdditionalTax] = useState(0);
+  const [finalGrandTotal, setFinalGrandTotal] = useState(0);
+
+  const calculateTaxes = () => {
+    let taxValueToApi = 0;
+    let taxAdditionalToApi = 0;
+    //Tax Calculation
+    taxValueToApi = (finalSubTotal * generalSettings?.taxPercentage) / 100;
+
+    // Additional Tax Calculation
+    taxAdditionalToApi = generalSettings?.isServiceChargePercentage
+      ? (finalSubTotal * generalSettings?.serviceChargeFee) / 100
+      : generalSettings?.serviceChargeFee;
+
+    setTax(taxValueToApi);
+    setAdditionalTax(taxAdditionalToApi);
   };
+
+  const finalGrandTotalHandler = () => {
+    let calculatedAmount = 0;
+
+    if (
+      generalSettings?.isServiceChargePercentage &&
+      generalSettings?.isServiceChargeApplicable
+    ) {
+      calculatedAmount =
+        finalSubTotal +
+        (finalSubTotal * generalSettings?.taxPercentage) / 100 +
+        (finalSubTotal * generalSettings?.serviceChargeFee) / 100;
+    } else {
+      calculatedAmount =
+        finalSubTotal +
+        (finalSubTotal * generalSettings?.taxPercentage) / 100 +
+        generalSettings?.serviceChargeFee;
+    }
+
+    setFinalGrandTotal(parseFloat(calculatedAmount).toFixed(2));
+  };
+
+  // Calculate finalSubTotal whenever cartItems change
+
+  useEffect(() => {
+    let total = 0;
+    cartItems.forEach((item: any) => {
+      total += item.price; // Assuming each item in cartItems has a 'price' property
+    });
+    setSubtotal(total);
+  }, [cartItems]);
+
+  useEffect(() => {
+    calculateTaxes();
+    finalGrandTotalHandler();
+  }, [finalSubTotal]);
 
   /**On CLick GenerateKOT*/
   /**Order Item Info for API */
@@ -149,29 +201,30 @@ const OrderDetails = ({navigation}) => {
 
     /**Customer Details */
     const customerId = 0;
-    const customerName = 'KK';
+    const customerName = 'MOBILE TEST';
     const emailAddress = '';
     const phone = '';
 
     /**Amounts */
-    const subTotal = billDetails?.subTotal;
-    const tax = billDetails?.tax;
-    const grandTotal = billDetails?.finalGrandTotal;
+    const subTotal = finalSubTotal;
+    const tax = gstTax;
+    const grandTotal = finalGrandTotal;
     const discountAmount = 0;
     const couponAmount = '';
     const tipAmount = 0;
     const paymentDiscountAmount = 0;
     const addOnAmount = 0;
-    const serviceCharge = 5;
-    const serviceChargeFee = billDetails?.serviceCharge;
+    const serviceCharge = generalSettings?.serviceChargeFee;
+    const serviceChargeFee = finalAdditionalTax;
     const refundAmount = 0;
     const refundedTax = 0;
     const refundedServiceCharge = 0;
     const paymentDiscountPercentage = 0;
     const isServiceChargeRefund = false;
     const isTaxRefund = false;
-    const isServiceChargePercentage = true;
-    const taxPercentage = 10;
+    const isServiceChargePercentage =
+      generalSettings?.isServiceChargePercentage;
+    const taxPercentage = generalSettings?.taxPercentage;
     const couponCode = '';
 
     /**Order keys */
@@ -297,7 +350,7 @@ const OrderDetails = ({navigation}) => {
       splitPayments,
     };
 
-    //console.log(orderPayload, "SVAE_ORDER");
+    console.log(orderPayload, 'SVAE_ORDER');
     API_CALL({
       method: 'POST',
       url: 'Order/SaveOrder',
@@ -312,7 +365,15 @@ const OrderDetails = ({navigation}) => {
           Alert.alert(
             'Success',
             'Order Placed Successfully',
-            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            [
+              {
+                text: 'OK',
+                onPress: () => {
+                  navigation.navigate('Dashboard');
+                  dispatch(CartAction.removeItems());
+                },
+              },
+            ],
             {cancelable: false},
           );
         } else {
@@ -476,7 +537,12 @@ const OrderDetails = ({navigation}) => {
                     isVisible={showBillSummary}
                     closeModal={closeBillModal}
                     cartItems={cartItems}
-                    billDetailsHandler={billDetailsHandler}
+                    totals={{
+                      subTotal: finalSubTotal,
+                      tax: gstTax,
+                      serviceCharge: finalAdditionalTax,
+                      total: finalGrandTotal,
+                    }}
                   />
                 )}
               </TouchableOpacity>

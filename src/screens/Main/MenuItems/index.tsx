@@ -142,6 +142,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
       },
     });
   };
+
   const getGroupItemsWithGroupAPI = () => {
     setItemsLoading(true);
     API_CALL({
