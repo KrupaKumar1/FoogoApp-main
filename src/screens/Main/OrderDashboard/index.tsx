@@ -178,7 +178,7 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
 
   return (
     <SafeAreaProvider style={styles.container}>
-      <StatusBar barStyle="dark-content" translucent />
+      <StatusBar barStyle="dark-content" translucent backgroundColor={Color.PRIMARY} />
       <Separator extraProps={{}} height={StatusBar.currentHeight} />
       <SafeAreaView>
         <Header />

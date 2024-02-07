@@ -4,92 +4,17 @@ import {Colors, FontSize} from '../../../CSS/GlobalStyles';
 import Color from '../../../constant/Color';
 import Font from '../../../constant/Font';
 import Modal from 'react-native-modal';
-import {FontAwesome, Entypo} from '../../../constant/Icons';
+
 import CrossIcon from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useSelector} from 'react-redux';
 
 const BillSummary = (props: any) => {
-  const {isVisible, closeModal, cartItems, billDetailsHandler} = props;
+  const {isVisible, closeModal, totals} = props;
+  const {subTotal, tax, serviceCharge, total} = totals;
 
   const {generalSettings} = useSelector(state => state?.generalSettingsState);
-
-  console.log('SETTINGS', generalSettings);
-
-  const [subtotal, setSubtotal] = useState(0);
-  const [tax, setTax] = useState(0);
-  const [additionalTax, setAdditionalTax] = useState(0);
-  const [finalGrandTotal, setFinalGrandTotal] = useState(0);
-
-  const calculateTaxes = () => {
-    let taxValueToApi = 0;
-    let taxAdditionalToApi = 0;
-    //Tax Calculation
-    taxValueToApi = (subtotal * generalSettings?.taxPercentage) / 100;
-
-    // Additional Tax Calculation
-    taxAdditionalToApi = generalSettings?.isServiceChargePercentage
-      ? (subtotal * generalSettings?.serviceChargeFee) / 100
-      : generalSettings?.serviceChargeFee;
-
-    setTax(taxValueToApi);
-    setAdditionalTax(taxAdditionalToApi);
-  };
-
-  useEffect(() => {
-    billDetailsHandler({
-      subtotal: subtotal,
-      tax: tax,
-      serviceCharge: additionalTax,
-      finalGrandTotal: finalGrandTotal,
-    });
-  }, [
-    subtotal,
-    tax,
-    additionalTax,
-    finalGrandTotal,
-    generalSettings?.taxPercentage,
-    generalSettings?.serviceChargeFee,
-    generalSettings?.isServiceChargePercentage,
-    generalSettings?.isServiceChargeApplicable,
-  ]);
-
-  const finalGrandTotalHandler = () => {
-    let calculatedAmount = 0;
-
-    if (
-      generalSettings?.isServiceChargePercentage &&
-      generalSettings?.isServiceChargeApplicable
-    ) {
-      calculatedAmount =
-        subtotal +
-        (subtotal * generalSettings?.taxPercentage) / 100 +
-        (subtotal * generalSettings?.serviceChargeFee) / 100;
-    } else {
-      calculatedAmount =
-        subtotal +
-        (subtotal * generalSettings?.taxPercentage) / 100 +
-        generalSettings?.serviceChargeFee;
-    }
-
-    setFinalGrandTotal(parseFloat(calculatedAmount).toFixed(2));
-  };
-
-  // Calculate subtotal whenever cartItems change
-
-  useEffect(() => {
-    let total = 0;
-    cartItems.forEach((item: any) => {
-      total += item.price; // Assuming each item in cartItems has a 'price' property
-    });
-    setSubtotal(total);
-  }, [cartItems]);
-
-  useEffect(() => {
-    calculateTaxes();
-    finalGrandTotalHandler();
-  }, [subtotal]);
 
   return (
     <Modal
@@ -125,7 +50,7 @@ const BillSummary = (props: any) => {
               </View>
               <Text style={styles.cardTitle}>
                 {generalSettings?.currencyCode}
-                {subtotal.toFixed(2)}
+                {subTotal.toFixed(2)}
               </Text>
             </View>
             <View style={styles.section1}>
@@ -160,7 +85,7 @@ const BillSummary = (props: any) => {
               </View>
               <Text style={styles.cardTitle}>
                 {generalSettings?.currencyCode}
-                {additionalTax.toFixed(2)}
+                {serviceCharge.toFixed(2)}
               </Text>
             </View>
 
@@ -175,7 +100,7 @@ const BillSummary = (props: any) => {
               <Text style={styles.totalDue}>Total Due Amount</Text>
               <Text style={styles.totalDue}>
                 {generalSettings?.currencyCode}
-                {finalGrandTotal}
+                {total}
               </Text>
             </View>
           </View>

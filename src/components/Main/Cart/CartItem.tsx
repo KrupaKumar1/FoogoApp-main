@@ -34,11 +34,7 @@ const CartItem = ({item}) => {
             <TouchableOpacity style={styles.qtyButton1}>
               <Text style={styles.qtyIcon}>-</Text>
             </TouchableOpacity>
-            <TextInput
-              style={styles.qtyValue}
-              value="1"
-              keyboardType="numeric"
-            />
+            <Text style={styles.qtyValue}>3</Text>
             <TouchableOpacity style={styles.qtyButton2}>
               <Text style={styles.qtyIcon}>+</Text>
             </TouchableOpacity>
@@ -82,13 +78,16 @@ const styles = StyleSheet.create({
     color: Color.DEFAULT_BLACK,
     paddingBottom: 10,
   },
+
   qtySection: {
     flexDirection: 'row',
     borderWidth: 2,
-    borderRadius: Display.setWidth(12.5),
+    borderRadius: 25,
     borderColor: Color.PRIMARY,
     justifyContent: 'center',
+    alignItems: 'center',
     width: Display.setWidth(30),
+    height: Display.setHeight(5),
     padding: Display.setWidth(0.75),
   },
   qtyButton1: {
@@ -98,8 +97,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: Display.setWidth(7),
     height: Display.setHeight(3),
-    borderTopLeftRadius: Display.setWidth(5),
-    borderBottomLeftRadius: Display.setWidth(5),
+    borderTopLeftRadius: 25,
+    borderBottomLeftRadius: 25,
   },
   qtyButton2: {
     backgroundColor: Color.PRIMARY,
@@ -108,13 +107,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: Display.setWidth(7),
     height: Display.setHeight(3),
-    borderTopRightRadius: Display.setWidth(5),
-    borderBottomRightRadius: Display.setWidth(5),
+    borderTopRightRadius: 25,
+    borderBottomRightRadius: 25,
   },
 
   qtyValue: {
+    flex: 1,
+    textAlign: 'center',
     fontSize: 16,
-    marginHorizontal: 25,
+    paddingHorizontal: 20,
     fontFamily: Font.POPPINS_BOLD,
   },
   qtyIcon: {

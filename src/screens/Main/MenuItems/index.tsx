@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   Alert,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -21,6 +22,8 @@ import ViewCart from '../../../components/Main/MenuItems/ViewCart';
 import {Colors} from '../../../CSS/GlobalStyles';
 import Font from '../../../constant/Font';
 import {Image} from 'react-native-elements';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import Separator from '../../../components/General/Seperator';
 
 interface RootState {
   generalState: {
@@ -181,6 +184,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
       },
     });
   };
+
   const getGroupItemsWithGroupAPI = () => {
      const isTopOrderedItem = foodtypefilter.includes("Bestseller");
     setItemsLoading(true);
@@ -312,7 +316,9 @@ const MenuItems = ({navigation}: {navigation: any}) => {
   }, [cartItems]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaProvider style={styles.container}>
+      <StatusBar barStyle={'dark-content'} translucent={true} />
+      <Separator extraProps={{}} height={StatusBar.currentHeight} />
       <SafeAreaView>
         <Header />
       </SafeAreaView>
@@ -409,7 +415,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
           cardQtySetHandler={cardQtySetHandler}
         />
       )}
-    </View>
+    </SafeAreaProvider>
   );
 };
 
@@ -431,7 +437,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     marginLeft: 5,
   },
- 
+
   menuText: {
     fontSize: 20,
     paddingLeft: 15,

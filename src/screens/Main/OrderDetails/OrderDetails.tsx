@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   UIManager,
   LayoutAnimation,
+  StatusBar,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -25,6 +26,8 @@ import CartItem from '../../../components/Main/Cart/CartItem';
 import BillSummary from '../../../components/Main/OrderDetails/BillSummary';
 import API_CALL from '../../../services/Api';
 import {Alert} from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import Separator from '../../../components/General/Seperator';
 
 // Enable LayoutAnimation for Android
 if (
@@ -54,13 +57,65 @@ const OrderDetails = ({navigation}) => {
   const [customerDetails, setCustomerDetails] = useState({});
 
   /**BIll Sumary Details */
+  const {generalSettings} = useSelector(state => state?.generalSettingsState);
 
-  const [billDetails, setBillDetails] = useState({});
-  console.log('BILL', billDetails);
+  console.log('SETTINGS', generalSettings);
 
-  const billDetailsHandler = (data: any) => {
-    setBillDetails(data);
+  const [finalSubTotal, setSubtotal] = useState(0);
+  const [gstTax, setTax] = useState(0);
+  const [finalAdditionalTax, setAdditionalTax] = useState(0);
+  const [finalGrandTotal, setFinalGrandTotal] = useState(0);
+
+  const calculateTaxes = () => {
+    let taxValueToApi = 0;
+    let taxAdditionalToApi = 0;
+    //Tax Calculation
+    taxValueToApi = (finalSubTotal * generalSettings?.taxPercentage) / 100;
+
+    // Additional Tax Calculation
+    taxAdditionalToApi = generalSettings?.isServiceChargePercentage
+      ? (finalSubTotal * generalSettings?.serviceChargeFee) / 100
+      : generalSettings?.serviceChargeFee;
+
+    setTax(taxValueToApi);
+    setAdditionalTax(taxAdditionalToApi);
   };
+
+  const finalGrandTotalHandler = () => {
+    let calculatedAmount = 0;
+
+    if (
+      generalSettings?.isServiceChargePercentage &&
+      generalSettings?.isServiceChargeApplicable
+    ) {
+      calculatedAmount =
+        finalSubTotal +
+        (finalSubTotal * generalSettings?.taxPercentage) / 100 +
+        (finalSubTotal * generalSettings?.serviceChargeFee) / 100;
+    } else {
+      calculatedAmount =
+        finalSubTotal +
+        (finalSubTotal * generalSettings?.taxPercentage) / 100 +
+        generalSettings?.serviceChargeFee;
+    }
+
+    setFinalGrandTotal(parseFloat(calculatedAmount).toFixed(2));
+  };
+
+  // Calculate finalSubTotal whenever cartItems change
+
+  useEffect(() => {
+    let total = 0;
+    cartItems.forEach((item: any) => {
+      total += item.price; // Assuming each item in cartItems has a 'price' property
+    });
+    setSubtotal(total);
+  }, [cartItems]);
+
+  useEffect(() => {
+    calculateTaxes();
+    finalGrandTotalHandler();
+  }, [finalSubTotal]);
 
   /**On CLick GenerateKOT*/
   /**Order Item Info for API */
@@ -149,29 +204,30 @@ const OrderDetails = ({navigation}) => {
 
     /**Customer Details */
     const customerId = 0;
-    const customerName = 'KK';
+    const customerName = 'MOBILE TEST';
     const emailAddress = '';
     const phone = '';
 
     /**Amounts */
-    const subTotal = billDetails?.subTotal;
-    const tax = billDetails?.tax;
-    const grandTotal = billDetails?.finalGrandTotal;
+    const subTotal = finalSubTotal;
+    const tax = gstTax;
+    const grandTotal = finalGrandTotal;
     const discountAmount = 0;
     const couponAmount = '';
     const tipAmount = 0;
     const paymentDiscountAmount = 0;
     const addOnAmount = 0;
-    const serviceCharge = 5;
-    const serviceChargeFee = billDetails?.serviceCharge;
+    const serviceCharge = generalSettings?.serviceChargeFee;
+    const serviceChargeFee = finalAdditionalTax;
     const refundAmount = 0;
     const refundedTax = 0;
     const refundedServiceCharge = 0;
     const paymentDiscountPercentage = 0;
     const isServiceChargeRefund = false;
     const isTaxRefund = false;
-    const isServiceChargePercentage = true;
-    const taxPercentage = 10;
+    const isServiceChargePercentage =
+      generalSettings?.isServiceChargePercentage;
+    const taxPercentage = generalSettings?.taxPercentage;
     const couponCode = '';
 
     /**Order keys */
@@ -297,7 +353,7 @@ const OrderDetails = ({navigation}) => {
       splitPayments,
     };
 
-    //console.log(orderPayload, "SVAE_ORDER");
+    console.log(orderPayload, 'SVAE_ORDER');
     API_CALL({
       method: 'POST',
       url: 'Order/SaveOrder',
@@ -312,7 +368,15 @@ const OrderDetails = ({navigation}) => {
           Alert.alert(
             'Success',
             'Order Placed Successfully',
-            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            [
+              {
+                text: 'OK',
+                onPress: () => {
+                  navigation.navigate('Dashboard');
+                  dispatch(CartAction.removeItems());
+                },
+              },
+            ],
             {cancelable: false},
           );
         } else {
@@ -352,151 +416,158 @@ const OrderDetails = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.LIGHT_GREY2}}>
-      <View style={styles.container}>
+    <SafeAreaProvider style={styles.container}>
+      <StatusBar barStyle="dark-content" translucent />
+      <Separator extraProps={{}} height={StatusBar.currentHeight} />
+      <SafeAreaView>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon name="arrow-back" size={30} color="black" />
           </TouchableOpacity>
           <Text style={styles.menuText}>OrderDetails</Text>
         </View>
-        <ScrollView
-          style={styles.scrollView}
-          decelerationRate="fast"
-          showsVerticalScrollIndicator={false}>
-          <View style={styles.summary}>
-            <View style={styles.cardSection}>
-              {cartItems?.length > 0 &&
-                cartItems.map((item: any, index: number) => (
-                  <CartItem item={item} key={index} />
-                ))}
-              <TouchableOpacity style={styles.addMoreContainer}>
-                <Text style={styles.addMoreButton}>+Add More Items</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.cardSection}>
-              <TouchableOpacity>
-                <View style={styles.section1}>
-                  <View style={styles.couponContainer}>
-                    <MaterialIcon
-                      name="ticket-percent-outline"
-                      size={20}
-                      style={styles.couponIcon}
-                      color={Colors.colorBlack}
-                    />
-                    <Text style={styles.cardTitle}>All Coupons</Text>
-                  </View>
-                  <Entypo
-                    name="chevron-small-right"
-                    size={20}
-                    color={Colors.colorDarkslateblue}
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.cardSection}>
-              <TouchableOpacity onPress={toggleCustomerDetails}>
-                <View style={styles.section1}>
-                  <View style={styles.couponContainer}>
-                    <Icon
-                      name="person"
-                      size={20}
-                      style={styles.couponIcon}
-                      color={Colors.colorBlack}
-                    />
-                    <Text style={styles.cardTitle}>Customer Details</Text>
-                  </View>
-                  <Entypo
-                    name={
-                      showCustomerDetails
-                        ? 'chevron-small-down'
-                        : 'chevron-small-right'
-                    }
-                    size={20}
-                    color={Colors.colorDarkslateblue}
-                  />
-                </View>
-              </TouchableOpacity>
-              {showCustomerDetails && <CustomerDetails />}
-            </View>
-
-            <View style={styles.cardSection}>
-              <TouchableOpacity onPress={toggleAddTip}>
-                <View style={styles.section1}>
-                  <View style={styles.couponContainer}>
-                    <Entypo
-                      name="wallet"
-                      size={20}
-                      style={styles.couponIcon}
-                      color={Colors.colorBlack}
-                    />
-                    <Text style={styles.cardTitle}>Add Tip</Text>
-                  </View>
-                  <Entypo
-                    name={
-                      showAddTip ? 'chevron-small-down' : 'chevron-small-right'
-                    }
-                    size={20}
-                    color={Colors.colorDarkslateblue}
-                  />
-                </View>
-                {showAddTip && (
-                  <View>
-                    <Text>10%</Text>
-                    <Text>10%</Text>
-                  </View>
-                )}
-              </TouchableOpacity>
-            </View>
-            <View style={styles.cardSection}>
-              <TouchableOpacity onPress={toggleBillSummary}>
-                <View style={styles.section1}>
-                  <View style={styles.couponContainer}>
-                    <Entypo
-                      name="text-document"
-                      size={20}
-                      style={styles.couponIcon}
-                      color={Colors.colorBlack}
-                    />
-                    <Text style={styles.cardTitle}>Bill Summary</Text>
-                  </View>
-
-                  <Entypo
-                    name={
-                      showBillSummary
-                        ? 'chevron-small-down'
-                        : 'chevron-small-right'
-                    }
-                    size={20}
-                    color={Colors.colorDarkslateblue}
-                  />
-                </View>
-                {showBillSummary && (
-                  <BillSummary
-                    isVisible={showBillSummary}
-                    closeModal={closeBillModal}
-                    cartItems={cartItems}
-                    billDetailsHandler={billDetailsHandler}
-                  />
-                )}
-              </TouchableOpacity>
-            </View>
+      </SafeAreaView>
+      <ScrollView
+        style={styles.scrollView}
+        decelerationRate="fast"
+        showsVerticalScrollIndicator={false}>
+        <View style={styles.summary}>
+          <View style={styles.cardSection}>
+            {cartItems?.length > 0 &&
+              cartItems.map((item: any, index: number) => (
+                <CartItem item={item} key={index} />
+              ))}
+            <TouchableOpacity style={styles.addMoreContainer}>
+              <Text style={styles.addMoreButton}>+Add More Items</Text>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
-        <View style={styles.footer}>
-          <TouchableOpacity
-            onPress={() => cancelOrder()}
-            style={styles.paymentContainer}>
-            <Text style={styles.paymentText}>Cancel Order</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => SaveOrder()}
-            style={styles.generateKOTContainer}>
-            <Text style={styles.generateKOTText}>Generate KOT</Text>
-          </TouchableOpacity>
+          <View style={styles.cardSection}>
+            <TouchableOpacity>
+              <View style={styles.section1}>
+                <View style={styles.couponContainer}>
+                  <MaterialIcon
+                    name="ticket-percent-outline"
+                    size={20}
+                    style={styles.couponIcon}
+                    color={Colors.colorBlack}
+                  />
+                  <Text style={styles.cardTitle}>All Coupons</Text>
+                </View>
+                <Entypo
+                  name="chevron-small-right"
+                  size={20}
+                  color={Colors.colorDarkslateblue}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.cardSection}>
+            <TouchableOpacity onPress={toggleCustomerDetails}>
+              <View style={styles.section1}>
+                <View style={styles.couponContainer}>
+                  <Icon
+                    name="person"
+                    size={20}
+                    style={styles.couponIcon}
+                    color={Colors.colorBlack}
+                  />
+                  <Text style={styles.cardTitle}>Customer Details</Text>
+                </View>
+                <Entypo
+                  name={
+                    showCustomerDetails
+                      ? 'chevron-small-down'
+                      : 'chevron-small-right'
+                  }
+                  size={20}
+                  color={Colors.colorDarkslateblue}
+                />
+              </View>
+            </TouchableOpacity>
+            {showCustomerDetails && <CustomerDetails />}
+          </View>
+
+          <View style={styles.cardSection}>
+            <TouchableOpacity onPress={toggleAddTip}>
+              <View style={styles.section1}>
+                <View style={styles.couponContainer}>
+                  <Entypo
+                    name="wallet"
+                    size={20}
+                    style={styles.couponIcon}
+                    color={Colors.colorBlack}
+                  />
+                  <Text style={styles.cardTitle}>Add Tip</Text>
+                </View>
+                <Entypo
+                  name={
+                    showAddTip ? 'chevron-small-down' : 'chevron-small-right'
+                  }
+                  size={20}
+                  color={Colors.colorDarkslateblue}
+                />
+              </View>
+              {showAddTip && (
+                <View>
+                  <Text>10%</Text>
+                  <Text>10%</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
+          <View style={styles.cardSection}>
+            <TouchableOpacity onPress={toggleBillSummary}>
+              <View style={styles.section1}>
+                <View style={styles.couponContainer}>
+                  <Entypo
+                    name="text-document"
+                    size={20}
+                    style={styles.couponIcon}
+                    color={Colors.colorBlack}
+                  />
+                  <Text style={styles.cardTitle}>Bill Summary</Text>
+                </View>
+
+                <Entypo
+                  name={
+                    showBillSummary
+                      ? 'chevron-small-down'
+                      : 'chevron-small-right'
+                  }
+                  size={20}
+                  color={Colors.colorDarkslateblue}
+                />
+              </View>
+              {showBillSummary && (
+                <BillSummary
+                  isVisible={showBillSummary}
+                  closeModal={closeBillModal}
+                  cartItems={cartItems}
+                  totals={{
+                    subTotal: finalSubTotal,
+                    tax: gstTax,
+                    serviceCharge: finalAdditionalTax,
+                    total: finalGrandTotal,
+                  }}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
+      </ScrollView>
+      <View style={styles.footer}>
+        <TouchableOpacity
+          onPress={() => cancelOrder()}
+          style={styles.paymentContainer}>
+          <Text style={styles.paymentText}>Cancel Order</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => SaveOrder()}
+          style={styles.generateKOTContainer}>
+          <Text style={styles.generateKOTText}>Generate KOT</Text>
+        </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
