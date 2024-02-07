@@ -76,11 +76,11 @@ const AllCoupons = ({navigation}) => {
           <Text style={applyButtonStyle}>APPLY</Text>
         </TouchableOpacity>
       </View>
+      <Text style={styles.couponsHeader}>Available Coupons</Text>
       <ScrollView
         style={styles.scrollView}
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}>
-        <Text style={styles.couponsHeader}>Available Coupons</Text>
         <View style={styles.couponSection}>
           {allCoupons?.map((item: any, index) => {
             return (
@@ -179,6 +179,7 @@ const styles = StyleSheet.create({
     fontFamily: Font.POPPINS_SEMI_BOLD,
     textAlign: 'center',
     marginTop: 10,
+    marginBottom: 10,
   },
   cardSection: {
     padding: 14,
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   applyButton: {
-    color: Colors.colorDarkgray, // Modify this to your desired disabled button color
+    color: Color.PRIMARY, // Modify this to your desired disabled button color
     fontSize: 12,
     fontFamily: Font.POPPINS_BOLD,
   },
