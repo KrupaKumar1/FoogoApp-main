@@ -28,6 +28,7 @@ import API_CALL from '../../../services/Api';
 import {Alert} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Separator from '../../../components/General/Seperator';
+import AllCoupons from './Coupons/AllCoupons';
 
 // Enable LayoutAnimation for Android
 if (
@@ -49,6 +50,7 @@ const OrderDetails = ({navigation}) => {
 
   const dispatch = useDispatch();
 
+  const [showAllCoupons, setShowAllCoupons] = useState(false);
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [showBillSummary, setShowBillSummary] = useState(false);
   const [showAddTip, setShowAddTip] = useState(false);
@@ -65,6 +67,34 @@ const OrderDetails = ({navigation}) => {
   const [gstTax, setTax] = useState(0);
   const [finalAdditionalTax, setAdditionalTax] = useState(0);
   const [finalGrandTotal, setFinalGrandTotal] = useState(0);
+
+  const closeBillModal = () => {
+    setShowBillSummary(false);
+  };
+
+  const cancelOrder = () => {
+    dispatch(CartAction.removeItems());
+  };
+
+  const toggleAllCoupons = () => {
+    navigation.navigate('Coupons');
+  };
+  // Function to toggle visibility of CustomerDetails
+  const toggleCustomerDetails = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setShowCustomerDetails(!showCustomerDetails);
+  };
+
+  // Function to toggle visibility of BillSummary
+  const toggleBillSummary = () => {
+    setShowBillSummary(!showBillSummary);
+  };
+
+  // Function to toggle visibility of AddTip
+  const toggleAddTip = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setShowAddTip(!showAddTip);
+  };
 
   const calculateTaxes = () => {
     let taxValueToApi = 0;
@@ -391,30 +421,6 @@ const OrderDetails = ({navigation}) => {
     });
   };
 
-  const closeBillModal = () => {
-    setShowBillSummary(false);
-  };
-
-  const cancelOrder = () => {
-    dispatch(CartAction.removeItems());
-  };
-  // Function to toggle visibility of CustomerDetails
-  const toggleCustomerDetails = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setShowCustomerDetails(!showCustomerDetails);
-  };
-
-  // Function to toggle visibility of BillSummary
-  const toggleBillSummary = () => {
-    setShowBillSummary(!showBillSummary);
-  };
-
-  // Function to toggle visibility of AddTip
-  const toggleAddTip = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setShowAddTip(!showAddTip);
-  };
-
   return (
     <SafeAreaProvider style={styles.container}>
       <StatusBar barStyle="dark-content" translucent />
@@ -442,7 +448,7 @@ const OrderDetails = ({navigation}) => {
             </TouchableOpacity>
           </View>
           <View style={styles.cardSection}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={toggleAllCoupons}>
               <View style={styles.section1}>
                 <View style={styles.couponContainer}>
                   <MaterialIcon

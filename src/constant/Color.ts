@@ -25,5 +25,5 @@ export default {
 
   PRIMARY: '#ff8b00',
   //PRIMARY: '#4A61A8',
-  //PRIMARY: '#24C869',
+  //PRIMARY: '#61569b',
 };
