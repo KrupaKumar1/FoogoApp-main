@@ -82,13 +82,16 @@ const styles = StyleSheet.create({
     color: Color.DEFAULT_BLACK,
     paddingBottom: 10,
   },
+
   qtySection: {
     flexDirection: 'row',
     borderWidth: 2,
-    borderRadius: Display.setWidth(12.5),
+    borderRadius: 20,
     borderColor: Color.PRIMARY,
     justifyContent: 'center',
+    alignItems: 'center',
     width: Display.setWidth(30),
+    height: Display.setHeight(5),
     padding: Display.setWidth(0.75),
   },
   qtyButton1: {
@@ -114,7 +117,7 @@ const styles = StyleSheet.create({
 
   qtyValue: {
     fontSize: 16,
-    marginHorizontal: 25,
+    margin: 20,
     fontFamily: Font.POPPINS_BOLD,
   },
   qtyIcon: {
