@@ -8,7 +8,6 @@ import {
   SafeAreaView,
   Alert,
   ScrollView,
-  StatusBar,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -22,8 +21,6 @@ import ViewCart from '../../../components/Main/MenuItems/ViewCart';
 import {Colors} from '../../../CSS/GlobalStyles';
 import Font from '../../../constant/Font';
 import {Image} from 'react-native-elements';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import Separator from '../../../components/General/Seperator';
 
 interface RootState {
   generalState: {
@@ -95,7 +92,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
   }
 
   /**Quantity set Handler */
-  const cardQtySetHandler = () => {
+  const cardQtySetHandlerTest= () => {
     const itemQtyMap: {[key: string]: number} = {};
 
     cartItems?.forEach((listItem: any) => {
@@ -124,6 +121,83 @@ const MenuItems = ({navigation}: {navigation: any}) => {
     });
 
     setMenuItems(dataList);
+  };
+
+    const cardQtySetHandler = () => {
+    if (selectedGroupId == 10) {
+      const itemQtyMap: {[key: string]: number} = {};
+ 
+      cartItems.forEach((listItem:any) => {
+        menuitem.forEach((apiItem:any) => {
+          const matchingMenuItem = apiItem.menuItemDto.find(
+            (menuItem:any) => menuItem.name == listItem?.item
+          );
+ 
+          if (matchingMenuItem) {
+            const itemName = matchingMenuItem.name;
+            const quantityToAdd = listItem.qty;
+ 
+            if (itemQtyMap.hasOwnProperty(itemName)) {
+              itemQtyMap[itemName] += quantityToAdd;
+            } else {
+              itemQtyMap[itemName] = quantityToAdd;
+            }
+ 
+            matchingMenuItem.quantity = itemQtyMap[itemName];
+          }
+        });
+      });
+ 
+      // Remove groups with empty menuItemDto arrays
+      const updatedMenuGroupItemData = menuitem.filter((apiItem:any) => {
+        return apiItem.menuItemDto.length > 0;
+      });
+ 
+      // Update the quantity in the remaining groups
+      updatedMenuGroupItemData.forEach((apiItem:any) => {
+        apiItem.menuItemDto.forEach((menuItem:any) => {
+          const itemName = menuItem.name;
+ 
+          if (itemQtyMap.hasOwnProperty(itemName)) {
+            menuItem.quantity = itemQtyMap[itemName];
+          }
+        });
+      });
+ 
+      // Set the updated menuGroupItemData without empty groups
+      setmenuitem(menuitem);
+      // setmenuItemGroup([]);
+    } else {
+     
+     const itemQtyMap: {[key: string]: number} = {};
+      cartItems?.forEach((listItem:any) => {
+        const itemName = listItem.item;
+ 
+        // Check if the item is already in the map
+        if (itemQtyMap.hasOwnProperty(itemName)) {
+          // If yes, update the quantity
+          itemQtyMap[itemName] += listItem.qty;
+        } else {
+          // If no, add the item to the map with its quantity
+          itemQtyMap[itemName] = listItem.qty;
+        }
+      });
+ 
+      // Now update the menuItemforGrpoup based on the itemQtyMap
+     const dataList = [...menuItems];
+    dataList.forEach((apiItem: any) => {
+      const itemName = apiItem.name;
+
+      if (itemQtyMap.hasOwnProperty(itemName)) {
+        // If the item exists in the map, update the quantity
+        apiItem.quantity = itemQtyMap[itemName];
+      } else {
+        apiItem.quantity = null;
+      }
+    });
+
+    setMenuItems(dataList);
+    }
   };
 
   /**Group Items */
@@ -184,7 +258,6 @@ const MenuItems = ({navigation}: {navigation: any}) => {
       },
     });
   };
-
   const getGroupItemsWithGroupAPI = () => {
      const isTopOrderedItem = foodtypefilter.includes("Bestseller");
     setItemsLoading(true);
@@ -316,9 +389,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
   }, [cartItems]);
 
   return (
-    <SafeAreaProvider style={styles.container}>
-      <StatusBar barStyle={'dark-content'} translucent={true} />
-      <Separator extraProps={{}} height={StatusBar.currentHeight} />
+    <View style={styles.container}>
       <SafeAreaView>
         <Header />
       </SafeAreaView>
@@ -415,7 +486,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
           cardQtySetHandler={cardQtySetHandler}
         />
       )}
-    </SafeAreaProvider>
+    </View>
   );
 };
 
@@ -437,7 +508,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     marginLeft: 5,
   },
-
+ 
   menuText: {
     fontSize: 20,
     paddingLeft: 15,
@@ -497,6 +568,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Color.PRIMARY,
     backgroundColor:Color.PRIMARY,
+    color:Color.DEFAULT_WHITE,
     marginHorizontal: 5,
   },
   filterText: {
