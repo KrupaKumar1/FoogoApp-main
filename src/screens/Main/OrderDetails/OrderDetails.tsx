@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   UIManager,
   LayoutAnimation,
+  StatusBar,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -26,6 +27,7 @@ import BillSummary from '../../../components/Main/OrderDetails/BillSummary';
 import API_CALL from '../../../services/Api';
 import {Alert} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import Separator from '../../../components/General/Seperator';
 
 // Enable LayoutAnimation for Android
 if (
@@ -415,12 +417,16 @@ const OrderDetails = ({navigation}) => {
 
   return (
     <SafeAreaProvider style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={30} color="black" />
-        </TouchableOpacity>
-        <Text style={styles.menuText}>OrderDetails</Text>
-      </View>
+      <StatusBar barStyle="dark-content" translucent />
+      <Separator extraProps={{}} height={StatusBar.currentHeight} />
+      <SafeAreaView>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon name="arrow-back" size={30} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.menuText}>OrderDetails</Text>
+        </View>
+      </SafeAreaView>
       <ScrollView
         style={styles.scrollView}
         decelerationRate="fast"
