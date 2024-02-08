@@ -2,6 +2,7 @@ import CartAction from '../actions/CartAction';
 
 const initialState = {
   cartItems: [],
+  orderId: '',
 };
 
 const CartReducer = (state = initialState, action: any) => {
@@ -15,6 +16,11 @@ const CartReducer = (state = initialState, action: any) => {
       return {
         ...state,
         cartItems: action.payload,
+      };
+    case CartAction.types.GET_ORDER_ID:
+      return {
+        ...state,
+        orderId: action.payload,
       };
     default:
       return state;

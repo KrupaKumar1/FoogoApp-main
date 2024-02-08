@@ -29,6 +29,8 @@ import {Alert} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Separator from '../../../components/General/Seperator';
 import AllCoupons from './Coupons/AllCoupons';
+import CouponsAction from '../../../services/redux/actions/CouponsAction';
+import OrderedItems from '../../../components/Main/Cart/OrderedItems';
 
 // Enable LayoutAnimation for Android
 if (
@@ -39,31 +41,30 @@ if (
 }
 
 const OrderDetails = ({navigation}) => {
-  const {cartItems} = useSelector(state => state?.cartState);
+  /**Redux States */
+  const {cartItems, orderId} = useSelector(state => state?.cartState);
   const {token, userDetails, userIp} = useSelector(
     state => state?.generalState,
   );
   const {generalSettings} = useSelector(state => state?.generalSettingsState);
 
   const currentDate = new Date();
-
-  console.log('USER', userDetails);
-
   const dispatch = useDispatch();
-
+  /**Toggles */
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [showBillSummary, setShowBillSummary] = useState(false);
   const [showAddTip, setShowAddTip] = useState(false);
-
   /**Customer Details */
   const [customerDetails, setCustomerDetails] = useState({});
-
   /**BIll Sumary Details */
-
   const [finalSubTotal, setSubtotal] = useState(0);
   const [gstTax, setTax] = useState(0);
   const [finalAdditionalTax, setAdditionalTax] = useState(0);
   const [finalGrandTotal, setFinalGrandTotal] = useState(0);
+
+  /**ALL Order Details State */
+  const [tableOrderDetails, setTableOrderDetails] = useState([]);
+  console.log('ORDER DETAILS', tableOrderDetails);
 
   const closeBillModal = () => {
     setShowBillSummary(false);
@@ -74,8 +75,17 @@ const OrderDetails = ({navigation}) => {
   };
 
   const toggleAllCoupons = () => {
+    dispatch(
+      CouponsAction.updateCartTotals({
+        subTotal: finalSubTotal,
+        tax: gstTax,
+        serviceCharge: finalAdditionalTax,
+        total: finalGrandTotal,
+      }),
+    );
     navigation.navigate('Coupons');
   };
+
   // Function to toggle visibility of CustomerDetails
   const toggleCustomerDetails = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -129,20 +139,34 @@ const OrderDetails = ({navigation}) => {
     setFinalGrandTotal(parseFloat(calculatedAmount).toFixed(2));
   };
 
-  // Calculate finalSubTotal whenever cartItems change
+  /**Get Order Details */
+  const getOrderDetails = () => {
+    const orderDetails = {
+      orderGuid: orderId,
+    };
+    API_CALL({
+      method: 'POST',
+      url: 'Order/GetOrderDetails',
+      headerConfig: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      params: orderDetails,
 
-  useEffect(() => {
-    let total = 0;
-    cartItems.forEach((item: any) => {
-      total += item.price; // Assuming each item in cartItems has a 'price' property
+      callback: async ({status, data}: {status: any; data: any}) => {
+        if (status === 200) {
+          setTableOrderDetails(data.data.order);
+        } else {
+          Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        }
+      },
     });
-    setSubtotal(total);
-  }, [cartItems]);
-
-  useEffect(() => {
-    calculateTaxes();
-    finalGrandTotalHandler();
-  }, [finalSubTotal]);
+  };
 
   /**On CLick GenerateKOT*/
   /**Order Item Info for API */
@@ -418,6 +442,24 @@ const OrderDetails = ({navigation}) => {
     });
   };
 
+  // Calculate finalSubTotal whenever cartItems change
+  useEffect(() => {
+    let total = 0;
+    cartItems.forEach((item: any) => {
+      total += item.price; // Assuming each item in cartItems has a 'price' property
+    });
+    setSubtotal(total);
+  }, [cartItems]);
+
+  useEffect(() => {
+    calculateTaxes();
+    finalGrandTotalHandler();
+  }, [finalSubTotal]);
+
+  useEffect(() => {
+    getOrderDetails();
+  }, [orderId]);
+
   return (
     <SafeAreaProvider style={styles.container}>
       <StatusBar barStyle="dark-content" translucent />
@@ -435,12 +477,33 @@ const OrderDetails = ({navigation}) => {
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}>
         <View style={styles.summary}>
+          {tableOrderDetails?.orderNumber && (
+            <View style={styles.cardSection}>
+              <Text>{tableOrderDetails?.orderNumber}</Text>
+            </View>
+          )}
           <View style={styles.cardSection}>
-            {cartItems?.length > 0 &&
-              cartItems.map((item: any, index: number) => (
-                <CartItem item={item} key={index} />
-              ))}
-            <TouchableOpacity style={styles.addMoreContainer} onPress={() => navigation.goBack()}>
+            {tableOrderDetails?.orderNumber ? (
+              <>
+                {tableOrderDetails?.orderItems?.length > 0 &&
+                  tableOrderDetails?.orderItems.map(
+                    (item: any, index: number) => (
+                      <OrderedItems item={item} key={index} />
+                    ),
+                  )}
+              </>
+            ) : (
+              <>
+                {cartItems?.length > 0 &&
+                  cartItems.map((item: any, index: number) => (
+                    <CartItem item={item} key={index} />
+                  ))}
+              </>
+            )}
+
+            <TouchableOpacity
+              style={styles.addMoreContainer}
+              onPress={() => navigation.goBack()}>
               <Text style={styles.addMoreButton}>+Add More Items</Text>
             </TouchableOpacity>
           </View>

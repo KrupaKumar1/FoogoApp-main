@@ -1,22 +1,29 @@
-import React,{useState} from 'react';
-import {View, Text, StyleSheet, Platform, TouchableOpacity, Alert} from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import Color from '../../../../constant/Color';
 import {Colors, FontSize} from '../../../../CSS/GlobalStyles';
 import Font from '../../../../constant/Font';
-import moment  from "moment";
+import moment from 'moment';
 import API_CALL from '../../../../services/Api';
-import { useSelector } from 'react-redux';
-
+import {useDispatch, useSelector} from 'react-redux';
+import {CartAction} from '../../../../services/redux/actions';
+import {useNavigation} from '@react-navigation/native';
 
 interface OrderCardProps {
   orderNumber: string;
   paid: string;
   username: string;
-  preparingTime: string;
+
   orderDetails: Object;
-  getAllOrdersList:Function;
-  cancelHandler:Function;
-  closeModal:Function;
+  getAllOrdersList: Function;
+  cancelHandler: Function;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({
@@ -25,23 +32,22 @@ const OrderCard: React.FC<OrderCardProps> = ({
   paid,
   username,
   getAllOrdersList,
-  preparingTime,
-  closeModal,
   cancelHandler,
-
 }) => {
+  const navigation = useNavigation();
   const getStatusStyle = () => {
     return paid === 'Paid' ? styles.paidStatus : styles.unpaidStatus;
   };
-const {token} = useSelector(state => state?.generalState);
-    const TableNames =
+
+  const dispatch = useDispatch();
+  const {token} = useSelector(state => state?.generalState);
+
+  const TableNames =
     Array.isArray(orderDetails?.tableId) && orderDetails?.tableId != null
       ? orderDetails?.tableId?.replace(/,/g, ', ')
       : orderDetails?.tableId;
 
- 
-
- const deliverStatusHandler = async (orderid:any) => {
+  const deliverStatusHandler = async (orderid: any) => {
     API_CALL({
       method: 'POST',
       url: `Order/UpdateOrderStatus?orderId=${orderid}&statusId=5&comments="test"&userName="Krupa kumaar"&ipAddress="111.93.18.226"`,
@@ -51,7 +57,7 @@ const {token} = useSelector(state => state?.generalState);
       },
       callback: async ({status, data}: {status: any; data: any}) => {
         if (status === 200) {
-        Alert.alert('Order Delivered Successfully');
+          Alert.alert('Order Delivered Successfully');
           getAllOrdersList();
         } else {
           Alert.alert(
@@ -64,7 +70,7 @@ const {token} = useSelector(state => state?.generalState);
       },
     });
   };
-  const delayStatusHandler = async (orderid:any) => {
+  const delayStatusHandler = async (orderid: any) => {
     API_CALL({
       method: 'POST',
       url: `Order/UpdateOrderStatus?orderId=${orderid}&statusId=16&comments="test"&userName="Krupa kumaar"&ipAddress="111.93.18.226"`,
@@ -74,7 +80,7 @@ const {token} = useSelector(state => state?.generalState);
       },
       callback: async ({status, data}: {status: any; data: any}) => {
         if (status === 200) {
-        Alert.alert('Order Delayed Successfully');
+          Alert.alert('Order Delayed Successfully');
           getAllOrdersList();
         } else {
           Alert.alert(
@@ -88,7 +94,7 @@ const {token} = useSelector(state => state?.generalState);
     });
   };
 
-   const readyStatusHandler = async (orderid:any) => {
+  const readyStatusHandler = async (orderid: any) => {
     API_CALL({
       method: 'POST',
       url: `Order/UpdateOrderStatus?orderId=${orderid}&statusId=15&comments="test"&userName="Krupa kumaar"&ipAddress="111.93.18.226"`,
@@ -98,9 +104,8 @@ const {token} = useSelector(state => state?.generalState);
       },
       callback: async ({status, data}: {status: any; data: any}) => {
         if (status === 200) {
-        Alert.alert('Order Ready Successfully');
-        getAllOrdersList();
-        
+          Alert.alert('Order Ready Successfully');
+          getAllOrdersList();
         } else {
           Alert.alert(
             'Error',
@@ -111,6 +116,11 @@ const {token} = useSelector(state => state?.generalState);
         }
       },
     });
+  };
+
+  const orderDetailsHandler = () => {
+    dispatch(CartAction.getOrderId(orderDetails?.guid));
+    navigation.navigate('Cart');
   };
 
   return (
@@ -163,80 +173,96 @@ const {token} = useSelector(state => state?.generalState);
           </View>
         </View>
       </View>
-      {orderDetails?.paymentStatus === "Paid" && orderDetails?.status ==="OrderPreparedReadyForDelivery" &&
-      
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.actionButtonText}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={()=>deliverStatusHandler(orderDetails?.id)}>
-          <Text style={styles.actionButtonText}>Deliver</Text>
-        </TouchableOpacity>
-      </View>
-}
- {orderDetails?.paymentStatus === "Paid" && orderDetails?.status ==="Preparing" &&
-      
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.actionButtonText}>Cancel</Text>
-        </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={()=>delayStatusHandler(orderDetails?.id)}>
-          <Text style={styles.actionButtonText}>Delay</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={()=>readyStatusHandler(orderDetails?.id)}>
-          <Text style={styles.actionButtonText}>Ready</Text>
-        </TouchableOpacity>
-      </View>
-}
- {orderDetails?.paymentStatus !== "Paid" && orderDetails?.status ==="Preparing" &&
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.actionButtonText}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.actionButtonText}>Pay</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}  onPress={()=>delayStatusHandler(orderDetails?.id)}>
-          <Text style={styles.actionButtonText}>Delay</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}  onPress={()=>readyStatusHandler(orderDetails?.id)}>
-          <Text style={styles.actionButtonText}>Ready</Text>
-        </TouchableOpacity>
-      </View>
-}
-{orderDetails?.paymentStatus !== "Paid" && orderDetails?.status ==="Delay" &&
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.actionButtonText}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.actionButtonText}>Pay</Text>
-        </TouchableOpacity>
-       
-        <TouchableOpacity style={styles.button}  onPress={()=>readyStatusHandler(orderDetails?.id)}>
-          <Text style={styles.actionButtonText}>Ready</Text>
-        </TouchableOpacity>
-      </View>
-}
+      {orderDetails?.paymentStatus === 'Paid' &&
+        orderDetails?.status === 'OrderPreparedReadyForDelivery' && (
+          <View style={styles.footer}>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.actionButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => deliverStatusHandler(orderDetails?.id)}>
+              <Text style={styles.actionButtonText}>Deliver</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      {orderDetails?.paymentStatus === 'Paid' &&
+        orderDetails?.status === 'Preparing' && (
+          <View style={styles.footer}>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.actionButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => delayStatusHandler(orderDetails?.id)}>
+              <Text style={styles.actionButtonText}>Delay</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => readyStatusHandler(orderDetails?.id)}>
+              <Text style={styles.actionButtonText}>Ready</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      {orderDetails?.paymentStatus !== 'Paid' &&
+        orderDetails?.status === 'Preparing' && (
+          <View style={styles.footer}>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.actionButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => orderDetailsHandler()}
+              style={styles.button}>
+              <Text style={styles.actionButtonText}>Pay</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => delayStatusHandler(orderDetails?.id)}>
+              <Text style={styles.actionButtonText}>Delay</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => readyStatusHandler(orderDetails?.id)}>
+              <Text style={styles.actionButtonText}>Ready</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      {orderDetails?.paymentStatus !== 'Paid' &&
+        orderDetails?.status === 'Delay' && (
+          <View style={styles.footer}>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.actionButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => orderDetailsHandler()}
+              style={styles.button}>
+              <Text style={styles.actionButtonText}>Pay</Text>
+            </TouchableOpacity>
 
-{orderDetails?.paymentStatus !== "Paid" && orderDetails?.status ==="OrderPreparedReadyForDelivery" &&
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.button} onPress={()=>cancelHandler()}>
-          <Text style={styles.actionButtonText}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.actionButtonText}>Pay</Text>
-        </TouchableOpacity>
-      </View>
-}
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => readyStatusHandler(orderDetails?.id)}>
+              <Text style={styles.actionButtonText}>Ready</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
-
- 
+      {orderDetails?.paymentStatus !== 'Paid' &&
+        orderDetails?.status === 'OrderPreparedReadyForDelivery' && (
+          <View style={styles.footer}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => cancelHandler()}>
+              <Text style={styles.actionButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => orderDetailsHandler()}
+              style={styles.button}>
+              <Text style={styles.actionButtonText}>Pay</Text>
+            </TouchableOpacity>
+          </View>
+        )}
     </View>
-
-    
-          
-
   );
 };
 

@@ -19,8 +19,90 @@ const AllCoupons = ({navigation}) => {
   const {token, userDetails, userIp} = useSelector(
     state => state?.generalState,
   );
+  const {totalAmounts} = useSelector(state => state?.appliedCouponState);
+  console.log('AMOUNTS', totalAmounts);
   const [allCoupons, setAllCoupons] = useState([]);
-  const couponCode = '';
+  const [couponCode, setCouponCode] = useState('');
+
+  const handleCouponCode = text => {
+    setCouponCode(text);
+  };
+
+  const apllyCouponAPI = () => {
+    const couponObject = {
+      createdBy: userDetails.fullName,
+      createdDate: new Date(),
+      createdIP: userIp,
+      id: 0,
+      customerId: 0,
+      customerName: '',
+      discountAmount: 0,
+      couponAmount: 0,
+      tipAmount: 0,
+      deliveryFee: 0,
+      subTotal: totalAmounts?.subTotal,
+      tax: totalAmounts?.tax,
+      grandTotal: totalAmounts?.total,
+      orderStatusId: 0,
+      modeOfPayment: '',
+      paymentDiscountAmount: 0,
+      addOnAmount: 0,
+      serviceCharge: totalAmounts?.serviceCharge,
+      serviceChargeFee: 5,
+      refundAmount: 0,
+      refundedTax: 0,
+      refundedServiceCharge: 0,
+      isPrintingFailed: true,
+      orderId: 0,
+      orderNumber: '',
+      isServiceChargeRefund: false,
+      isTaxRefund: false,
+      isServiceChargePercentage: true,
+      taxPercentage: 10,
+      orderSource: 'POS',
+      couponCode: couponCode,
+      orderItems: itemsList,
+    };
+
+    API_CALL({
+      method: 'POST',
+      url: 'Order/ApplyCoupon',
+      headerConfig: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      data: couponObject,
+      callback: async ({status, data}) => {
+        if (status === 200) {
+          if (data.data == null) {
+            // Data is null, set error message from the response
+            // setCouponErrorMsg(data.errorMessage);
+            // setCouponAmount(0);
+            // couponAmountCallback(0);
+          } else if (data.data.IsSuccess) {
+            // setCouponAmount(data.data.couponDiscount);
+            // couponAmountCallback(data.data.couponDiscount, couponCode);
+            // setAppliedCoupon({couponCode: couponCode});
+            // setCouponErrorMsg('');
+            // setCouponCode('');
+          } else {
+            // Data is not null and IsSuccess is false, set error message from data
+            // setCouponErrorMsg(data.data.Message);
+            // setCouponAmount(0);
+            // couponAmountCallback(0);
+          }
+        } else {
+          Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        }
+      },
+    });
+  };
+
   const applyButtonStyle =
     couponCode.length > 0
       ? styles.applyButtonEnabled
@@ -70,6 +152,7 @@ const AllCoupons = ({navigation}) => {
         <TextInput
           style={styles.couponCode}
           value={couponCode}
+          onChangeText={handleCouponCode}
           placeholder="Type coupon code here"
         />
         <TouchableOpacity>
@@ -77,6 +160,9 @@ const AllCoupons = ({navigation}) => {
         </TouchableOpacity>
       </View>
       <Text style={styles.couponsHeader}>Available Coupons</Text>
+      <Text style={styles.couponsHeader}>
+        {parseFloat(totalAmounts?.total).toFixed(2)}
+      </Text>
       <ScrollView
         style={styles.scrollView}
         decelerationRate="fast"
@@ -85,7 +171,9 @@ const AllCoupons = ({navigation}) => {
           {allCoupons?.map((item: any, index) => {
             return (
               <View style={styles.cardSection}>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => applyCoupon(item?.couponCode)}
+                  key={index}>
                   <View style={styles.section1}>
                     <View style={styles.couponContainer}>
                       <Text key={index} style={styles.couponText}>

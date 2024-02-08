@@ -254,7 +254,6 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
             setIsFlatListScrolling(event.nativeEvent.contentOffset.x !== 0);
           }}
         />
-          
       </View>
       {orderTypes && (
         <OrderBottomTabBar
@@ -263,11 +262,10 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
           handleTabPress={handleTabPress}
         />
       )}
-       {/* <CancelModal
+      {/* <CancelModal
           isVisible={isModalVisible}
             closeModal={closeModal}
       />  */}
-    
     </SafeAreaProvider>
   );
 };
