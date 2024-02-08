@@ -6,7 +6,7 @@ import Font from '../../../../constant/Font';
 import moment  from "moment";
 import API_CALL from '../../../../services/Api';
 import { useSelector } from 'react-redux';
-import CancelModal from '../CancelModal';
+
 
 interface OrderCardProps {
   orderNumber: string;
@@ -15,6 +15,8 @@ interface OrderCardProps {
   preparingTime: string;
   orderDetails: Object;
   getAllOrdersList:Function;
+  cancelHandler:Function;
+  closeModal:Function;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({
@@ -24,6 +26,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
   username,
   getAllOrdersList,
   preparingTime,
+  closeModal,
+  cancelHandler,
+
 }) => {
   const getStatusStyle = () => {
     return paid === 'Paid' ? styles.paidStatus : styles.unpaidStatus;

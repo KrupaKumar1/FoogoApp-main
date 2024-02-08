@@ -440,7 +440,7 @@ const OrderDetails = ({navigation}) => {
               cartItems.map((item: any, index: number) => (
                 <CartItem item={item} key={index} />
               ))}
-            <TouchableOpacity style={styles.addMoreContainer}>
+            <TouchableOpacity style={styles.addMoreContainer} onPress={() => navigation.goBack()}>
               <Text style={styles.addMoreButton}>+Add More Items</Text>
             </TouchableOpacity>
           </View>

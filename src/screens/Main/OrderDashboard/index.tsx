@@ -40,7 +40,7 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
   const [isModalVisible, setModalVisible] = useState(false);
 
   const cancelHandler = () => {
-    setModalVisible(true);
+    setModalVisible(false);
   };
   const closeModal = () => {
     setModalVisible(false);
@@ -243,6 +243,8 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
                     username={dataItem.orderType}
                     preparingTime={dataItem.status}
                     getAllOrdersList={getAllOrdersList}
+                    cancelHandler={cancelHandler}
+                    closeModal={closeModal}
                   />
                 </TouchableOpacity>
               ))}
@@ -252,6 +254,7 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
             setIsFlatListScrolling(event.nativeEvent.contentOffset.x !== 0);
           }}
         />
+          
       </View>
       {orderTypes && (
         <OrderBottomTabBar
@@ -260,10 +263,11 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
           handleTabPress={handleTabPress}
         />
       )}
-      {/* <CancelModal
+       {/* <CancelModal
           isVisible={isModalVisible}
             closeModal={closeModal}
-      /> */}
+      />  */}
+    
     </SafeAreaProvider>
   );
 };
