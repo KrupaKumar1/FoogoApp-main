@@ -64,7 +64,7 @@ const MenuCard = ({itemDetails,cardQtySetHandler}: {itemDetails: any}) => {
     if (objIndex !== -1) {
       dispatch(CartAction.sameitemupdateIn(itemObjectDetails));
     } else {
-        dispatch(CartAction.orderdetailsIn(itemObjectDetails));
+       dispatch(CartAction.orderdetailsIn(itemObjectDetails));
      // dispatch(CartAction.addItemToCart(itemObjectDetails));
     }
   };

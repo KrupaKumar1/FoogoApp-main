@@ -21,18 +21,18 @@ const removeItems = () => {
     payload: [],
   };
 };
-//  const additemIn = (data:any) => {
-//   return {
-//     type: types.ADDITEM_IN,
-//     payload: data,
-//   };
-// };
-//  const customizationIn = (data:any) => {
-//   return {
-//     type: types.CUSTOMIZATION_IN,
-//     payload: data,
-//   };
-// };
+ const additemIn = (data:any) => {
+  return {
+    type: types.ADDITEM_IN,
+    payload: data,
+  };
+};
+ const customizationIn = (data:any) => {
+  return {
+    type: types.CUSTOMIZATION_IN,
+    payload: data,
+  };
+};
 const sameitemupdateIn = (qty: any) => {
   return {
     type: types.ITEMUPDATE_IN_MENUITEM,
@@ -44,9 +44,8 @@ const sameitemupdateIn = (qty: any) => {
 const orderdetailsIn = (data: any) => {
   return {
     type: types.ORDERDETAILS_IN,
-    payload: {
-      id: Math.random(),
-      data: data,
+    payload: {...data,cartUniqueId:new Date().getTime().toString()
+     
     },
   };
 };

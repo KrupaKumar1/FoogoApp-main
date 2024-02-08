@@ -44,16 +44,13 @@ const CartReducer = (state = initialState, action: any, payload: any) => {
         // updatedResponse : data1.responseOrder
       };
     case CartAction.types.ORDERDETAILS_IN:
-      const {id, data} = action.payload;
+      
       return {
         ...state,
 
         cartItems: [
           ...state.cartItems,
-          {
-            id: id,
-            data: data,
-          },
+         action.payload
         ],
       };
 
