@@ -17,9 +17,10 @@ import {CartAction} from '../../../services/redux/actions';
 import {useDispatch, useSelector} from 'react-redux';
 import {FontSize} from '../../../CSS/GlobalStyles';
 
-const MenuCard = ({itemDetails}: {itemDetails: any}) => {
+const MenuCard = ({itemDetails,cardQtySetHandler}: {itemDetails: any}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {cartItems} = useSelector(state => state?.cartState);
+  console.log(itemDetails?.quantity)
 
   const dispatch = useDispatch();
 
@@ -52,20 +53,66 @@ const MenuCard = ({itemDetails}: {itemDetails: any}) => {
     if (itemDetails?.menuSubItem?.length > 0) {
       setModalVisible(true);
     } else {
-      dispatch(CartAction.addItemToCart(itemObjectDetails));
+      // dispatch(CartAction.addItemToCart(itemObjectDetails));
       // setModalVisible(true);
+    
+
+    const objIndex = cartItems?.findIndex(
+      (obj:any) => obj.item === itemObjectDetails.item,
+    );
+
+    if (objIndex !== -1) {
+      dispatch(CartAction.sameitemupdateIn(itemObjectDetails));
+    } else {
+        dispatch(CartAction.orderdetailsIn(itemObjectDetails));
+     // dispatch(CartAction.addItemToCart(itemObjectDetails));
     }
-
-    // const objIndex = list?.findIndex(
-    //   obj => obj.data.item === itemObjectDetails.item,
-    // );
-
-    // if (objIndex !== -1) {
-    //   dispatch(sameitemupdateIn(itemObjectDetails));
-    // } else {
-    //   dispatch(orderdetailsIn(itemObjectDetails));
-    // }
   };
+}
+
+ const addOrderItem = (item:any) => {
+   
+    const isMatching = cartItems.map((cartItem:any) => cartItem.item === item.name);
+    // If you want to check if at least one item has a matching name
+    const anyMatching = isMatching.some((match:any) => match === true);
+    if (anyMatching) {
+      dispatch(customizationIn(item));
+    } else {
+      dispatch(additemIn(item));
+    }
+  };
+
+
+
+   /**adding quantity or reducing quantity */
+  const addonPlusHandler = (menuitem1:any) => {
+    const menuItemDetails = { ...menuitem1, quantity: 1 };
+ 
+    if (menuItemDetails?.menuSubItem?.length == 0) {
+       showOrderDetails(menuItemDetails);
+       cardQtySetHandler();
+    } else {
+      // addOrderItem(menuItemDetails);
+      // cardQtySetHandler();
+    }
+  };
+ 
+  /**checking the customization and dispatcing the action */
+  const addonMinusHandler = (menuitem1) => {
+    const menuItemDetails = { ...menuitem1, quantity: 1 };
+ 
+    if (menuItemDetails?.menuSubItem?.length == 0) {
+      showOrderDetailsMinusHandler(menuItemDetails);
+      cardQtySetHandler();
+ 
+      // menuGroupitemsHandler();
+    } else {
+      // addOrderItem(menuItemDetails);
+      // cardQtySetHandler();
+      // cardQtySetHandler();
+    }
+  };
+ 
 
   const closeModal = () => {
     setModalVisible(false);

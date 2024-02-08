@@ -443,7 +443,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
             ) : (
               <FlatList
                 data={menuItems}
-                renderItem={({item}) => <MenuCard itemDetails={item} />}
+                renderItem={({item}) => <MenuCard itemDetails={item} cardQtySetHandler={cardQtySetHandler} />}
               />
             )}
           </View>
@@ -469,7 +469,7 @@ const MenuItems = ({navigation}: {navigation: any}) => {
                       <Text style={styles.category}>{menuitem1.name}</Text>
                       <FlatList
                         data={menuitem1.menuItemDto}
-                        renderItem={({item}) => <MenuCard itemDetails={item} />}
+                        renderItem={({item}) => <MenuCard itemDetails={item} cardQtySetHandler={cardQtySetHandler} />}
                       />
                     </>
                   );
