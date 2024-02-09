@@ -33,7 +33,7 @@ const CartReducer = (state = initialState, action: any, payload: any) => {
         //     compareArrays(obj.data.addons, item.addons)))
       );
 
-      state.cartItems[itemobjIndex].qty += item.qty;
+      state.cartItems[itemobjIndex].qty += 1;
       state.cartItems[itemobjIndex].addonsamount1 =
         state.cartItems[itemobjIndex].addonsamount1 + item?.addonsamount1;
       return {

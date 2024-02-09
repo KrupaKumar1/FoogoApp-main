@@ -37,9 +37,9 @@ const MenuCard = ({itemDetails,cardQtySetHandler}: {itemDetails: any}) => {
     const itemObjectDetails = {
       responseOrder: itemDetails,
       qty: itemDetails?.quantity || 1,
-      item: itemDetails.name,
-      price: itemDetails.deliveryPrice,
-      total: itemDetails.deliveryPrice,
+      item: itemDetails?.name,
+      price: itemDetails?.deliveryPrice,
+      total: itemDetails?.deliveryPrice,
       addonsamount1: 0,
       subItem: {},
       customFieldListItem: [],
@@ -69,6 +69,48 @@ const MenuCard = ({itemDetails,cardQtySetHandler}: {itemDetails: any}) => {
     }
   };
 }
+const showOrderDetailsMinusHandler = () => {
+    const itemObjectDetails = {
+      responseOrder: itemDetails,
+      qty: itemDetails?.quantity || 1,
+      item: itemDetails?.name,
+      price: itemDetails?.deliveryPrice,
+      total: itemDetails?.deliveryPrice,
+      addonsamount1: 0,
+      subItem: {},
+      customFieldListItem: [],
+      addons: [],
+      listAddons: [],
+      radioAddon: {},
+      customFields: [],
+      addonField: [],
+    };
+
+     if (itemDetails?.menuSubItem?.length > 0) {
+      setModalVisible(true);
+    } else {
+
+ 
+    const objIndex = cartItems?.findIndex((obj) => {
+      const sameItem = obj.item === itemObjectDetails.item;
+      return sameItem;
+    });
+    const matchedItemList = cartItems[objIndex];
+ 
+    if (objIndex !== -1) {
+      const quantityUpdateObject = {
+        id: matchedItemList.id,
+        qty: matchedItemList.qty,
+      };
+      // dispatch(reduceQuantity(quantityUpdateObject));
+    
+    } else {
+      dispatch(CartAction.orderdetailsIn(itemObjectDetails));
+      
+    }
+  }
+  };
+ 
 
  const addOrderItem = (item:any) => {
    
@@ -89,7 +131,7 @@ const MenuCard = ({itemDetails,cardQtySetHandler}: {itemDetails: any}) => {
     const menuItemDetails = { ...menuitem1, quantity: 1 };
  
     if (menuItemDetails?.menuSubItem?.length == 0) {
-       showOrderDetails(menuItemDetails);
+       openModal();
        cardQtySetHandler();
     } else {
       // addOrderItem(menuItemDetails);
@@ -98,11 +140,11 @@ const MenuCard = ({itemDetails,cardQtySetHandler}: {itemDetails: any}) => {
   };
  
   /**checking the customization and dispatcing the action */
-  const addonMinusHandler = (menuitem1) => {
-    const menuItemDetails = { ...menuitem1, quantity: 1 };
+  const addonMinusHandler = (menuitemData:any) => {
+    const menuItemDetails = { ...menuitemData, quantity: 1 };
  
     if (menuItemDetails?.menuSubItem?.length == 0) {
-      showOrderDetailsMinusHandler(menuItemDetails);
+      showOrderDetailsMinusHandler();
       cardQtySetHandler();
  
       // menuGroupitemsHandler();
@@ -158,10 +200,10 @@ const MenuCard = ({itemDetails,cardQtySetHandler}: {itemDetails: any}) => {
                 </TouchableOpacity>
                 <TextInput
                   style={styles.qtyValue}
-                  value="1"
+                  value={itemDetails.quantity.toString()?itemDetails.quantity.toString():"1"}
                   keyboardType="numeric"
                 />
-                <TouchableOpacity style={styles.qtyButton2}>
+                <TouchableOpacity style={styles.qtyButton2} onPress={()=>addonPlusHandler(itemDetails)}>
                   <Text style={styles.qtyIcon}>+</Text>
                 </TouchableOpacity>
               </View>

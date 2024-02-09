@@ -45,7 +45,6 @@ const orderdetailsIn = (data: any) => {
   return {
     type: types.ORDERDETAILS_IN,
     payload: {...data,cartUniqueId:new Date().getTime().toString()
-     
     },
   };
 };
