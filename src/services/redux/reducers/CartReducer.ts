@@ -18,6 +18,27 @@ const CartReducer = (state = initialState, action: any, payload: any) => {
         cartItems: action.payload,
       };
 
+       
+      case  CartAction.types.REDUCE_QUANTITY:
+      const { dataQuantityReduce } = action.payload;
+      const objIndexQuantityReduce = state.cartItems.findIndex(
+        (obj) => obj.id === dataQuantityReduce.id
+      );
+      const updatedQuantity = Math.max(dataQuantityReduce.qty - 1, 1);
+      // Create a new array with the updated quantity
+     
+      const updatedItemList = state.cartItems.map((item, index) =>
+        index === objIndexQuantityReduce
+          ? { ...item,   qty: updatedQuantity  }
+          : item
+      );
+ 
+      return {
+        ...state,
+        cartItems: updatedItemList,
+       
+      };
+
     case CartAction.types.ITEMUPDATE_IN_MENUITEM:
       const {item} = action.payload;
 

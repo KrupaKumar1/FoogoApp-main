@@ -91,7 +91,7 @@ const showOrderDetailsMinusHandler = () => {
     } else {
 
  
-    const objIndex = cartItems?.findIndex((obj) => {
+    const objIndex = cartItems?.findIndex((obj:any) => {
       const sameItem = obj.item === itemObjectDetails.item;
       return sameItem;
     });
@@ -102,7 +102,7 @@ const showOrderDetailsMinusHandler = () => {
         id: matchedItemList.id,
         qty: matchedItemList.qty,
       };
-      // dispatch(reduceQuantity(quantityUpdateObject));
+       dispatch(CartAction.reduceQuantity(quantityUpdateObject));
     
     } else {
       dispatch(CartAction.orderdetailsIn(itemObjectDetails));
@@ -195,7 +195,7 @@ const showOrderDetailsMinusHandler = () => {
               </TouchableOpacity>
             ) : (
               <View style={styles.qtySection}>
-                <TouchableOpacity style={styles.qtyButton1}>
+                <TouchableOpacity style={styles.qtyButton1} onPress={()=>addonMinusHandler(itemDetails)}>
                   <Text style={styles.qtyIcon}>-</Text>
                 </TouchableOpacity>
                 <TextInput
