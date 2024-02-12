@@ -11,19 +11,18 @@ const OrderedItems = ({item}) => {
   const {generalSettings} = useSelector(state => state?.generalSettingsState);
   return (
     <View style={styles.itemList}>
-      <View style={styles.itemDetails}>
-        <View style={styles.section1}>
-          <View style={styles.itemInfo}>
-            <View style={styles.itemNameContainer}>
-              <Text style={styles.itemName}>{item?.itemName}</Text>
-            </View>
-            <Text style={styles.itemPrice}>
-              {generalSettings?.currencyCode}
-              {parseFloat(
-                item?.price * item?.quantity + item?.addOnAmount,
-              ).toFixed(2)}
-            </Text>
-          </View>
+      <View style={styles.section1}>
+        <View style={styles.itemNameContainer}>
+          <Text style={styles.itemName}>{item?.itemName}</Text>
+        </View>
+        <View style={styles.section2}>
+          <Text style={styles.itemPrice}>
+            {generalSettings?.currencyCode}
+            {parseFloat(
+              item?.price * item?.quantity + item?.addOnAmount,
+            ).toFixed(2)}
+          </Text>
+
           <View style={styles.qtySection}>
             <TouchableOpacity style={styles.qtyButton1}>
               <Text style={styles.qtyIcon}>-</Text>
@@ -40,14 +39,16 @@ const OrderedItems = ({item}) => {
 };
 
 const styles = StyleSheet.create({
-  itemList: {},
-  itemDetails: {
-    padding: 5,
+  itemList: {
+    flex: 1,
+    backgroundColor: Color?.DEFAULT_WHITE,
   },
+
   section1: {
     flexDirection: 'row',
+    flexShrink: 1,
     justifyContent: 'space-between',
-    backgroundColor: Color.DEFAULT_GREEN,
+    backgroundColor: Colors.colorWhitesmoke_200,
     alignItems: 'center',
     marginBottom: 5,
   },
@@ -55,18 +56,29 @@ const styles = StyleSheet.create({
     flex: 1, // Added flex to allow itemName and itemPrice to take available space
   },
   itemNameContainer: {
-    backgroundColor: Color?.LIGHT_YELLOW,
+    flexShrink: 2,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    width: Display.setWidth(40),
+    height: '100%',
+
+    paddingLeft: 10,
   },
   itemName: {
     fontSize: 14,
-    fontFamily: Font.POPPINS_SEMI_BOLD,
+    fontFamily: Font.POPPINS_REGULAR,
     color: Color.DEFAULT_BLACK,
+  },
+  section2: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   itemPrice: {
     fontSize: 14,
     fontFamily: Font.POPPINS_SEMI_BOLD,
     color: Color.DEFAULT_BLACK,
-    textAlign: 'right', // Align the price to the right
+    paddingRight: 10,
   },
   qtySection: {
     flexDirection: 'row',
