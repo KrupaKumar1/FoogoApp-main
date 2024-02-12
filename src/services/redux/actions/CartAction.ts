@@ -6,6 +6,7 @@ const types = {
   ORDERDETAILS_IN: 'ORDERDETAILS_IN',
   ITEMUPDATE_IN_MENUITEM: 'ITEMUPDATE_IN_MENUITEM',
   GET_ORDER_ID: 'GET_ORDER_ID',
+  REDUCE_QUANTITY:"REDUCE_QUANTITY",
 };
 
 const addItemToCart = (cartItem: any) => {
@@ -33,6 +34,14 @@ const removeItems = () => {
     payload: data,
   };
 };
+ const reduceQuantity = (qty) => {
+  return {
+    type: types.REDUCE_QUANTITY,
+    payload: {
+      dataQuantityReduce: qty,
+    },
+  };
+};
 const sameitemupdateIn = (qty: any) => {
   return {
     type: types.ITEMUPDATE_IN_MENUITEM,
@@ -45,7 +54,6 @@ const orderdetailsIn = (data: any) => {
   return {
     type: types.ORDERDETAILS_IN,
     payload: {...data,cartUniqueId:new Date().getTime().toString()
-     
     },
   };
 };
@@ -63,6 +71,7 @@ export default {
   removeItems,
   additemIn,
   customizationIn,
+  reduceQuantity,
   sameitemupdateIn,
   orderdetailsIn,
   getOrderId,
