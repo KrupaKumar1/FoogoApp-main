@@ -457,7 +457,9 @@ const OrderDetails = ({navigation}) => {
   }, [finalSubTotal]);
 
   useEffect(() => {
+    if(orderId){
     getOrderDetails();
+    }
   }, [orderId]);
 
   return (
