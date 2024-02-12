@@ -180,7 +180,7 @@ const showOrderDetailsMinusHandler = () => {
         <View style={styles.itemDetailsContainer}>
           <Text style={styles.itemName}>{itemDetails?.name}</Text>
           <View style={styles.priceRatingContainer}>
-            <Text style={styles.price}>$50.00</Text>
+            <Text style={styles.price}>${parseFloat(itemDetails.deliveryPrice).toFixed(2)}</Text>
           </View>
           <View style={styles.buttonConatiner}>
             <TouchableOpacity style={styles.moreDetailsButton}>
