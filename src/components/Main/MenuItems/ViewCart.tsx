@@ -1,14 +1,21 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import Color from '../../../constant/Color';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {CartAction} from '../../../services/redux/actions';
 
 const ViewCart = ({navigation}: {navigation: any}) => {
   const {cartItems} = useSelector(state => state?.cartState);
+  const dispatch = useDispatch();
+
+  const viewCartHandler = () => {
+    dispatch(CartAction.getOrderId(null));
+    navigation.navigate('Cart');
+  };
   return (
     <View style={styles.bottomTabBar}>
       <TouchableOpacity
-        onPress={() => navigation.navigate('Cart')}
+        onPress={() => viewCartHandler()}
         style={styles.tabButton}>
         <Text style={styles.tabText}>View Cart</Text>
         <Text style={styles.cartItems}>{cartItems?.length}</Text>

@@ -49,8 +49,10 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     justifyContent: 'space-between',
     backgroundColor: Colors.colorWhitesmoke_200,
+    padding: 5,
+    borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 5,
+    marginBottom: 7,
   },
   itemInfo: {
     flex: 1, // Added flex to allow itemName and itemPrice to take available space
