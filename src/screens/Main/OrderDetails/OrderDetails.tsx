@@ -16,7 +16,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Color from '../../../constant/Color';
 import {CartAction} from '../../../services/redux/actions';
 import {Colors, FontFamily, FontSize} from '../../../CSS/GlobalStyles';
-
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomerDetails from '../../../components/Main/OrderDetails/CutomerDetails';
@@ -28,7 +27,6 @@ import API_CALL from '../../../services/Api';
 import {Alert} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Separator from '../../../components/General/Seperator';
-import AllCoupons from './Coupons/AllCoupons';
 import CouponsAction from '../../../services/redux/actions/CouponsAction';
 import OrderedItems from '../../../components/Main/Cart/OrderedItems';
 
@@ -55,7 +53,7 @@ const OrderDetails = ({navigation}) => {
   const [showBillSummary, setShowBillSummary] = useState(false);
   const [showAddTip, setShowAddTip] = useState(false);
   /**Customer Details */
-  const [customerDetails, setCustomerDetails] = useState({});
+ 
   /**BIll Sumary Details */
   const [finalSubTotal, setSubtotal] = useState(0);
   const [gstTax, setTax] = useState(0);
@@ -64,7 +62,7 @@ const OrderDetails = ({navigation}) => {
 
   /**ALL Order Details State */
   const [tableOrderDetails, setTableOrderDetails] = useState([]);
-  console.log('ORDER DETAILS', tableOrderDetails);
+ 
 
   const closeBillModal = () => {
     setShowBillSummary(false);
