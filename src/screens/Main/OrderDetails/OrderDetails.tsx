@@ -53,7 +53,7 @@ const OrderDetails = ({navigation}) => {
   const [showBillSummary, setShowBillSummary] = useState(false);
   const [showAddTip, setShowAddTip] = useState(false);
   /**Customer Details */
- 
+
   /**BIll Sumary Details */
   const [finalSubTotal, setSubtotal] = useState(0);
   const [gstTax, setTax] = useState(0);
@@ -62,7 +62,6 @@ const OrderDetails = ({navigation}) => {
 
   /**ALL Order Details State */
   const [tableOrderDetails, setTableOrderDetails] = useState([]);
- 
 
   const closeBillModal = () => {
     setShowBillSummary(false);
@@ -402,7 +401,7 @@ const OrderDetails = ({navigation}) => {
       splitPayments,
     };
 
-    console.log(orderPayload, 'SVAE_ORDER');
+    //console.log(orderPayload, 'SVAE_ORDER');
     API_CALL({
       method: 'POST',
       url: 'Order/SaveOrder',
@@ -455,8 +454,8 @@ const OrderDetails = ({navigation}) => {
   }, [finalSubTotal]);
 
   useEffect(() => {
-    if(orderId){
-    getOrderDetails();
+    if (orderId) {
+      getOrderDetails();
     }
   }, [orderId]);
 
@@ -479,7 +478,10 @@ const OrderDetails = ({navigation}) => {
         <View style={styles.summary}>
           {tableOrderDetails?.orderNumber && (
             <View style={styles.cardSection}>
-              <Text>{tableOrderDetails?.orderNumber}</Text>
+              <Text style={styles.orderNumber}>
+                {tableOrderDetails?.orderNumber}
+              </Text>
+              <Text>{tableOrderDetails?.customerName}</Text>
             </View>
           )}
           <View style={styles.cardSection}>
@@ -619,6 +621,13 @@ const OrderDetails = ({navigation}) => {
               )}
             </TouchableOpacity>
           </View>
+          <TouchableOpacity onPress={() => navigation.navigate('Payments')}>
+            <View style={styles.cardSection2}>
+              <View style={styles.section1}>
+                <Text style={styles.cardTitle}>Pay</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
         </View>
       </ScrollView>
       <View style={styles.footer}>
@@ -630,7 +639,9 @@ const OrderDetails = ({navigation}) => {
         <TouchableOpacity
           onPress={() => SaveOrder()}
           style={styles.generateKOTContainer}>
-          <Text style={styles.generateKOTText}>Generate KOT</Text>
+          <Text style={styles.generateKOTText}>
+            {tableOrderDetails?.orderNumber ? 'Fire KOT' : 'Generate KOT'}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaProvider>
@@ -664,6 +675,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     padding: 12,
   },
+  orderNumber: {
+    fontFamily: Font.POPPINS_SEMI_BOLD,
+  },
   cardSection: {
     padding: 14,
     flexDirection: 'column',
@@ -673,13 +687,26 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     marginBottom: 10,
   },
+
+  cardSection2: {
+    padding: 14,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    backgroundColor: Color.SECONDARY_GREEN,
+    borderRadius: 12,
+    shadowColor: '#000',
+    marginBottom: 10,
+    marginTop: 20,
+  },
   couponIcon: {
     marginRight: 10,
   },
   cardTitle: {
     fontSize: 12,
     fontFamily: Font.POPPINS_SEMI_BOLD,
-    color: Color.DEFAULT_BLACK,
+    color: Color.PRIMARY,
   },
   addMoreContainer: {
     flexDirection: 'row',
@@ -771,6 +798,7 @@ const styles = StyleSheet.create({
 
   footer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     position: 'relative',
     bottom: 0,
     left: 0,
