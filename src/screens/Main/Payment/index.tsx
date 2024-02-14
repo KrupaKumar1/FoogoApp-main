@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -11,13 +11,26 @@ import {styles} from './styles';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Separator from '../../../components/General/Seperator';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {useDispatch, useSelector} from 'react-redux';
+import {PaymentAction} from '../../../services/redux/actions';
 
 const Payments = ({navigation}) => {
+  const dispatch = useDispatch();
   const [selectedOption, setSelectedOption] = useState('Cash');
+  const {orderDetails, paymentMethod} = useSelector(
+    state => state?.paymentState,
+  );
+
+  console.log('DERAILS', paymentMethod);
 
   const handleOptionSelect = option => {
     setSelectedOption(option);
+    dispatch(PaymentAction.paymentMethod(option));
   };
+
+  useEffect(() => {
+    dispatch(PaymentAction.paymentMethod('Cash'));
+  }, []);
 
   const renderOption = option => {
     return (

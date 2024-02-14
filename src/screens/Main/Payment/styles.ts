@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
     color: Color.DEFAULT_BLACK,
   },
   selectPaymentCard: {
-    marginTop: 50,
+    marginTop: 30,
   },
   cardSection: {
     padding: 14,

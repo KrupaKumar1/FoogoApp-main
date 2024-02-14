@@ -14,7 +14,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Color from '../../../constant/Color';
-import {CartAction} from '../../../services/redux/actions';
+import {CartAction, PaymentAction} from '../../../services/redux/actions';
 import {Colors, FontFamily, FontSize} from '../../../CSS/GlobalStyles';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -98,6 +98,12 @@ const OrderDetails = ({navigation}) => {
   const toggleAddTip = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setShowAddTip(!showAddTip);
+  };
+
+  /**Payment Handler */
+  const paymentHandler = () => {
+    dispatch(PaymentAction.getOrderDetails(tableOrderDetails));
+    navigation.navigate('Payments');
   };
 
   const calculateTaxes = () => {
@@ -485,6 +491,9 @@ const OrderDetails = ({navigation}) => {
             </View>
           )}
           <View style={styles.cardSection}>
+            <View style={styles.addMoreContainer}>
+              <Text style={styles.addMoreButton}>ITEM DETAILS</Text>
+            </View>
             {tableOrderDetails?.orderNumber ? (
               <>
                 {tableOrderDetails?.orderItems?.length > 0 &&
@@ -503,11 +512,11 @@ const OrderDetails = ({navigation}) => {
               </>
             )}
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.addMoreContainer}
               onPress={() => navigation.goBack()}>
               <Text style={styles.addMoreButton}>+Add More Items</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           <View style={styles.cardSection}>
             <TouchableOpacity onPress={toggleAllCoupons}>
@@ -517,7 +526,7 @@ const OrderDetails = ({navigation}) => {
                     name="ticket-percent-outline"
                     size={20}
                     style={styles.couponIcon}
-                    color={Colors.colorBlack}
+                    color={Colors.colorLimegreen}
                   />
                   <Text style={styles.cardTitle}>All Coupons</Text>
                 </View>
@@ -537,7 +546,7 @@ const OrderDetails = ({navigation}) => {
                     name="person"
                     size={20}
                     style={styles.couponIcon}
-                    color={Colors.colorBlack}
+                    color={Color.FABEBOOK_BLUE}
                   />
                   <Text style={styles.cardTitle}>Customer Details</Text>
                 </View>
@@ -563,7 +572,7 @@ const OrderDetails = ({navigation}) => {
                     name="wallet"
                     size={20}
                     style={styles.couponIcon}
-                    color={Colors.colorBlack}
+                    color={Colors.colorDarkslateblue}
                   />
                   <Text style={styles.cardTitle}>Add Tip</Text>
                 </View>
@@ -621,10 +630,10 @@ const OrderDetails = ({navigation}) => {
               )}
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('Payments')}>
+          <TouchableOpacity onPress={() => paymentHandler()}>
             <View style={styles.cardSection2}>
               <View style={styles.section1}>
-                <Text style={styles.cardTitle}>Pay</Text>
+                <Text style={styles.cardTitle2}>Pay</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -685,7 +694,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.DEFAULT_WHITE,
     borderRadius: 12,
     shadowColor: '#000',
-    marginBottom: 10,
+    marginBottom: 15,
   },
 
   cardSection2: {
@@ -694,7 +703,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
 
-    backgroundColor: Color.SECONDARY_GREEN,
+    backgroundColor: Color.PRIMARY,
     borderRadius: 12,
     shadowColor: '#000',
     marginBottom: 10,
@@ -704,9 +713,14 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   cardTitle: {
-    fontSize: 12,
-    fontFamily: Font.POPPINS_SEMI_BOLD,
-    color: Color.PRIMARY,
+    fontSize: 14,
+    fontFamily: Font.POPPINS_REGULAR,
+    color: Color.DEFAULT_BLACK,
+  },
+  cardTitle2: {
+    fontSize: 14,
+    fontFamily: Font.POPPINS_REGULAR,
+    color: Color.DEFAULT_WHITE,
   },
   addMoreContainer: {
     flexDirection: 'row',

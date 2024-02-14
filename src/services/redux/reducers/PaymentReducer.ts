@@ -2,6 +2,7 @@ import {PaymentAction} from '../actions';
 
 const initialState = {
   orderDetails: {},
+  paymentMethod: '',
 };
 
 const PaymentReducer = (state = initialState, action: any) => {
@@ -10,6 +11,12 @@ const PaymentReducer = (state = initialState, action: any) => {
       return {
         ...state,
         orderDetails: action.payload,
+      };
+
+    case PaymentAction.types.SET_PAYMENT_METHOD:
+      return {
+        ...state,
+        paymentMethod: action.payload,
       };
 
     default:
