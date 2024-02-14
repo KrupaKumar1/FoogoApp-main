@@ -117,6 +117,29 @@ const OrderCard: React.FC<OrderCardProps> = ({
       },
     });
   };
+   const recievedStatusHandler = async (orderid: any) => {
+    API_CALL({
+      method: 'POST',
+      url: `Order/UpdateOrderStatus?orderId=${orderid}&statusId=21&comments="test"&userName="Krupa kumaar"&ipAddress="111.93.18.226"`,
+      headerConfig: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      callback: async ({status, data}: {status: any; data: any}) => {
+        if (status === 200) {
+          Alert.alert('Order Accepted Successfully');
+          getAllOrdersList();
+        } else {
+          Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        }
+      },
+    });
+  };
 
   const orderDetailsHandler = () => {
     dispatch(CartAction.getOrderId(orderDetails?.guid));
@@ -246,6 +269,22 @@ const OrderCard: React.FC<OrderCardProps> = ({
             </TouchableOpacity>
           </View>
         )}
+        {orderDetails?.paymentStatus ==="Paid" &&  orderDetails?.status === 'OrderPaymentSuccessful' && (
+  <View style={styles.footer}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => cancelHandler()}>
+              <Text style={styles.actionButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => recievedStatusHandler()}
+              style={styles.button}>
+              <Text style={styles.actionButtonText}>Accept</Text>
+            </TouchableOpacity>
+          </View>
+)
+
+}
 
       {orderDetails?.paymentStatus !== 'Paid' &&
         orderDetails?.status === 'OrderPreparedReadyForDelivery' && (
@@ -265,6 +304,8 @@ const OrderCard: React.FC<OrderCardProps> = ({
     </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   cardContainer: {
