@@ -20,19 +20,9 @@ import {FontSize} from '../../../CSS/GlobalStyles';
 const MenuCard = ({itemDetails,cardQtySetHandler}: {itemDetails: any}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {cartItems} = useSelector(state => state?.cartState);
-  console.log(itemDetails?.quantity)
+ 
 
   const dispatch = useDispatch();
-
-  // const openModal = () => {
-  //   if (itemDetails?.menuSubItem?.length > 0) {
-  //     setModalVisible(true);
-  //   } else {
-  //     dispatch(CartAction.addItemToCart({...itemDetails, qty: 1}));
-  //     // setModalVisible(true);
-  //   }
-  // };
-
   const openModal = () => {
     const itemObjectDetails = {
       responseOrder: itemDetails,

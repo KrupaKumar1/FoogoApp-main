@@ -12,10 +12,115 @@ import {Colors} from '../../../CSS/GlobalStyles';
 import Display from '../../../utils/Display';
 import FontAwsome from 'react-native-vector-icons/FontAwesome';
 import CrossIcon from 'react-native-vector-icons/Entypo';
-import {useSelector} from 'react-redux';
+import {useSelector,useDispatch} from 'react-redux';
+import { CartAction } from '../../../services/redux/actions';
 
 const CartItem = ({item}) => {
   const {generalSettings} = useSelector(state => state?.generalSettingsState);
+   const {cartItems} = useSelector(state => state?.cartState);
+  const dispatch = useDispatch();
+
+  const openModal = (itemDetails:any) => {
+    const itemObjectDetails = {
+      responseOrder: itemDetails,
+      qty: itemDetails?.qty || 1,
+      item: itemDetails?.item,
+      price: itemDetails?.price,
+      total: itemDetails?.price,
+      addonsamount1: 0,
+      subItem: {},
+      customFieldListItem: [],
+      addons: [],
+      listAddons: [],
+      radioAddon: {},
+      customFields: [],
+      addonField: [],
+    };
+
+  
+    
+
+    const objIndex = cartItems?.findIndex(
+      (obj:any) => obj.item === itemObjectDetails.item,
+    );
+
+    if (objIndex !== -1) {
+      dispatch(CartAction.sameitemupdateIn(itemObjectDetails));
+    } else {
+       dispatch(CartAction.orderdetailsIn(itemObjectDetails));
+     // dispatch(CartAction.addItemToCart(itemObjectDetails));
+    }
+  
+}
+const showOrderDetailsMinusHandler = (itemDetails:any) => {
+    const itemObjectDetails = {
+      responseOrder: itemDetails,
+      qty: itemDetails?.qty || 1,
+      item: itemDetails?.item,
+      price: itemDetails?.price,
+      total: itemDetails?.price,
+      addonsamount1: 0,
+      subItem: {},
+      customFieldListItem: [],
+      addons: [],
+      listAddons: [],
+      radioAddon: {},
+      customFields: [],
+      addonField: [],
+    };
+
+   
+
+ 
+    const objIndex = cartItems?.findIndex((obj:any) => {
+      const sameItem = obj.item === itemObjectDetails.item;
+      return sameItem;
+    });
+    const matchedItemList = cartItems[objIndex];
+ 
+    if (objIndex !== -1) {
+      const quantityUpdateObject = {
+        id: matchedItemList.id,
+        qty: matchedItemList.qty,
+      };
+       dispatch(CartAction.reduceQuantity(quantityUpdateObject));
+    
+    } else {
+      dispatch(CartAction.orderdetailsIn(itemObjectDetails));
+      
+    }
+  
+  };
+
+    /**adding quantity or reducing quantity */
+  const addonPlusHandler = (menuitem1:any) => {
+    const menuItemDetails = { ...menuitem1, quantity: 1 };
+ 
+    if (menuItemDetails?.menuSubItem?.length == 0) {
+       openModal(menuitem1);
+    //   cardQtySetHandler();
+    } else {
+      // addOrderItem(menuItemDetails);
+      // cardQtySetHandler();
+    }
+  };
+ 
+  /**checking the customization and dispatcing the action */
+  const addonMinusHandler = (menuitemData:any) => {
+    const menuItemDetails = { ...menuitemData, quantity: 1 };
+ 
+    if (menuItemDetails?.menuSubItem?.length == 0) {
+      showOrderDetailsMinusHandler(menuitemData);
+    //  cardQtySetHandler();
+ 
+      // menuGroupitemsHandler();
+    } else {
+      // addOrderItem(menuItemDetails);
+      // cardQtySetHandler();
+      // cardQtySetHandler();
+    }
+  };
+  console.log(item)
   return (
     <View style={styles.itemList}>
       <View style={styles.itemDetails}>
@@ -31,11 +136,11 @@ const CartItem = ({item}) => {
         </Text> */}
         <View style={styles.section1}>
           <View style={styles.qtySection}>
-            <TouchableOpacity style={styles.qtyButton1}>
+            <TouchableOpacity style={styles.qtyButton1} onPress={()=>addonMinusHandler(item)}>
               <Text style={styles.qtyIcon}>-</Text>
             </TouchableOpacity>
             <Text style={styles.qtyValue}>{item?.qty}</Text>
-            <TouchableOpacity style={styles.qtyButton2}>
+            <TouchableOpacity style={styles.qtyButton2} onPress={()=>addonPlusHandler(item)}>
               <Text style={styles.qtyIcon}>+</Text>
             </TouchableOpacity>
           </View>
