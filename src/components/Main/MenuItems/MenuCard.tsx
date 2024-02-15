@@ -151,8 +151,49 @@ const showOrderDetailsMinusHandler = () => {
   };
 
   return (
+
     <View style={styles.container}>
-      <Image
+       {!itemDetails?.inStock || !itemDetails?.isItemAvailableNow ?
+       <>
+     <Image
+        source={{
+          uri:
+            itemDetails && itemDetails.pictureName !== 'noimage.png'
+              ? itemDetails.pictureName.replace(/\\/g, '/')
+              : 'https:devcdn.restrozap.com/7/images/restaurant/menu/pexels-ash-376464.jpg',
+        }}
+        style={styles.posterStyle}
+        resizeMode="cover"
+      />
+
+      <View style={styles.overlayContainer}>
+        <View style={styles.bestsellerTag}>
+          <Text style={styles.bestsellerText}>Bestseller</Text>
+        </View>
+        <View style={styles.itemDetailsContainer}>
+          <Text style={styles.itemName}>{itemDetails?.name}</Text>
+          <View style={styles.priceRatingContainer}>
+            <Text style={styles.price}>${parseFloat(itemDetails.deliveryPrice).toFixed(2)}</Text>
+          </View>
+          <View style={styles.buttonConatiner}>
+            <TouchableOpacity style={styles.moreDetailsButton}>
+              <Text
+                style={styles.moreDetailsButtonText}>{`Item is no longer available`}</Text>
+            </TouchableOpacity>
+           
+          
+          </View>
+          <AddItemModal
+            isVisible={isModalVisible}
+            closeModal={closeModal}
+            itemDetails={itemDetails}
+          />
+        </View>
+      </View>
+      </>
+      :
+      <>
+        <Image
         source={{
           uri:
             itemDetails && itemDetails.pictureName !== 'noimage.png'
@@ -177,6 +218,7 @@ const showOrderDetailsMinusHandler = () => {
               <Text
                 style={styles.moreDetailsButtonText}>{`More Details>`}</Text>
             </TouchableOpacity>
+           
             {!itemDetails.quantity ? (
               <TouchableOpacity
                 style={styles.addButton}
@@ -206,6 +248,9 @@ const showOrderDetailsMinusHandler = () => {
           />
         </View>
       </View>
+            </>
+}
+    
     </View>
   );
 };
