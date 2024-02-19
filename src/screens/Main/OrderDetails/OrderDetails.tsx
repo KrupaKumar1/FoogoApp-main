@@ -630,6 +630,7 @@ const OrderDetails = ({navigation}) => {
               )}
             </TouchableOpacity>
           </View>
+{orderId && (
           <TouchableOpacity onPress={() => paymentHandler()}>
             <View style={styles.cardSection2}>
               <View style={styles.section1}>
@@ -637,6 +638,9 @@ const OrderDetails = ({navigation}) => {
               </View>
             </View>
           </TouchableOpacity>
+)
+}
+
         </View>
       </ScrollView>
       <View style={styles.footer}>
