@@ -15,6 +15,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
 import {CartAction, PaymentAction} from '../../../services/redux/actions';
 import API_CALL from '../../../services/Api';
+import RazorpayCheckout from 'react-native-razorpay';
+
+// Initialize Razorpay with your API key
+
 
 const Payments = ({navigation}) => {
   
@@ -37,6 +41,7 @@ const Payments = ({navigation}) => {
     setSelectedOption(option);
     dispatch(PaymentAction.paymentMethod(option));
   };
+  // RazorpayCheckout.setApiKey("rzp_test_HvLWgvPK6h36fg","MA0vRESEVMjWt3");
 
    const orderItemsInfo = cartItems?.map(list => ({
     createdBy: userDetails.fullName,
@@ -109,6 +114,43 @@ const Payments = ({navigation}) => {
           }
         : null,
   }));
+  const upiHandler=()=>{
+   if(selectedOption==="Cash"){
+    SaveOrder();
+   }
+   else{
+
+var options = {
+    description: 'Credits towards consultation',
+    image: 'https://i.imgur.com/3g7nmJC.png',
+    currency: 'INR',
+    key: 'rzp_test_HvLWgvPK6h36fg', // Your api key
+    amount: parseFloat(orderDetails?.grandTotal).toFixed(2)*100,
+    name: 'POS',
+     prefill: {
+            name: "Ananad",
+            email: "anandsingh181097@gmail.com",
+            contact: "6200756476",
+          },
+
+          notes: {
+            address: "Razorpay Corporate Office",
+          },
+        
+    theme: {color: '#000FF'}
+  }
+  RazorpayCheckout.open(options).then((data) => {
+    // handle success
+  //  Alert.alert(`Success: Payment done!`);
+    SaveOrder();
+  }).catch((error) => {
+    // handle failure
+    Alert.alert(`Error: ${error.code} | ${error.description}`);
+  });
+
+   }
+
+  }
 
   const SaveOrder = () => {
     const createdBy = userDetails?.userId;
@@ -184,7 +226,7 @@ const Payments = ({navigation}) => {
     const numberOfPeople = 0;
 
     /**Payment Type */
-    const modeOfPayment = 'Cash';
+    const modeOfPayment = selectedOption;
     const creditCardType = '';
     const paymentStatusId = 1;
     const isPrintingFailed = false;
@@ -311,6 +353,7 @@ const Payments = ({navigation}) => {
   };
 
 
+
   useEffect(() => {
     dispatch(PaymentAction.paymentMethod('Cash'));
   }, []);
@@ -364,7 +407,7 @@ const Payments = ({navigation}) => {
         </View>
       </ScrollView>
       <View style={styles.placeOrderButtonContainer}>
-        <TouchableOpacity onPress={()=>SaveOrder()}>
+        <TouchableOpacity onPress={()=>upiHandler()}>
           <Text
             style={styles.placeOrderButton}>{`Pay by ${selectedOption}`}</Text>
         </TouchableOpacity>
