@@ -117,7 +117,7 @@ const Payments = ({navigation}) => {
   const upiHandler=()=>{
    if(selectedOption==="Cash"){
     SaveOrder();
-   }
+   } 
    else{
 
 var options = {
