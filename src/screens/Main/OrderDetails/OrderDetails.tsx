@@ -60,6 +60,24 @@ const OrderDetails = ({navigation}) => {
   const [finalAdditionalTax, setAdditionalTax] = useState(0);
   const [finalGrandTotal, setFinalGrandTotal] = useState(0);
 
+
+  /**Customer Details */
+  const [customerNameData, setCustomerName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhone] = useState('');
+
+  const handleNameChange = (name) => {
+    setCustomerName(name);
+  };
+
+  const handleEmailChange = (email) => {
+    setEmail(email);
+  };
+
+  const handlePhoneChange = (phone) => {
+    setPhone(phone);
+  };
+
   /**ALL Order Details State */
   const [tableOrderDetails, setTableOrderDetails] = useState([]);
 
@@ -82,6 +100,8 @@ const OrderDetails = ({navigation}) => {
     );
     navigation.navigate('Coupons');
   };
+
+ 
 
   // Function to toggle visibility of CustomerDetails
   const toggleCustomerDetails = () => {
@@ -159,6 +179,7 @@ const OrderDetails = ({navigation}) => {
       callback: async ({status, data}: {status: any; data: any}) => {
         if (status === 200) {
           setTableOrderDetails(data.data.order);
+          // setCustomerName(data.data.order.customerName);
         } else {
           Alert.alert(
             'Error',
@@ -246,6 +267,7 @@ const OrderDetails = ({navigation}) => {
   }));
 
   const SaveOrder = () => {
+    console.log(customerNameData)
     const createdBy = userDetails?.userId;
     const createdDate = currentDate;
     const createdIP = userIp;
@@ -258,9 +280,9 @@ const OrderDetails = ({navigation}) => {
 
     /**Customer Details */
     const customerId = 0;
-    const customerName = 'MOBILE TEST';
-    const emailAddress = '';
-    const phone = '';
+    const customerName = customerNameData;
+    const emailAddress = email;
+    const phone = phoneNumber;
 
     /**Amounts */
     const subTotal = finalSubTotal;
@@ -462,6 +484,7 @@ const OrderDetails = ({navigation}) => {
   useEffect(() => {
     if (orderId) {
       getOrderDetails();
+      
     }
   }, [orderId]);
 
@@ -561,7 +584,13 @@ const OrderDetails = ({navigation}) => {
                 />
               </View>
             </TouchableOpacity>
-            {showCustomerDetails && <CustomerDetails />}
+            {showCustomerDetails && 
+            <CustomerDetails  
+         onNameChange={handleNameChange}
+        onEmailChange={handleEmailChange}
+         tableOrderDetails={tableOrderDetails}
+        onPhoneChange={handlePhoneChange}/>
+            }
           </View>
 
           <View style={styles.cardSection}>

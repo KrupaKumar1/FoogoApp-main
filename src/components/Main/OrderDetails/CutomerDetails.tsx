@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import Color from '../../../constant/Color';
 
-const CustomerDetails = () => {
+const CustomerDetails = ({onNameChange, onEmailChange, onPhoneChange,tableOrderDetails}) => {
   // State for input values
   const [customerName, setCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -11,16 +11,27 @@ const CustomerDetails = () => {
   // Handlers for input changes
   const handleCustomerNameChange = text => {
     setCustomerName(text);
+    onNameChange(text);
   };
 
   const handlePhoneNumberChange = text => {
-    // Assuming currency code is prefixed to phone number
+   
     setPhoneNumber(text);
+    onPhoneChange(text)
   };
 
   const handleEmailChange = text => {
     setEmail(text);
+    onEmailChange(text);
   };
+
+  useEffect(()=>{
+
+setCustomerName(tableOrderDetails?.customerName);
+setEmail(tableOrderDetails?.emailAddress);
+setPhoneNumber(tableOrderDetails?.phone);
+
+  },[])
 
   return (
     <View style={styles.container}>
