@@ -107,7 +107,7 @@ const BillSummary = (props: any) => {
               </View>
               <Text style={styles.cardTitle}>
                 {generalSettings?.currencyCode}
-                {tipAmount}
+                {parseFloat(tipAmount).toFixed(2)}
               </Text>
             </View>
 }
@@ -116,7 +116,7 @@ const BillSummary = (props: any) => {
               <Text style={styles.totalDue}>Total Due Amount</Text>
               <Text style={styles.totalDue}>
                 {generalSettings?.currencyCode}
-                {total}
+                {parseFloat(Number(total)+Number(tipAmount)).toFixed(2)}
               </Text>
             </View>
           </View>

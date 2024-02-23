@@ -172,7 +172,7 @@ var options = {
     /**Amounts */
     const subTotal = orderDetails.subTotal;
     const tax = orderDetails.tax;
-    const grandTotal = orderDetails.grandTotal;
+    const grandTotal = Number(orderDetails.grandTotal)+ Number(orderDetails?.tipAmount);
     const discountAmount = 0;
     const couponAmount = '';
     const tipAmount = orderDetails?.tipAmount;
