@@ -12,7 +12,7 @@ import {useSelector} from 'react-redux';
 
 const BillSummary = (props: any) => {
   const {isVisible, closeModal, totals} = props;
-  const {subTotal, tax, serviceCharge, total} = totals;
+  const {subTotal, tax, serviceCharge, total,tipAmount} = totals;
 
   const {generalSettings} = useSelector(state => state?.generalSettingsState);
 
@@ -95,6 +95,22 @@ const BillSummary = (props: any) => {
                 - {generalSettings?.currencyCode}5.00
               </Text>
             </View> */}
+     { tipAmount>0 &&       <View style={styles.section1}>
+              <View style={styles.couponContainer}>
+                <Ionicons
+                  name="fast-food-outline"
+                  size={20}
+                  style={styles.couponIcon}
+                  color={Colors.colorBlack}
+                />
+                <Text style={styles.cardTitle}>Tip Amount</Text>
+              </View>
+              <Text style={styles.cardTitle}>
+                {generalSettings?.currencyCode}
+                {tipAmount}
+              </Text>
+            </View>
+}
 
             <View style={styles.billItem}>
               <Text style={styles.totalDue}>Total Due Amount</Text>
