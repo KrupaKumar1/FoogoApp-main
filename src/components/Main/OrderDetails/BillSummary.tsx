@@ -12,9 +12,10 @@ import {useSelector} from 'react-redux';
 
 const BillSummary = (props: any) => {
   const {isVisible, closeModal, totals} = props;
-  const {subTotal, tax, serviceCharge, total,tipAmount} = totals;
+  const {subTotal, tax, serviceCharge, total,tipAmount,couponDiscount} = totals;
 
   const {generalSettings} = useSelector(state => state?.generalSettingsState);
+  console.log(couponDiscount?.length)
 
   return (
     <Modal
@@ -68,7 +69,7 @@ const BillSummary = (props: any) => {
               </View>
               <Text style={styles.cardTitle}>
                 {generalSettings?.currencyCode}
-                {tax.toFixed(2)}
+                {(couponDiscount?.tax?couponDiscount.tax:tax).toFixed(2)}
               </Text>
             </View>
             <View style={styles.section1}>
@@ -111,12 +112,32 @@ const BillSummary = (props: any) => {
               </Text>
             </View>
 }
+ { couponDiscount.couponDiscount>0 &&       <View style={styles.section1}>
+              <View style={styles.couponContainer}>
+                <Ionicons
+                  name="fast-food-outline"
+                  size={20}
+                  style={styles.couponIcon}
+                  color={Colors.colorBlack}
+                />
+                <Text style={styles.cardTitle}>Coupon Discount</Text>
+              </View>
+              <Text style={styles.cardTitle}>
+                -{generalSettings?.currencyCode}
+                {parseFloat(couponDiscount?.couponDiscount).toFixed(2)}
+              </Text>
+            </View>
+}
 
             <View style={styles.billItem}>
               <Text style={styles.totalDue}>Total Due Amount</Text>
               <Text style={styles.totalDue}>
-                {generalSettings?.currencyCode}
-                {parseFloat(Number(total)+Number(tipAmount)).toFixed(2)}
+                {generalSettings?.currencyCode}{
+          couponDiscount &&     couponDiscount?.tax >0 ? parseFloat(Number(total)+Number(tipAmount)-Number(couponDiscount?.couponDiscount)-Number(tax)+Number(couponDiscount?.tax)).toFixed(2)
+                  :
+                  parseFloat(Number(total)+Number(tipAmount)).toFixed(2)
+                }
+                
               </Text>
             </View>
           </View>

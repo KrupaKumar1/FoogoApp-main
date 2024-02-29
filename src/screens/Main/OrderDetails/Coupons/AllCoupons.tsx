@@ -12,23 +12,29 @@ import Font from '../../../../constant/Font';
 import {TextInput} from 'react-native-gesture-handler';
 import {Colors} from '../../../../CSS/GlobalStyles';
 import API_CALL from '../../../../services/Api';
-import {useSelector} from 'react-redux';
+import {useSelector,useDispatch} from 'react-redux';
 import {Alert} from 'react-native';
+import CouponsAction from '../../../../services/redux/actions/CouponsAction';
 
 const AllCoupons = ({navigation}) => {
   const {token, userDetails, userIp} = useSelector(
     state => state?.generalState,
   );
   const {totalAmounts} = useSelector(state => state?.appliedCouponState);
-  console.log('AMOUNTS', totalAmounts);
+  const {couponDetails}=useSelector(state => state?.appliedCouponState);
+  
   const [allCoupons, setAllCoupons] = useState([]);
   const [couponCode, setCouponCode] = useState('');
+  const [couponApplied,setCouponApplied]=useState(null)
 
   const handleCouponCode = text => {
     setCouponCode(text);
   };
 
-  const apllyCouponAPI = () => {
+  const dispatch=useDispatch();
+
+  const applyCoupon = (couponCodeApplied:any) => {
+    setCouponApplied(couponCodeApplied);
     const couponObject = {
       createdBy: userDetails.fullName,
       createdDate: new Date(),
@@ -60,8 +66,8 @@ const AllCoupons = ({navigation}) => {
       isServiceChargePercentage: true,
       taxPercentage: 10,
       orderSource: 'POS',
-      couponCode: couponCode,
-      orderItems: itemsList,
+      couponCode: couponCodeApplied,
+      orderItems: totalAmounts.items,
     };
 
     API_CALL({
@@ -74,22 +80,44 @@ const AllCoupons = ({navigation}) => {
       data: couponObject,
       callback: async ({status, data}) => {
         if (status === 200) {
+           console.log("data123",data.data);
           if (data.data == null) {
             // Data is null, set error message from the response
             // setCouponErrorMsg(data.errorMessage);
             // setCouponAmount(0);
             // couponAmountCallback(0);
+          
+              Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
           } else if (data.data.IsSuccess) {
             // setCouponAmount(data.data.couponDiscount);
             // couponAmountCallback(data.data.couponDiscount, couponCode);
             // setAppliedCoupon({couponCode: couponCode});
             // setCouponErrorMsg('');
             // setCouponCode('');
+               dispatch(
+      CouponsAction.applyCoupon(data.data));
+              Alert.alert(
+            'Success',
+            "Coupon Applied Successfully",
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
           } else {
             // Data is not null and IsSuccess is false, set error message from data
             // setCouponErrorMsg(data.data.Message);
             // setCouponAmount(0);
             // couponAmountCallback(0);
+              Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
           }
         } else {
           Alert.alert(
@@ -120,6 +148,7 @@ const AllCoupons = ({navigation}) => {
       callback: async ({status, data}: {status: any; data: any}) => {
         if (status === 200) {
           setAllCoupons(data.data);
+           setCouponApplied(couponDetails?.coupon)
         } else {
           Alert.alert(
             'Error',
@@ -181,7 +210,7 @@ const AllCoupons = ({navigation}) => {
                       </Text>
                       <Text style={styles.description}>{item.description}</Text>
                     </View>
-                    {index === 0 ? (
+                    {item?.couponCode === couponApplied ? (
                       <View style={styles.appliedButtonContainer}>
                         <FontAwesome6
                           name="check-double"

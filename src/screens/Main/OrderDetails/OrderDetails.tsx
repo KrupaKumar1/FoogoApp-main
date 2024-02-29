@@ -46,7 +46,8 @@ const OrderDetails = ({navigation}) => {
     state => state?.generalState,
   );
   const {generalSettings} = useSelector(state => state?.generalSettingsState);
-
+   const {couponDetails}=useSelector(state => state?.appliedCouponState);
+console.log("123",couponDetails)
   const currentDate = new Date();
   const dispatch = useDispatch();
   /**Toggles */
@@ -133,10 +134,11 @@ const OrderDetails = ({navigation}) => {
   const toggleAllCoupons = () => {
     dispatch(
       CouponsAction.updateCartTotals({
-        subTotal: finalSubTotal,
-        tax: gstTax,
-        serviceCharge: finalAdditionalTax,
-        total: finalGrandTotal,
+        subTotal: tableOrderDetails?.orderNumber ? tableOrderDetails.subTotal  : finalSubTotal,
+        tax: tableOrderDetails?.orderNumber ? tableOrderDetails.tax  : gstTax,
+        serviceCharge: tableOrderDetails?.orderNumber ? tableOrderDetails?.serviceChargeFee  : finalAdditionalTax,
+        total:tableOrderDetails?.orderNumber ? tableOrderDetails.grandTotal  : finalGrandTotal,
+        items:tableOrderDetails?.orderItems,
       }),
     );
     navigation.navigate('Coupons');
@@ -521,7 +523,7 @@ const OrderDetails = ({navigation}) => {
   // Calculate finalSubTotal whenever cartItems change
   useEffect(() => {
     let total = 0;
-    cartItems.forEach((item: any) => {
+    cartItems?.forEach((item: any) => {
       total += item.price; // Assuming each item in cartItems has a 'price' property
     });
     setSubtotal(total);
@@ -602,8 +604,11 @@ const OrderDetails = ({navigation}) => {
                     size={20}
                     style={styles.couponIcon}
                     color={Colors.colorLimegreen}
-                  />
-                  <Text style={styles.cardTitle}>All Coupons</Text>
+                  />{
+                    couponDetails?.coupon? <Text style={styles.cardTitle}>{couponDetails?.coupon}</Text>:
+                     <Text style={styles.cardTitle}>All Coupons</Text>
+                  }
+                 
                 </View>
                 <Entypo
                   name="chevron-small-right"
@@ -738,6 +743,7 @@ const OrderDetails = ({navigation}) => {
                     serviceCharge: tableOrderDetails?.serviceChargeFee,
                     total: tableOrderDetails?.grandTotal,
                     tipAmount:tipAmountValue,
+                    couponDiscount:couponDetails,
                   }}
                 />
               )}
