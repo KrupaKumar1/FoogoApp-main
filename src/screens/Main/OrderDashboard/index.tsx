@@ -171,7 +171,7 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
   // });
 
   const menuItemsRouteHandler = () => {
-    navigation?.navigate('MenuItems');
+    navigation?.navigate('OrderType');
   };
 
   if (loading) {

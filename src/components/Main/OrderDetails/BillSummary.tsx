@@ -112,7 +112,7 @@ const BillSummary = (props: any) => {
               </Text>
             </View>
 }
- { couponDiscount.couponDiscount>0 &&       <View style={styles.section1}>
+ { couponDiscount?.couponDiscount>0 &&       <View style={styles.section1}>
               <View style={styles.couponContainer}>
                 <Ionicons
                   name="fast-food-outline"
