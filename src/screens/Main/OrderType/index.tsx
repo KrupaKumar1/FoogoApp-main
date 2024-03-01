@@ -7,9 +7,13 @@ import { Icon } from 'react-native-elements';
 
 const OrderType = ({navigation}: {navigation: NavigationProp<any>}) => {
   const handleCardPress = (cardNumber:any) => {
-    console.log(`Clicked Card ${cardNumber}`);
+    if(cardNumber==4){
+     navigation?.navigate('DineIn');
+    }
+    else{
      navigation?.navigate('MenuItems');
-  
+    }
+    
   };
 
   return (
@@ -21,7 +25,7 @@ const OrderType = ({navigation}: {navigation: NavigationProp<any>}) => {
         <Text style={styles.menuText}>Order Types</Text>
         <View style={styles.filterIconContainer}>
           <TouchableOpacity>
-            <Icon name="filter" size={30} color="black" />
+            {/* <Icon name="filter" size={30} color="black" /> */}
           </TouchableOpacity>
         </View>
       </View>
