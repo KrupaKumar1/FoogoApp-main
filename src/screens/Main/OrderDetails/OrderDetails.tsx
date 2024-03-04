@@ -10,6 +10,7 @@ import {
   UIManager,
   LayoutAnimation,
   StatusBar,
+  TextInput,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -45,13 +46,15 @@ const OrderDetails = ({navigation}) => {
     state => state?.generalState,
   );
   const {generalSettings} = useSelector(state => state?.generalSettingsState);
-
+   const {couponDetails}=useSelector(state => state?.appliedCouponState);
+console.log("123",couponDetails)
   const currentDate = new Date();
   const dispatch = useDispatch();
   /**Toggles */
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [showBillSummary, setShowBillSummary] = useState(false);
   const [showAddTip, setShowAddTip] = useState(false);
+  const [showCustomTip,setShowCustomTip] = useState(false);
   /**Customer Details */
 
   /**BIll Sumary Details */
@@ -65,6 +68,45 @@ const OrderDetails = ({navigation}) => {
   const [customerNameData, setCustomerName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhone] = useState('');
+
+  /**Tip amount */
+  const [tipAmountValue,setTipamount]=useState(0);
+  const [activeButton, setActiveButton] = useState(null);
+  const [value, setValue] = useState(0);
+  const [applyCustomTip,setApplyCustomTip]=useState(false);
+
+  const handleChangeText = (text) => {
+    // Remove any non-numeric characters from the input
+    const numericValue = text.replace(/[^0-9]/g, '');
+    setValue(numericValue);
+  };
+  const applyTipHandler=()=>{
+    setApplyCustomTip(true)
+    setTipamount(value)
+  }
+
+  const handleButtonPress = (buttonNumber:any) => {
+    setActiveButton(buttonNumber);
+    if(buttonNumber==2){
+  setTipamount(tableOrderDetails?.grandTotal*10/100);
+    }
+    else if(buttonNumber==3){
+       setTipamount(tableOrderDetails?.grandTotal*15/100);
+    }
+    else if(buttonNumber==4){
+     if(applyCustomTip){
+        setTipamount(value)
+     }
+     else{
+       setTipamount(0)
+     }
+    }
+    else{
+       setTipamount(0);
+    }
+  
+  };
+  
 
   const handleNameChange = (name) => {
     setCustomerName(name);
@@ -92,10 +134,11 @@ const OrderDetails = ({navigation}) => {
   const toggleAllCoupons = () => {
     dispatch(
       CouponsAction.updateCartTotals({
-        subTotal: finalSubTotal,
-        tax: gstTax,
-        serviceCharge: finalAdditionalTax,
-        total: finalGrandTotal,
+        subTotal: tableOrderDetails?.orderNumber ? tableOrderDetails.subTotal  : finalSubTotal,
+        tax: tableOrderDetails?.orderNumber ? tableOrderDetails.tax  : gstTax,
+        serviceCharge: tableOrderDetails?.orderNumber ? tableOrderDetails?.serviceChargeFee  : finalAdditionalTax,
+        total:tableOrderDetails?.orderNumber ? tableOrderDetails.grandTotal  : finalGrandTotal,
+        items:tableOrderDetails?.orderItems,
       }),
     );
     navigation.navigate('Coupons');
@@ -120,9 +163,19 @@ const OrderDetails = ({navigation}) => {
     setShowAddTip(!showAddTip);
   };
 
+   // Function to toggle visibility of AddTip
+   const toggleCustomTip = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setShowCustomTip(!showCustomTip);
+    if(showCustomTip){
+    setActiveButton(4);
+    }
+  };
+
   /**Payment Handler */
   const paymentHandler = () => {
-    dispatch(PaymentAction.getOrderDetails(tableOrderDetails));
+    const finalObject={...tableOrderDetails, tipAmount:tipAmountValue }
+    dispatch(PaymentAction.getOrderDetails(finalObject));
     navigation.navigate('Payments');
   };
 
@@ -290,7 +343,7 @@ const OrderDetails = ({navigation}) => {
     const grandTotal = finalGrandTotal;
     const discountAmount = 0;
     const couponAmount = '';
-    const tipAmount = 0;
+    const tipAmount = tipAmountValue;
     const paymentDiscountAmount = 0;
     const addOnAmount = 0;
     const serviceCharge = generalSettings?.serviceChargeFee;
@@ -470,7 +523,7 @@ const OrderDetails = ({navigation}) => {
   // Calculate finalSubTotal whenever cartItems change
   useEffect(() => {
     let total = 0;
-    cartItems.forEach((item: any) => {
+    cartItems?.forEach((item: any) => {
       total += item.price; // Assuming each item in cartItems has a 'price' property
     });
     setSubtotal(total);
@@ -541,8 +594,9 @@ const OrderDetails = ({navigation}) => {
               <Text style={styles.addMoreButton}>+Add More Items</Text>
             </TouchableOpacity> */}
           </View>
-          <View style={styles.cardSection}>
-            <TouchableOpacity onPress={toggleAllCoupons}>
+         {tableOrderDetails?.orderNumber && 
+         (<View style={styles.cardSection}>
+            <TouchableOpacity onPress={toggleAllCoupons}   >
               <View style={styles.section1}>
                 <View style={styles.couponContainer}>
                   <MaterialIcon
@@ -550,8 +604,11 @@ const OrderDetails = ({navigation}) => {
                     size={20}
                     style={styles.couponIcon}
                     color={Colors.colorLimegreen}
-                  />
-                  <Text style={styles.cardTitle}>All Coupons</Text>
+                  />{
+                    couponDetails?.coupon? <Text style={styles.cardTitle}>{couponDetails?.coupon}</Text>:
+                     <Text style={styles.cardTitle}>All Coupons</Text>
+                  }
+                 
                 </View>
                 <Entypo
                   name="chevron-small-right"
@@ -560,7 +617,7 @@ const OrderDetails = ({navigation}) => {
                 />
               </View>
             </TouchableOpacity>
-          </View>
+          </View>)}
           <View style={styles.cardSection}>
             <TouchableOpacity onPress={toggleCustomerDetails}>
               <View style={styles.section1}>
@@ -592,9 +649,10 @@ const OrderDetails = ({navigation}) => {
         onPhoneChange={handlePhoneChange}/>
             }
           </View>
-
-          <View style={styles.cardSection}>
-            <TouchableOpacity onPress={toggleAddTip}>
+{tableOrderDetails?.orderNumber && 
+(
+  <View style={styles.cardSection}>
+            <TouchableOpacity onPress={toggleAddTip} disabled={tableOrderDetails?.orderNumber?false:true}>
               <View style={styles.section1}>
                 <View style={styles.couponContainer}>
                   <Entypo
@@ -614,14 +672,85 @@ const OrderDetails = ({navigation}) => {
                 />
               </View>
               {showAddTip && (
-                <View>
-                  <Text>10%</Text>
-                  <Text>10%</Text>
+               <View style={styles.containerTip}>
+           <TouchableOpacity style={[styles.button, { backgroundColor: activeButton === 1 ? 'orange' : Color.PRIMARY, flex: 0.2 }]}  onPress={() => handleButtonPress(1)}>
+              <Text style={styles.buttonText}>No Tip</Text>
+           </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, { backgroundColor: activeButton === 2 ? 'orange' : Color.PRIMARY, flex: 0.2 }]}  onPress={() => handleButtonPress(2)}>
+        <Text style={styles.buttonText}>10 %</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, {backgroundColor: activeButton === 3 ? 'orange' : Color.PRIMARY, flex: 0.2 }]}  onPress={() => handleButtonPress(3)}>
+        <Text style={styles.buttonText}>15 %</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, { backgroundColor: activeButton === 4 ? 'orange' : Color.PRIMARY, flex: 0.2 }]} onPress={toggleCustomTip}>
+        <Text style={styles.buttonText}>Custom</Text>
+      </TouchableOpacity>
+    
+    </View>
+      
+
+              )}
+                {
+        showCustomTip && showAddTip&&
+        (
+           <View style={styles.inputRow}>
+          <TextInput style={styles.input} placeholder="Enter custom tip"   onChangeText={handleChangeText}
+        value={value}
+        keyboardType="numeric" />
+          <TouchableOpacity style={styles.applyButton} onPress={applyTipHandler}>
+            <Text style={styles.applyText}>Apply</Text>
+          </TouchableOpacity>
+        </View>
+        )
+      }
+            </TouchableOpacity>
+          </View>
+)
+}
+          
+          
+   { orderId?<View style={styles.cardSection}>
+            <TouchableOpacity onPress={toggleBillSummary}>
+              <View style={styles.section1}>
+                <View style={styles.couponContainer}>
+                  <Entypo
+                    name="text-document"
+                    size={20}
+                    style={styles.couponIcon}
+                    color={Colors.colorBlack}
+                  />
+                  <Text style={styles.cardTitle}>Bill Summary</Text>
                 </View>
+
+                <Entypo
+                  name={
+                    showBillSummary
+                      ? 'chevron-small-down'
+                      : 'chevron-small-right'
+                  }
+                  size={20}
+                  color={Colors.colorDarkslateblue}
+                />
+              </View>
+              {showBillSummary && (
+                <BillSummary
+                  isVisible={showBillSummary}
+                  closeModal={closeBillModal}
+                  cartItems={cartItems}
+                  totals={{
+                    subTotal: tableOrderDetails?.subTotal,
+                    tax: tableOrderDetails?.tax,
+                    serviceCharge: tableOrderDetails?.serviceChargeFee,
+                    total: tableOrderDetails?.grandTotal,
+                    tipAmount:tipAmountValue,
+                    couponDiscount:couponDetails,
+                  }}
+                />
               )}
             </TouchableOpacity>
           </View>
-          <View style={styles.cardSection}>
+          :
+           <View style={styles.cardSection}>
             <TouchableOpacity onPress={toggleBillSummary}>
               <View style={styles.section1}>
                 <View style={styles.couponContainer}>
@@ -654,11 +783,16 @@ const OrderDetails = ({navigation}) => {
                     tax: gstTax,
                     serviceCharge: finalAdditionalTax,
                     total: finalGrandTotal,
+                    tipAmount:tipAmountValue,
                   }}
                 />
               )}
             </TouchableOpacity>
           </View>
+}
+
+
+
 {orderId && (
           <TouchableOpacity onPress={() => paymentHandler()}>
             <View style={styles.cardSection2}>
@@ -697,6 +831,50 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.LIGHT_GREY2,
   },
+
+  containerTip: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    marginTop: 20,
+  },
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+    input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    padding: 8,
+    marginRight: 10,
+  },
+
+   inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+
+  applyButton: {
+    backgroundColor:  Color.PRIMARY,
+    padding: 10,
+    borderRadius: 5,
+  },
+  applyText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+
 
   scrollView: {
     flex: 1,
