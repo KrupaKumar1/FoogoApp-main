@@ -1,7 +1,13 @@
-import {View, Text, StatusBar, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  StatusBar,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useState} from 'react';
-import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Font from '../../../constant/Font';
 import {NavigationProp} from '@react-navigation/native';
@@ -24,113 +30,82 @@ const DineIn = ({navigation}: {navigation: NavigationProp<any>}) => {
     }
   };
 
-  const handlePress = option => {
+  const handlePress = (option: string) => {
     setSelectedOption(option);
   };
 
   return (
-    <SafeAreaProvider style={styles.container}>
+    <SafeAreaProvider>
       <StatusBar barStyle="dark-content" translucent />
-      <Separator extraProps={{}} height={StatusBar.currentHeight} />
-      <SafeAreaView>
+      <SafeAreaView style={styles.container}>
+        <Separator extraProps={{}} height={StatusBar.currentHeight} />
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon name="arrow-back" size={30} color="black" />
           </TouchableOpacity>
           <Text style={styles.menuText}>Select a table</Text>
         </View>
-      </SafeAreaView>
 
-      <View style={styles.cardSection}>
-        <View style={styles.floorContainer}>
-          <TouchableOpacity
-            style={[
-              styles.radioButton,
-              selectedOption === 'first' && styles.radioButtonSelected,
-            ]}
-            onPress={() => handlePress('first')}>
-            <Text style={styles.radioButtonText}>Cafe Area</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.radioButton,
-              selectedOption === 'second' && styles.radioButtonSelected,
-            ]}
-            onPress={() => handlePress('second')}>
-            <Text style={styles.radioButtonText}>First Floor </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.radioButton,
-              selectedOption === 'third' && styles.radioButtonSelected,
-            ]}
-            onPress={() => handlePress('third')}>
-            <Text style={styles.radioButtonText}>Second Floor</Text>
-          </TouchableOpacity>
-        </View>
-        <Text>No.of Guests</Text>
-        <View style={styles.qtySection}>
-          <TouchableOpacity
-            onPress={decrementQuantity}
-            style={styles.qtyButton1}>
-            <Text style={styles.qtyIcon}>-</Text>
-          </TouchableOpacity>
-          <Text style={styles.qtyValue}>{quantity}</Text>
-          <TouchableOpacity
-            onPress={incrementQuantity}
-            style={styles.qtyButton2}>
-            <Text style={styles.qtyIcon}>+</Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView
-          style={styles.scrollView}
-          decelerationRate="fast"
-          showsVerticalScrollIndicator={false}>
-          <View style={styles.containerCircle}>
-            <View style={styles.circle}>
-              <Text style={styles.number}>1</Text>
-            </View>
-            <View style={styles.circle}>
-              <Text style={styles.number}>1</Text>
-            </View>
-            <View style={styles.circle}>
-              <Text style={styles.number}>1</Text>
-            </View>
-            <View style={styles.circle}>
-              <Text style={styles.number}>1</Text>
-            </View>
-            <View style={styles.circle}>
-              <Text style={styles.number}>1</Text>
-            </View>
-            <View style={styles.circle}>
-              <Text style={styles.number}>1</Text>
-            </View>
-            <View style={styles.circle}>
-              <Text style={styles.number}>1</Text>
-            </View>
-            <View style={styles.circle}>
-              <Text style={styles.number}>1</Text>
-            </View>
-            <View style={styles.circle}>
-              <Text style={styles.number}>1</Text>
-            </View>
-            <View style={styles.circle}>
-              <Text style={styles.number}>1</Text>
-            </View>
-            <View style={styles.circle}>
-              <Text style={styles.number}>1</Text>
-            </View>
-            <View style={styles.circle}>
-              <Text style={styles.number}>1</Text>
-            </View>
+        <View style={styles.cardSection}>
+          <View style={styles.floorContainer}>
+            <TouchableOpacity
+              style={[
+                styles.radioButton,
+                selectedOption === 'first' && styles.radioButtonSelected,
+              ]}
+              onPress={() => handlePress('first')}>
+              <Text style={styles.radioButtonText}>Cafe Area</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.radioButton,
+                selectedOption === 'second' && styles.radioButtonSelected,
+              ]}
+              onPress={() => handlePress('second')}>
+              <Text style={styles.radioButtonText}>First Floor </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.radioButton,
+                selectedOption === 'third' && styles.radioButtonSelected,
+              ]}
+              onPress={() => handlePress('third')}>
+              <Text style={styles.radioButtonText}>Second Floor</Text>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
-        <View style={styles.containerButton}>
-          <TouchableOpacity style={styles.buttonProceed}>
-            <Text style={styles.buttonTextProceed}>Proceed</Text>
-          </TouchableOpacity>
+          <Text>No.of Guests</Text>
+          <View style={styles.qtySection}>
+            <TouchableOpacity
+              onPress={decrementQuantity}
+              style={styles.qtyButton1}>
+              <Text style={styles.qtyIcon}>-</Text>
+            </TouchableOpacity>
+            <Text style={styles.qtyValue}>{quantity}</Text>
+            <TouchableOpacity
+              onPress={incrementQuantity}
+              style={styles.qtyButton2}>
+              <Text style={styles.qtyIcon}>+</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView
+            style={styles.scrollView}
+            decelerationRate="fast"
+            showsVerticalScrollIndicator={false}>
+            <View style={styles.containerCircle}>
+              {[...Array(12)].map((_, index) => (
+                <View key={index} style={styles.circle}>
+                  <Text style={styles.number}>1</Text>
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+          <View style={styles.containerButton}>
+            <TouchableOpacity style={styles.buttonProceed}>
+              <Text style={styles.buttonTextProceed}>Proceed</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 };
@@ -139,9 +114,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Color.LIGHT_GREY2,
-    // backgroundColor: Color.DEFAULT_YELLOW,
   },
-
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -151,17 +124,10 @@ const styles = StyleSheet.create({
   menuText: {
     fontSize: FontSize.size_xl,
     paddingLeft: 15,
-    fontFamily: Font.POPPINS_BOLD, // Use appropriate Poppins font from your constants
+    fontFamily: Font.POPPINS_BOLD,
   },
   scrollView: {
     flex: 1,
-  },
-  quantityContainer: {
-    flexDirection: 'row',
-  },
-  tableContainer: {
-    margin: 10,
-    backgroundColor: Color.DEFAULT_GREEN,
   },
   cardSection: {
     flex: 1,
@@ -199,10 +165,8 @@ const styles = StyleSheet.create({
   qtySection: {
     flexDirection: 'row',
     justifyContent: 'center',
-    // align: 'center',
     width: 100,
     padding: 3,
-    // height: 100,
   },
   qtyButton1: {
     backgroundColor: Color.PRIMARY,
@@ -226,7 +190,6 @@ const styles = StyleSheet.create({
   },
   qtyValue: {
     fontSize: 16,
-
     marginHorizontal: 15,
   },
   qtyIcon: {
@@ -260,9 +223,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     marginTop: 82,
-    backgroundColor: 'transparent', // Adjust as needed
-    paddingHorizontal: 10, // Adjust as needed
-    paddingBottom: 10, // Adjust as needed
+    backgroundColor: 'transparent',
+    paddingHorizontal: 10,
+    paddingBottom: 10,
   },
   buttonProceed: {
     backgroundColor: Color.PRIMARY,
@@ -274,17 +237,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
   },
-  button: {
-    width: 30,
-    height: 30,
-    backgroundColor: Color.PRIMARY,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 15,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 20,
-  },
 });
+
 export default DineIn;
