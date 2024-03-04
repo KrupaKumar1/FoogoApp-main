@@ -1,24 +1,30 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, SafeAreaView, Platform, StatusBar } from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  Platform,
+  StatusBar,
+} from 'react-native';
 import {NavigationProp} from '@react-navigation/native';
 import Font from '../../../constant/Font';
 import Color from '../../../constant/Color';
-import { Icon } from 'react-native-elements';
+import {Icon} from 'react-native-elements';
 
 const OrderType = ({navigation}: {navigation: NavigationProp<any>}) => {
-  const handleCardPress = (cardNumber:any) => {
-    if(cardNumber==4){
-     navigation?.navigate('DineIn');
+  const handleCardPress = (cardNumber: any) => {
+    if (cardNumber === 4) {
+      navigation?.navigate('DineIn');
+    } else {
+      navigation?.navigate('MenuItems');
     }
-    else{
-     navigation?.navigate('MenuItems');
-    }
-    
   };
 
   return (
     <SafeAreaView style={styles.container}>
-   <View style={styles.header}>
+      <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={30} color="black" />
         </TouchableOpacity>
@@ -54,14 +60,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0, // Add for Android status bar
   },
-   header: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10,
     backgroundColor: Color.LIGHT_GREY2,
   },
-   menuText: {
+  menuText: {
     fontSize: 20,
     paddingLeft: 15,
     fontFamily: Font.POPPINS_BOLD, // Use appropriate Poppins font from your constants
@@ -76,12 +82,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 15,
     margin: 10,
-    elevation:5
-     
+    elevation: 5,
   },
   cardText: {
     fontSize: 30,
-    fontWeight:'bold'
+    fontWeight: 'bold',
   },
 });
 

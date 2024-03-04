@@ -49,21 +49,19 @@ const MenuItems = ({navigation}: {navigation: any}) => {
     {key: 'nonVeg', label: 'Non-Veg'},
   ];
 
-
-
   const handleFilterPress = (value: string) => {
     console.log(`${value} pressed`);
     // Implement your filter logic here
-    setfoodtypefilter((prevFilter) => {
+    setfoodtypefilter(prevFilter => {
       const newFilter = new Set(prevFilter);
- 
-      if (value === "Veg") {
-        if (newFilter.has("Veg")) {
-          newFilter.delete("Veg");
-          newFilter.delete("None");
+
+      if (value === 'Veg') {
+        if (newFilter.has('Veg')) {
+          newFilter.delete('Veg');
+          newFilter.delete('None');
         } else {
-          newFilter.add("Veg");
-          newFilter.add("None");
+          newFilter.add('Veg');
+          newFilter.add('None');
         }
       } else {
         if (newFilter.has(value)) {
@@ -71,28 +69,30 @@ const MenuItems = ({navigation}: {navigation: any}) => {
         } else {
           newFilter.add(value);
         }
- 
+
         // Remove "None" if "Veg" is not present
-        newFilter.delete("None");
+        newFilter.delete('None');
       }
- 
+
       return Array.from(newFilter);
     });
   };
 
-  function getFoodTypes(values:String) {
-    if (values?.includes("Bestseller")) {
+  function getFoodTypes(values: String) {
+    if (values?.includes('Bestseller')) {
       // Exclude "Bestseller" and join the remaining values
-      const otherValues = values?.filter((value:String) => value !== "Bestseller");
-      return otherValues.length > 1 ? otherValues.join(", ") : otherValues[0];
+      const otherValues = values?.filter(
+        (value: String) => value !== 'Bestseller',
+      );
+      return otherValues.length > 1 ? otherValues.join(', ') : otherValues[0];
     } else {
       // Proceed with joining all values
-      return values?.length > 1 ? values.join(", ") : values[0];
+      return values?.length > 1 ? values.join(', ') : values[0];
     }
   }
 
   /**Quantity set Handler */
-  const cardQtySetHandlerTest= () => {
+  const cardQtySetHandlerTest = () => {
     const itemQtyMap: {[key: string]: number} = {};
 
     cartItems?.forEach((listItem: any) => {
@@ -123,56 +123,55 @@ const MenuItems = ({navigation}: {navigation: any}) => {
     setMenuItems(dataList);
   };
 
-    const cardQtySetHandler = () => {
+  const cardQtySetHandler = () => {
     if (selectedGroupId == 10) {
       const itemQtyMap: {[key: string]: number} = {};
- 
-      cartItems.forEach((listItem:any) => {
-        menuitem.forEach((apiItem:any) => {
+
+      cartItems.forEach((listItem: any) => {
+        menuitem.forEach((apiItem: any) => {
           const matchingMenuItem = apiItem.menuItemDto.find(
-            (menuItem:any) => menuItem.name == listItem?.item
+            (menuItem: any) => menuItem.name == listItem?.item,
           );
- 
+
           if (matchingMenuItem) {
             const itemName = matchingMenuItem.name;
             const quantityToAdd = listItem.qty;
- 
+
             if (itemQtyMap.hasOwnProperty(itemName)) {
               itemQtyMap[itemName] += quantityToAdd;
             } else {
               itemQtyMap[itemName] = quantityToAdd;
             }
- 
+
             matchingMenuItem.quantity = itemQtyMap[itemName];
           }
         });
       });
- 
+
       // Remove groups with empty menuItemDto arrays
-      const updatedMenuGroupItemData = menuitem.filter((apiItem:any) => {
+      const updatedMenuGroupItemData = menuitem.filter((apiItem: any) => {
         return apiItem.menuItemDto.length > 0;
       });
- 
+
       // Update the quantity in the remaining groups
-      updatedMenuGroupItemData.forEach((apiItem:any) => {
-        apiItem.menuItemDto.forEach((menuItem:any) => {
+      updatedMenuGroupItemData.forEach((apiItem: any) => {
+        apiItem.menuItemDto.forEach((menuItem: any) => {
           const itemName = menuItem.name;
- 
+
           if (itemQtyMap.hasOwnProperty(itemName)) {
             menuItem.quantity = itemQtyMap[itemName];
           }
         });
       });
- 
+
       // Set the updated menuGroupItemData without empty groups
       setmenuitem(menuitem);
       // setmenuItemGroup([]);
     } else {
-     
-     const itemQtyMap: {[key: string]: number} = {};
-      cartItems?.forEach((listItem:any) => {
+      const itemQtyMap: {[key: string]: number} = {};
+      cartItems?.forEach((listItem: any) => {
         const itemName = listItem.item;
- 
+
         // Check if the item is already in the map
         if (itemQtyMap.hasOwnProperty(itemName)) {
           // If yes, update the quantity
@@ -182,21 +181,21 @@ const MenuItems = ({navigation}: {navigation: any}) => {
           itemQtyMap[itemName] = listItem.qty;
         }
       });
- 
+
       // Now update the menuItemforGrpoup based on the itemQtyMap
-     const dataList = [...menuItems];
-    dataList.forEach((apiItem: any) => {
-      const itemName = apiItem.name;
+      const dataList = [...menuItems];
+      dataList.forEach((apiItem: any) => {
+        const itemName = apiItem.name;
 
-      if (itemQtyMap.hasOwnProperty(itemName)) {
-        // If the item exists in the map, update the quantity
-        apiItem.quantity = itemQtyMap[itemName];
-      } else {
-        apiItem.quantity = null;
-      }
-    });
+        if (itemQtyMap.hasOwnProperty(itemName)) {
+          // If the item exists in the map, update the quantity
+          apiItem.quantity = itemQtyMap[itemName];
+        } else {
+          apiItem.quantity = null;
+        }
+      });
 
-    setMenuItems(dataList);
+      setMenuItems(dataList);
     }
   };
 
@@ -204,18 +203,17 @@ const MenuItems = ({navigation}: {navigation: any}) => {
   const getGroupItemsAPI = (menuId: any) => {
     setSelectedGroupId(menuId);
     // setItemsLoading(true);
-      const isTopOrderedItem = foodtypefilter.includes("Bestseller");
-   
+    const isTopOrderedItem = foodtypefilter.includes('Bestseller');
+
     API_CALL({
       method: 'GET',
       url: `Menu/GetActiveMenuItems?groupId=${menuId}&menuType=${
-          foodtypefilter.length != 0 ? getFoodTypes(foodtypefilter) : ""
-        }&isTopOrderedItem=${isTopOrderedItem}`,
+        foodtypefilter.length != 0 ? getFoodTypes(foodtypefilter) : ''
+      }&isTopOrderedItem=${isTopOrderedItem}`,
       headerConfig: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-    
 
       callback: async ({status, data}: {status: any; data: any}) => {
         if (status === 200) {
@@ -259,12 +257,12 @@ const MenuItems = ({navigation}: {navigation: any}) => {
     });
   };
   const getGroupItemsWithGroupAPI = () => {
-     const isTopOrderedItem = foodtypefilter.includes("Bestseller");
+    const isTopOrderedItem = foodtypefilter.includes('Bestseller');
     setItemsLoading(true);
     API_CALL({
       method: 'GET',
       url: `Menu/GetActiveMenuGroupsAndMenuItems?menuType=${
-        foodtypefilter?.length != 0 ? getFoodTypes(foodtypefilter) : ""
+        foodtypefilter?.length != 0 ? getFoodTypes(foodtypefilter) : ''
       }&isTopOrderedItem=${isTopOrderedItem}`,
       headerConfig: {
         'Content-Type': 'application/json',
@@ -334,11 +332,10 @@ const MenuItems = ({navigation}: {navigation: any}) => {
   useEffect(() => {
     if (selectedGroupId == 10) {
       getGroupItemsWithGroupAPI();
-    }
-    else{
+    } else {
       getGroupItemsAPI(selectedGroupId);
     }
-  }, [selectedGroupId,foodtypefilter]);
+  }, [selectedGroupId, foodtypefilter]);
 
   /**Group Names */
   const getGroupNames = () => {
@@ -425,7 +422,11 @@ const MenuItems = ({navigation}: {navigation: any}) => {
           {filters.map(filter => (
             <TouchableOpacity
               key={filter.key}
-              style={foodtypefilter?.includes(filter.label)? styles.filterButtonActive :  styles.filterButton}
+              style={
+                foodtypefilter?.includes(filter.label)
+                  ? styles.filterButtonActive
+                  : styles.filterButton
+              }
               onPress={() => handleFilterPress(filter.label)}>
               <Text style={styles.filterText}>{filter.label}</Text>
             </TouchableOpacity>
@@ -443,7 +444,12 @@ const MenuItems = ({navigation}: {navigation: any}) => {
             ) : (
               <FlatList
                 data={menuItems}
-                renderItem={({item}) => <MenuCard itemDetails={item} cardQtySetHandler={cardQtySetHandler} />}
+                renderItem={({item}) => (
+                  <MenuCard
+                    itemDetails={item}
+                    cardQtySetHandler={cardQtySetHandler}
+                  />
+                )}
               />
             )}
           </View>
@@ -469,7 +475,12 @@ const MenuItems = ({navigation}: {navigation: any}) => {
                       <Text style={styles.category}>{menuitem1.name}</Text>
                       <FlatList
                         data={menuitem1.menuItemDto}
-                        renderItem={({item}) => <MenuCard itemDetails={item} cardQtySetHandler={cardQtySetHandler} />}
+                        renderItem={({item}) => (
+                          <MenuCard
+                            itemDetails={item}
+                            cardQtySetHandler={cardQtySetHandler}
+                          />
+                        )}
                       />
                     </>
                   );
@@ -508,7 +519,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     marginLeft: 5,
   },
- 
+
   menuText: {
     fontSize: 20,
     paddingLeft: 15,
@@ -561,14 +572,14 @@ const styles = StyleSheet.create({
 
     marginHorizontal: 5,
   },
-   filterButtonActive: {
+  filterButtonActive: {
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: Color.PRIMARY,
-    backgroundColor:Color.PRIMARY,
-    color:Color.DEFAULT_WHITE,
+    backgroundColor: Color.PRIMARY,
+    color: Color.DEFAULT_WHITE,
     marginHorizontal: 5,
   },
   filterText: {

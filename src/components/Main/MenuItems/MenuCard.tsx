@@ -17,10 +17,9 @@ import {CartAction} from '../../../services/redux/actions';
 import {useDispatch, useSelector} from 'react-redux';
 import {FontSize} from '../../../CSS/GlobalStyles';
 
-const MenuCard = ({itemDetails,cardQtySetHandler}: {itemDetails: any}) => {
+const MenuCard = ({itemDetails, cardQtySetHandler}: {itemDetails: any}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {cartItems} = useSelector(state => state?.cartState);
- 
 
   const dispatch = useDispatch();
   const openModal = () => {
@@ -45,21 +44,20 @@ const MenuCard = ({itemDetails,cardQtySetHandler}: {itemDetails: any}) => {
     } else {
       // dispatch(CartAction.addItemToCart(itemObjectDetails));
       // setModalVisible(true);
-    
 
-    const objIndex = cartItems?.findIndex(
-      (obj:any) => obj.item === itemObjectDetails.item,
-    );
+      const objIndex = cartItems?.findIndex(
+        (obj: any) => obj.item === itemObjectDetails.item,
+      );
 
-    if (objIndex !== -1) {
-      dispatch(CartAction.sameitemupdateIn(itemObjectDetails));
-    } else {
-       dispatch(CartAction.orderdetailsIn(itemObjectDetails));
-     // dispatch(CartAction.addItemToCart(itemObjectDetails));
+      if (objIndex !== -1) {
+        dispatch(CartAction.sameitemupdateIn(itemObjectDetails));
+      } else {
+        dispatch(CartAction.orderdetailsIn(itemObjectDetails));
+        // dispatch(CartAction.addItemToCart(itemObjectDetails));
+      }
     }
   };
-}
-const showOrderDetailsMinusHandler = () => {
+  const showOrderDetailsMinusHandler = () => {
     const itemObjectDetails = {
       responseOrder: itemDetails,
       qty: itemDetails?.quantity || 1,
@@ -76,37 +74,33 @@ const showOrderDetailsMinusHandler = () => {
       addonField: [],
     };
 
-     if (itemDetails?.menuSubItem?.length > 0) {
+    if (itemDetails?.menuSubItem?.length > 0) {
       setModalVisible(true);
     } else {
+      const objIndex = cartItems?.findIndex((obj: any) => {
+        const sameItem = obj.item === itemObjectDetails.item;
+        return sameItem;
+      });
+      const matchedItemList = cartItems[objIndex];
 
- 
-    const objIndex = cartItems?.findIndex((obj:any) => {
-      const sameItem = obj.item === itemObjectDetails.item;
-      return sameItem;
-    });
-    const matchedItemList = cartItems[objIndex];
- 
-    if (objIndex !== -1) {
-      const quantityUpdateObject = {
-        id: matchedItemList.id,
-        qty: matchedItemList.qty,
-      };
-       dispatch(CartAction.reduceQuantity(quantityUpdateObject));
-    
-    } else {
-      dispatch(CartAction.orderdetailsIn(itemObjectDetails));
-      
+      if (objIndex !== -1) {
+        const quantityUpdateObject = {
+          id: matchedItemList.id,
+          qty: matchedItemList.qty,
+        };
+        dispatch(CartAction.reduceQuantity(quantityUpdateObject));
+      } else {
+        dispatch(CartAction.orderdetailsIn(itemObjectDetails));
+      }
     }
-  }
   };
- 
 
- const addOrderItem = (item:any) => {
-   
-    const isMatching = cartItems.map((cartItem:any) => cartItem.item === item.name);
+  const addOrderItem = (item: any) => {
+    const isMatching = cartItems.map(
+      (cartItem: any) => cartItem.item === item.name,
+    );
     // If you want to check if at least one item has a matching name
-    const anyMatching = isMatching.some((match:any) => match === true);
+    const anyMatching = isMatching.some((match: any) => match === true);
     if (anyMatching) {
       dispatch(customizationIn(item));
     } else {
@@ -114,29 +108,27 @@ const showOrderDetailsMinusHandler = () => {
     }
   };
 
+  /**adding quantity or reducing quantity */
+  const addonPlusHandler = (menuitem1: any) => {
+    const menuItemDetails = {...menuitem1, quantity: 1};
 
-
-   /**adding quantity or reducing quantity */
-  const addonPlusHandler = (menuitem1:any) => {
-    const menuItemDetails = { ...menuitem1, quantity: 1 };
- 
     if (menuItemDetails?.menuSubItem?.length == 0) {
-       openModal();
-       cardQtySetHandler();
+      openModal();
+      cardQtySetHandler();
     } else {
       // addOrderItem(menuItemDetails);
       // cardQtySetHandler();
     }
   };
- 
+
   /**checking the customization and dispatcing the action */
-  const addonMinusHandler = (menuitemData:any) => {
-    const menuItemDetails = { ...menuitemData, quantity: 1 };
- 
+  const addonMinusHandler = (menuitemData: any) => {
+    const menuItemDetails = {...menuitemData, quantity: 1};
+
     if (menuItemDetails?.menuSubItem?.length == 0) {
       showOrderDetailsMinusHandler();
       cardQtySetHandler();
- 
+
       // menuGroupitemsHandler();
     } else {
       // addOrderItem(menuItemDetails);
@@ -144,113 +136,124 @@ const showOrderDetailsMinusHandler = () => {
       // cardQtySetHandler();
     }
   };
- 
 
   const closeModal = () => {
     setModalVisible(false);
   };
 
   return (
-
     <View style={styles.container}>
-       {!itemDetails?.inStock || !itemDetails?.isItemAvailableNow ?
-       <>
-     <Image
-        source={{
-          uri:
-            itemDetails && itemDetails.pictureName !== 'noimage.png'
-              ? itemDetails.pictureName.replace(/\\/g, '/')
-              : 'https:devcdn.restrozap.com/7/images/restaurant/menu/pexels-ash-376464.jpg',
-        }}
-        style={styles.posterStyle}
-        resizeMode="cover"
-      />
-
-      <View style={styles.overlayContainer}>
-        <View style={styles.bestsellerTag}>
-          <Text style={styles.bestsellerText}>Bestseller</Text>
-        </View>
-        <View style={styles.itemDetailsContainer}>
-          <Text style={styles.itemName}>{itemDetails?.name}</Text>
-          <View style={styles.priceRatingContainer}>
-            <Text style={styles.price}>${parseFloat(itemDetails.deliveryPrice).toFixed(2)}</Text>
-          </View>
-          <View style={styles.buttonConatiner}>
-            <TouchableOpacity style={styles.moreDetailsButton}>
-              <Text
-                style={styles.moreDetailsButtonText}>{`Item is no longer available`}</Text>
-            </TouchableOpacity>
-           
-          
-          </View>
-          <AddItemModal
-            isVisible={isModalVisible}
-            closeModal={closeModal}
-            itemDetails={itemDetails}
+      {!itemDetails?.inStock || !itemDetails?.isItemAvailableNow ? (
+        <>
+          <Image
+            source={{
+              uri:
+                itemDetails && itemDetails.pictureName !== 'noimage.png'
+                  ? itemDetails.pictureName.replace(/\\/g, '/')
+                  : 'https:devcdn.restrozap.com/7/images/restaurant/menu/pexels-ash-376464.jpg',
+            }}
+            style={styles.posterStyle}
+            resizeMode="cover"
           />
-        </View>
-      </View>
-      </>
-      :
-      <>
-        <Image
-        source={{
-          uri:
-            itemDetails && itemDetails.pictureName !== 'noimage.png'
-              ? itemDetails.pictureName.replace(/\\/g, '/')
-              : 'https:devcdn.restrozap.com/7/images/restaurant/menu/pexels-ash-376464.jpg',
-        }}
-        style={styles.posterStyle}
-        resizeMode="cover"
-      />
 
-      <View style={styles.overlayContainer}>
-        <View style={styles.bestsellerTag}>
-          <Text style={styles.bestsellerText}>Bestseller</Text>
-        </View>
-        <View style={styles.itemDetailsContainer}>
-          <Text style={styles.itemName}>{itemDetails?.name}</Text>
-          <View style={styles.priceRatingContainer}>
-            <Text style={styles.price}>${parseFloat(itemDetails.deliveryPrice).toFixed(2)}</Text>
-          </View>
-          <View style={styles.buttonConatiner}>
-            <TouchableOpacity style={styles.moreDetailsButton}>
-              <Text
-                style={styles.moreDetailsButtonText}>{`More Details>`}</Text>
-            </TouchableOpacity>
-           
-            {!itemDetails.quantity ? (
-              <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => openModal()}>
-                <Text style={styles.addButtonText}>ADD</Text>
-              </TouchableOpacity>
-            ) : (
-              <View style={styles.qtySection}>
-                <TouchableOpacity style={styles.qtyButton1} onPress={()=>addonMinusHandler(itemDetails)}>
-                  <Text style={styles.qtyIcon}>-</Text>
-                </TouchableOpacity>
-                <TextInput
-                  style={styles.qtyValue}
-                  value={itemDetails.quantity.toString()?itemDetails.quantity.toString():"1"}
-                  keyboardType="numeric"
-                />
-                <TouchableOpacity style={styles.qtyButton2} onPress={()=>addonPlusHandler(itemDetails)}>
-                  <Text style={styles.qtyIcon}>+</Text>
+          <View style={styles.overlayContainer}>
+            <View style={styles.bestsellerTag}>
+              <Text style={styles.bestsellerText}>Bestseller</Text>
+            </View>
+            <View style={styles.itemDetailsContainer}>
+              <Text style={styles.itemName}>{itemDetails?.name}</Text>
+              <View style={styles.priceRatingContainer}>
+                <Text style={styles.price}>
+                  ${parseFloat(itemDetails.deliveryPrice).toFixed(2)}
+                </Text>
+              </View>
+              <View style={styles.buttonConatiner}>
+                <TouchableOpacity style={styles.moreDetailsButton}>
+                  <Text
+                    style={
+                      styles.moreDetailsButtonText
+                    }>{`Item is no longer available`}</Text>
                 </TouchableOpacity>
               </View>
-            )}
+              <AddItemModal
+                isVisible={isModalVisible}
+                closeModal={closeModal}
+                itemDetails={itemDetails}
+              />
+            </View>
           </View>
-          <AddItemModal
-            isVisible={isModalVisible}
-            closeModal={closeModal}
-            itemDetails={itemDetails}
+        </>
+      ) : (
+        <>
+          <Image
+            source={{
+              uri:
+                itemDetails && itemDetails.pictureName !== 'noimage.png'
+                  ? itemDetails.pictureName.replace(/\\/g, '/')
+                  : 'https:devcdn.restrozap.com/7/images/restaurant/menu/pexels-ash-376464.jpg',
+            }}
+            style={styles.posterStyle}
+            resizeMode="cover"
           />
-        </View>
-      </View>
-            </>
-}
-    
+
+          <View style={styles.overlayContainer}>
+            <View style={styles.bestsellerTag}>
+              <Text style={styles.bestsellerText}>Bestseller</Text>
+            </View>
+            <View style={styles.itemDetailsContainer}>
+              <Text style={styles.itemName}>{itemDetails?.name}</Text>
+              <View style={styles.priceRatingContainer}>
+                <Text style={styles.price}>
+                  ${parseFloat(itemDetails.deliveryPrice).toFixed(2)}
+                </Text>
+              </View>
+              <View style={styles.buttonConatiner}>
+                <TouchableOpacity style={styles.moreDetailsButton}>
+                  <Text
+                    style={
+                      styles.moreDetailsButtonText
+                    }>{`More Details>`}</Text>
+                </TouchableOpacity>
+
+                {!itemDetails.quantity ? (
+                  <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() => openModal()}>
+                    <Text style={styles.addButtonText}>ADD</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.qtySection}>
+                    <TouchableOpacity
+                      style={styles.qtyButton1}
+                      onPress={() => addonMinusHandler(itemDetails)}>
+                      <Text style={styles.qtyIcon}>-</Text>
+                    </TouchableOpacity>
+                    <TextInput
+                      style={styles.qtyValue}
+                      value={
+                        itemDetails.quantity.toString()
+                          ? itemDetails.quantity.toString()
+                          : '1'
+                      }
+                      keyboardType="numeric"
+                    />
+                    <TouchableOpacity
+                      style={styles.qtyButton2}
+                      onPress={() => addonPlusHandler(itemDetails)}>
+                      <Text style={styles.qtyIcon}>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+              <AddItemModal
+                isVisible={isModalVisible}
+                closeModal={closeModal}
+                itemDetails={itemDetails}
+              />
+            </View>
+          </View>
+        </>
+      )}
     </View>
   );
 };
