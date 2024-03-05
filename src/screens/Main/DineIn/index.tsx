@@ -5,8 +5,9 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Font from '../../../constant/Font';
@@ -15,25 +16,70 @@ import Color from '../../../constant/Color';
 import {Colors, FontSize} from '../../../CSS/GlobalStyles';
 
 import Separator from '../../../components/General/Seperator';
+import API_CALL from '../../../services/Api';
+import { useSelector } from 'react-redux';
 
 const DineIn = ({navigation}: {navigation: NavigationProp<any>}) => {
-  const [selectedOption, setSelectedOption] = useState('first');
-  const [quantity, setQuantity] = useState(1);
-
-  const incrementQuantity = () => {
-    setQuantity(quantity + 1);
-  };
-
+  
+   const {token} = useSelector((state: RootState) => state?.generalState ?? {});
+   const [quantity, setQuantity] = useState(1);
+   const [floorDetails, setFloorDetails] = useState([]);
+   const [floorId, setFloorId] = useState(null);
+    const incrementQuantity = () => {
+     setQuantity(quantity + 1);
+    };
   const decrementQuantity = () => {
     if (quantity > 0) {
       setQuantity(quantity - 1);
     }
   };
 
-  const handlePress = (option: string) => {
-    setSelectedOption(option);
+ 
+   const handleFloorSelection = (selectedFloorId:any) => {
+    // Set the selected floorId to the state variable
+    setFloorId(selectedFloorId);
+  };
+   const getFloorDetails = () => {
+    API_CALL({
+      method: "POST",
+      url: "FloorMaintenance/GetAllFloorsWithTables",
+       headerConfig: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      callback: async ({ status, data }) => {
+        if (status === 200) {
+          const result = data.data;
+          if (result && result.length > 0) {
+            // Find the first object with isActive: true
+            const activeFloor = result.find((item:any) => item.isActive);
+            if (activeFloor) {
+              // Set the floorId of the first active floor
+              setFloorId(activeFloor.floorId);
+            } else {
+              // Set null if no active floor is found
+              setFloorId(null);
+            }
+          } else {
+            // Set null if the array is empty
+            setFloorId(null);
+          }
+          setFloorDetails(result);
+        } else {
+           Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        }
+      },
+    });
   };
 
+useEffect(()=>{
+getFloorDetails()
+},[])
   return (
     <SafeAreaProvider>
       <StatusBar barStyle="dark-content" translucent />
@@ -48,30 +94,28 @@ const DineIn = ({navigation}: {navigation: NavigationProp<any>}) => {
 
         <View style={styles.cardSection}>
           <View style={styles.floorContainer}>
-            <TouchableOpacity
-              style={[
+            {
+              floorDetails?.map((floor:any)=>{
+                if(floor.isActive){
+                return(
+                  <>
+                
+                    <TouchableOpacity
+                  style={[
                 styles.radioButton,
-                selectedOption === 'first' && styles.radioButtonSelected,
-              ]}
-              onPress={() => handlePress('first')}>
-              <Text style={styles.radioButtonText}>Cafe Area</Text>
+                floor.floorId == floorId && styles.radioButtonSelected,
+                 ]}
+              onPress={() => handleFloorSelection(floor.floorId)}>
+              <Text style={styles.radioButtonText}>{floor.floorName}</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.radioButton,
-                selectedOption === 'second' && styles.radioButtonSelected,
-              ]}
-              onPress={() => handlePress('second')}>
-              <Text style={styles.radioButtonText}>First Floor </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.radioButton,
-                selectedOption === 'third' && styles.radioButtonSelected,
-              ]}
-              onPress={() => handlePress('third')}>
-              <Text style={styles.radioButtonText}>Second Floor</Text>
-            </TouchableOpacity>
+                 
+                  </>
+                )
+                }
+              })
+            }
+          
+           
           </View>
           <Text>No.of Guests</Text>
           <View style={styles.qtySection}>
