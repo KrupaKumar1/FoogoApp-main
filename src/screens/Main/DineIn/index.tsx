@@ -19,18 +19,43 @@ import Separator from '../../../components/General/Seperator';
 import API_CALL from '../../../services/Api';
 import { useSelector } from 'react-redux';
 
+
 const DineIn = ({navigation}: {navigation: NavigationProp<any>}) => {
+
+ 
+ let selectedTableCapacity = 0;
   
    const {token} = useSelector((state: RootState) => state?.generalState ?? {});
-   const [quantity, setQuantity] = useState(1);
-   const [floorDetails, setFloorDetails] = useState([]);
-   const [floorId, setFloorId] = useState(null);
+
+    const {userDetails, userIp} = useSelector(
+    state => state?.generalState,
+    );
+
+     const currentDate = new Date();
+   
+  const [peopleCount, setpeopleCount] = useState(1);
+  const [floorDetails, setFloorDetails] = useState([]);
+  const [tableInfo, setselectedBookingTableInfo] = useState(null); //blank from server
+  const [bookingList, setbookingList] = useState([]); //non-empty all tables data from server
+ 
+  const [selectedTables, setselectedTables] = useState([]);
+ 
+  const [selected, setselected] = useState(null);
+  const [selectedIndexesArr, setSelectedIndexesArr] = useState([]);
+ 
+  const [floorId, setFloorId] = useState(null);
+
+  function getTablesnames(tables:any) {
+    const tableNames = tables?.map((table) => table.name);
+    return tableNames?.length > 1 ? tableNames.join(", ") : tableNames[0];
+  }
+
     const incrementQuantity = () => {
-     setQuantity(quantity + 1);
+     setpeopleCount(peopleCount + 1);
     };
   const decrementQuantity = () => {
-    if (quantity > 0) {
-      setQuantity(quantity - 1);
+    if (peopleCount > 0) {
+      setpeopleCount(peopleCount - 1);
     }
   };
 
@@ -39,6 +64,101 @@ const DineIn = ({navigation}: {navigation: NavigationProp<any>}) => {
     // Set the selected floorId to the state variable
     setFloorId(selectedFloorId);
   };
+
+   /**Tables Selection validation */
+  const selectTableApi = (id:any, name:any, capacity:any, index:any, reserved:any) => {
+    const tableAvailability = bookingList.findIndex(
+      (ele:any) => ele.capacity == peopleCount && ele.isReserved == reserved
+    );
+ 
+    const tableAvailabilityListIndex = bookingList.findIndex(
+      (ele) => ele.name == name
+    );
+ 
+    const selectedTableFilter = selectedTables.findIndex(
+      (ele) => ele.name == name
+    );
+ 
+    if (tableAvailability != -1) {
+      if (selectedTableFilter != -1) {
+        const filteredTableList = selectedTables.filter(
+          (ele) => ele.name != name
+        );
+        setselectedTables(filteredTableList);
+        // handleSelectedTable(filteredTableList);
+        const op2 = selectedIndexesArr.filter((item, j, arr) => {
+          return item !== index;
+        });
+ 
+        setSelectedIndexesArr(op2);
+        setselected(null);
+      } else if (selectedTableCapacity == peopleCount) {
+         Alert.alert(
+            'Alert!',
+            "You cannot select this table",
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        
+      } else if (capacity > peopleCount || capacity < peopleCount) {
+          Alert.alert(
+            'Alert!',
+            `Please select a table for ${peopleCount}`,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+      } else {
+        setselectedTables([
+          ...selectedTables,
+          bookingList[tableAvailabilityListIndex],
+        ]);
+      
+        if (selected == index) {
+          const op = selectedIndexesArr.filter((item, j, arr) => {
+            return item !== index;
+          });
+          setSelectedIndexesArr(op);
+          return setselected(null);
+        }
+        setselected(index);
+ 
+        setSelectedIndexesArr([...selectedIndexesArr, index]);
+      }
+    } else {
+      if (selectedTableFilter != -1) {
+        const filteredTableList = selectedTables.filter(
+          (ele) => ele.name != name
+        );
+        setselectedTables(filteredTableList);
+      
+        setSelectedIndexesArr(op1);
+        setselected(null);
+      } else if (selectedTableCapacity >= peopleCount) {
+          Alert.alert(
+            'Alert',
+            "You cannot select this table",
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+       
+      } else {
+        setselectedTables([...selectedTables, bookingList[index]]);
+       
+        if (selected == index) {
+          const op = selectedIndexesArr.filter((item, j, arr) => {
+            return item !== index;
+          });
+          setSelectedIndexesArr(op);
+          return setselected(null);
+        }
+        setselected(index);
+        setSelectedIndexesArr([...selectedIndexesArr, index]);
+      }
+    }
+  };
+
+
+
    const getFloorDetails = () => {
     API_CALL({
       method: "POST",
@@ -76,6 +196,113 @@ const DineIn = ({navigation}: {navigation: NavigationProp<any>}) => {
       },
     });
   };
+
+  /**Get tables */
+   const CheckAvailability = () => {
+    const object = {
+      isDineIn: true,
+      people: 1,
+      floorId: floorId,
+    };
+    if (floorId) {
+     API_CALL({
+      method: "POST",
+      url: "Reservation/SetSelectedBookingInfo",
+       headerConfig: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      data:object,
+      callback: async ({ status, data }) => {
+        if (status === 200) {
+          const result = data.data;
+           setselectedBookingTableInfo(result.selectedBooking);
+            setbookingList(result.bookingList);
+        } else {
+           Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        }
+      },
+    });
+    }
+  };
+
+   const createDineInOrder = () => {
+    const tableInfo = {
+    createdBy: userDetails.fullName,
+    createdDate: currentDate,
+    createdIP: userIp,
+      id: 0,
+      orderSource: "POS",
+      printerStatusId: 0,
+      orderStatusId: 21,
+      modeOfPayment: "Cash",
+      deliveryType: "Dine-In",
+      tableId: getTablesnames(selectedTables),
+      freeUpTableIds: "",
+      numberOfPeople: peopleCount,
+      paymentStatusId: 2,
+      isPrintingFailed: false,
+      orderId: 0,
+      orderNumber: "",
+      isPickupOrder: true,
+      isServiceChargePercentage: true,
+      isDeliveryScheduled: false,
+      scheduleDeliveryTime: "",
+      estimatedDeliveryOrPickupTime: "",
+      couponCode: "",
+      orderDeliveryAddressInfo: null,
+      orderItems: [],
+      orderItemAddOns: [],
+      deliveryAddressInfo: null,
+    };
+    API_CALL({
+      method: "POST",
+      url: `order/saveOrder`,
+       headerConfig: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      data: tableInfo,
+ 
+      callback: async ({ status, data }) => {
+        if (status === 200) {
+          // setSelecteOrderType("Dine-In");
+          // setMenuItemsScreenShow(!menuItemsScreenShow);
+          // getDineInOrders();
+         navigation.navigate('Dashboard');
+            Alert.alert(
+            'Success!',
+            "Dine-In Order Placed Successfully",
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        } else {
+           Alert.alert(
+            'Error',
+            data.errorMessage,
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+            {cancelable: false},
+          );
+        }
+      },
+    });
+  };
+
+  useEffect(() => {
+    selectedTables.map((table, i) => (selectedTableCapacity += table.capacity));
+  }, [selectedIndexesArr]);
+ 
+
+
+  useEffect(()=>{
+  CheckAvailability();
+  },[floorId])
+
 
 useEffect(()=>{
 getFloorDetails()
@@ -124,7 +351,7 @@ getFloorDetails()
               style={styles.qtyButton1}>
               <Text style={styles.qtyIcon}>-</Text>
             </TouchableOpacity>
-            <Text style={styles.qtyValue}>{quantity}</Text>
+            <Text style={styles.qtyValue}>{peopleCount}</Text>
             <TouchableOpacity
               onPress={incrementQuantity}
               style={styles.qtyButton2}>
@@ -136,15 +363,54 @@ getFloorDetails()
             decelerationRate="fast"
             showsVerticalScrollIndicator={false}>
             <View style={styles.containerCircle}>
-              {[...Array(12)].map((_, index) => (
-                <View key={index} style={styles.circle}>
-                  <Text style={styles.number}>1</Text>
+              {bookingList?.map((table, index) => {
+              const isOccupied = table?.isOccupied;
+              const isReserved = table?.isReserved;
+ 
+              const listItemClassName = isOccupied
+                ? "seatOccupied"
+                : isReserved
+                ? "seatReserved"
+                : "";
+                if(!isOccupied && !isReserved){
+                return(
+                  <TouchableOpacity onPress={() =>
+                      selectTableApi(
+                        table.id,
+                        table.name,
+                        table.capacity,
+                        index,
+                        isReserved
+                      )
+                    }>
+                  <View key={index} style={[styles.circle, selectedIndexesArr.includes(index) ? styles.activeCircle : null]}>
+                  <Text style={styles.number}>{table?.capacity}</Text>
+                  <Text>{table?.name}</Text>
                 </View>
-              ))}
+                </TouchableOpacity>
+                )
+                }
+                else if(isOccupied){
+                 return(
+                  <View key={index} style={[styles.circle,listItemClassName==="seatOccupied" && styles.seatOccupied]}>
+                  <Text style={styles.number}>{table?.capacity}</Text>
+                  <Text>{table?.name}</Text>
+                </View>
+                )
+                }
+                else{
+                 return(
+                  <View key={index} style={[styles.circle,listItemClassName==="seatReserved" && styles.seatReserved]}>
+                  <Text style={styles.number}>{table?.capacity}</Text>
+                  <Text>{table?.name}</Text>
+                </View>
+                )
+                }
+              })}
             </View>
           </ScrollView>
           <View style={styles.containerButton}>
-            <TouchableOpacity style={styles.buttonProceed}>
+            <TouchableOpacity style={styles.buttonProceed} onPress={createDineInOrder}>
               <Text style={styles.buttonTextProceed}>Proceed</Text>
             </TouchableOpacity>
           </View>
@@ -172,6 +438,19 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  seatOccupied :{
+  backgroundColor: "#ffa3a3",
+  color: "white",
+},
+seatReserved :{
+  backgroundColor: "#fabc72",
+  color: "white",
+},
+  activeCircle: {
+    backgroundColor: 'lightgreen', // Color when selected
+    borderWidth: 2,
+    borderColor: 'green', // Border color when selected
   },
   cardSection: {
     flex: 1,
