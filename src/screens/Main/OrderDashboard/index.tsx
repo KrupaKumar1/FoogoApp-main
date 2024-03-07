@@ -225,14 +225,14 @@ const OrderDashboard = ({navigation}: {navigation: NavigationProp<any>}) => {
           data={orderTypes}
           onViewableItemsChanged={onViewRef.current}
           viewabilityConfig={viewConfigRef.current}
-          keyExtractor={item => item.label}
-          renderItem={({item}) => (
+          keyExtractor={item => item?.orderId}
+          renderItem={({item,index}) => (
             <ScrollView
               style={styles.orderContainer}
               showsVerticalScrollIndicator={false}>
               {DATA?.map(dataItem => (
                 <TouchableOpacity
-                  key={dataItem.orderNumber}
+                  key={dataItem?.orderId}
                   activeOpacity={0.7}
                   // Add any onPress functionality here
                 >
