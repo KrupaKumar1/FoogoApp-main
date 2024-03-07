@@ -14,7 +14,6 @@ import Font from '../../../constant/Font';
 import {NavigationProp} from '@react-navigation/native';
 import Color from '../../../constant/Color';
 import {Colors, FontSize} from '../../../CSS/GlobalStyles';
-
 import Separator from '../../../components/General/Seperator';
 import API_CALL from '../../../services/Api';
 import { useSelector } from 'react-redux';
@@ -24,25 +23,18 @@ const DineIn = ({navigation}: {navigation: NavigationProp<any>}) => {
 
  
  let selectedTableCapacity = 0;
-  
    const {token} = useSelector((state: RootState) => state?.generalState ?? {});
-
     const {userDetails, userIp} = useSelector(
     state => state?.generalState,
     );
-
-     const currentDate = new Date();
-   
+  const currentDate = new Date();
   const [peopleCount, setpeopleCount] = useState(1);
   const [floorDetails, setFloorDetails] = useState([]);
   const [tableInfo, setselectedBookingTableInfo] = useState(null); //blank from server
   const [bookingList, setbookingList] = useState([]); //non-empty all tables data from server
- 
   const [selectedTables, setselectedTables] = useState([]);
- 
   const [selected, setselected] = useState(null);
   const [selectedIndexesArr, setSelectedIndexesArr] = useState([]);
- 
   const [floorId, setFloorId] = useState(null);
 
   function getTablesnames(tables:any) {
@@ -158,7 +150,7 @@ const DineIn = ({navigation}: {navigation: NavigationProp<any>}) => {
   };
 
 
-
+/**get floor details */
    const getFloorDetails = () => {
     API_CALL({
       method: "POST",
@@ -231,6 +223,7 @@ const DineIn = ({navigation}: {navigation: NavigationProp<any>}) => {
     }
   };
 
+  /**Create the dine-In orders */
    const createDineInOrder = () => {
     const tableInfo = {
     createdBy: userDetails.fullName,

@@ -15,7 +15,7 @@ const BillSummary = (props: any) => {
   const {subTotal, tax, serviceCharge, total,tipAmount,couponDiscount} = totals;
 
   const {generalSettings} = useSelector(state => state?.generalSettingsState);
-  console.log(couponDiscount?.length)
+ 
 
   return (
     <Modal

@@ -20,7 +20,7 @@ import SkeletonForMenuCard from '../../../components/Main/MenuItems/SkeletonForM
 import ViewCart from '../../../components/Main/MenuItems/ViewCart';
 import {Colors} from '../../../CSS/GlobalStyles';
 import Font from '../../../constant/Font';
-import {Image} from 'react-native-elements';
+
 
 interface RootState {
   generalState: {
@@ -202,7 +202,6 @@ const MenuItems = ({navigation}: {navigation: any}) => {
   /**Group Items */
   const getGroupItemsAPI = (menuId: any) => {
     setSelectedGroupId(menuId);
-    // setItemsLoading(true);
     const isTopOrderedItem = foodtypefilter.includes('Bestseller');
 
     API_CALL({

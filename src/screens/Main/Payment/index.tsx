@@ -35,7 +35,7 @@ const Payments = ({navigation}) => {
     state => state?.paymentState,
   );
 
-  console.log('DERAILS', orderDetails);
+  
 
   const handleOptionSelect = option => {
     setSelectedOption(option);
@@ -152,6 +152,7 @@ var options = {
 
   }
 
+  /**Pay the created order */
   const SaveOrder = () => {
     const createdBy = userDetails?.userId;
     const createdDate = currentDate;

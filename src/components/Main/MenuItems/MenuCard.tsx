@@ -42,9 +42,6 @@ const MenuCard = ({itemDetails, cardQtySetHandler}: {itemDetails: any}) => {
     if (itemDetails?.menuSubItem?.length > 0) {
       setModalVisible(true);
     } else {
-      // dispatch(CartAction.addItemToCart(itemObjectDetails));
-      // setModalVisible(true);
-
       const objIndex = cartItems?.findIndex(
         (obj: any) => obj.item === itemObjectDetails.item,
       );
@@ -53,7 +50,6 @@ const MenuCard = ({itemDetails, cardQtySetHandler}: {itemDetails: any}) => {
         dispatch(CartAction.sameitemupdateIn(itemObjectDetails));
       } else {
         dispatch(CartAction.orderdetailsIn(itemObjectDetails));
-        // dispatch(CartAction.addItemToCart(itemObjectDetails));
       }
     }
   };
